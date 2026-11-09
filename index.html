@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#16002e">
+<link rel="manifest" href="/manifest.json">
 <title>FLAG LIVE</title>
 <style>
 :root{--violet:#a94dff;--pink:#ef8cff;--cyan:#66eaff;--panel:rgba(20,7,48,.88);--line:rgba(184,94,255,.72);--muted:#d4c3ef}
@@ -16,9 +17,6 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.16;ba
 .panel{margin-top:13px;padding:12px;background:var(--panel);border:1px solid rgba(149,65,218,.65);border-radius:16px;box-shadow:0 0 15px rgba(87,29,143,.2)}.heading{text-align:center;font-size:13px;font-weight:950;letter-spacing:.7px;margin-bottom:8px;color:#f1d9ff;text-shadow:0 0 10px rgba(181,96,255,.55)}.person{display:flex;align-items:center;gap:9px;padding:6px 3px;border-bottom:1px solid rgba(143,83,184,.22);font-size:12px}.person:last-child{border:0}.rank{width:20px;font-weight:950;color:#e7c6ff}.avatar{width:26px;height:26px;flex:0 0 26px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ffb5eb,#8034ff);color:#26003f;font-weight:950}.name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.score{font-weight:850;color:#d9b5ff}.results{display:none;min-height:190px;align-content:start;gap:8px}.result-title{text-align:center;font-size:19px;font-weight:950;color:#f0c7ff;text-shadow:0 0 12px #b23dff;margin:8px 0 12px}.result-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border:1px solid #7d2ac2;border-radius:12px;background:linear-gradient(90deg,#35105c,#17052f);font-weight:800}.result-row strong{color:#7dffb2;font-size:17px;text-shadow:0 0 10px #39d887}.result-empty{text-align:center;padding:30px 8px;color:#e4c9ff;font-weight:800}.muted{font-size:11px;color:var(--muted);text-align:center}.voters{margin:11px 0 8px;padding:9px 10px;border:1px solid rgba(136,69,194,.5);border-radius:12px;background:rgba(17,4,37,.84);font-size:10px;color:#eadcff;min-height:34px;text-align:center}.cta{margin-top:10px;padding:12px 9px;border:1px solid #d06bff;border-radius:13px;background:linear-gradient(90deg,rgba(97,24,154,.9),rgba(48,12,100,.95));text-align:center;font-size:13px;font-weight:950;letter-spacing:.25px;color:#fff;box-shadow:0 0 17px rgba(176,64,255,.3);text-shadow:0 0 8px #d36bff}.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.tools button,.submit{border:1px solid #b64cff;background:#29094b;color:white;border-radius:11px;padding:11px;font-weight:750}.demoform{display:grid;grid-template-columns:1fr 75px;gap:7px;margin-top:9px}.demoform input,.demoform select{min-width:0;border:1px solid #8b39c2;border-radius:10px;background:#0c001b;color:white;padding:10px}.demoform select,.demoform button{grid-column:1/-1}.status{font-size:12px;text-align:center;color:#e3caff;margin:10px 0}.connectbox{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:9px}.connectbox input{min-width:0;border:1px solid #8b39c2;border-radius:10px;background:#0c001b;color:white;padding:11px}.connectbox button{border:1px solid #b64cff;background:#29094b;color:white;border-radius:11px;padding:10px;font-weight:800}.livehint{font-size:10px;color:#cdb6e8;text-align:center;margin-top:6px}.foot{font-size:9px;color:#b99bd7;text-align:center;margin:12px 0 2px}
 @media(min-width:600px){body{padding:22px}.app{padding:17px 20px}.top{margin-bottom:4px}.answers{gap:12px}.answer{min-height:54px;font-size:16px}}
 </style>
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#080b14">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body><main class="app">
 <header class="top"><div class="stat">👥 <b id="viewerCount">324</b><br>joueurs</div><div class="logo">🌐 FLAG<br>LIVE<small>QUIZ EN DIRECT</small></div><div class="stat">Dernier abonné<br><b id="lastSub">En attente…</b></div></header>
@@ -309,11 +307,9 @@ $('voteForm').addEventListener('submit',e=>{e.preventDefault();if(closed){$('sta
 $('start').addEventListener('click',start);$('reveal').addEventListener('click',finish);
 drawBoard();start();
 })();
-<script>
+</script><script>
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js");
-  });
+  window.addEventListener("load", () => { navigator.serviceWorker.register("/sw.js").catch(err => console.log("Service worker:", err)); });
 }
 </script>
-</script></body></html>
+</body></html>
