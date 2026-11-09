@@ -312,4 +312,90 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => { navigator.serviceWorker.register("/sw.js").catch(err => console.log("Service worker:", err)); });
 }
 </script>
+
+<style>
+.gift-panel{margin-top:13px;padding:13px;border:1px solid #bd63ff;border-radius:16px;background:linear-gradient(145deg,#260747,#100020);box-shadow:0 0 18px #8b35bb55}
+.gift-title{text-align:center;font-weight:950;color:#f0c7ff;margin-bottom:10px}
+.gift-latest{text-align:center;padding:12px;background:#16052b;border-radius:12px;margin-bottom:10px;font-weight:800}
+.gift-bar{height:12px;background:#32134b;border-radius:20px;overflow:hidden;margin:8px 0}
+.gift-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#ef8cff,#66eaff);transition:width .3s}
+.gift-row{display:flex;justify-content:space-between;padding:7px 3px;border-bottom:1px solid #ffffff22;font-size:12px}
+.gift-demo{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.gift-demo button{padding:10px;border:1px solid #bd63ff;border-radius:10px;background:#321052;color:white;font-weight:800}
+.gift-flash{animation:giftflash .7s ease}
+@keyframes giftflash{50%{transform:scale(1.04);box-shadow:0 0 30px #ff72e8}}
+</style>
+
+<section class="gift-panel" id="giftPanel">
+  <div class="gift-title">🎁 CADEAUX DU LIVE</div>
+  <div class="gift-latest" id="giftLatest">En attente du premier cadeau…</div>
+  <div style="text-align:center;font-size:12px">🎯 Objectif : <b id="giftTotal">0</b> / 1000 pièces</div>
+  <div class="gift-bar"><div class="gift-bar-fill" id="giftProgress"></div></div>
+  <div class="gift-title">🏆 TOP DONATEURS</div>
+  <div id="giftLeaderboard" style="text-align:center;font-size:12px">Aucun cadeau reçu</div>
+  <div class="gift-demo">
+    <button type="button" id="demoRose">🌹 Tester une rose</button>
+    <button type="button" id="demoBig">💎 Tester un gros cadeau</button>
+  </div>
+  <div style="font-size:10px;text-align:center;color:#d4c3ef;margin-top:8px">Boutons de test : cadeaux fictifs, non envoyés sur TikTok.</div>
+</section>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+let donors={};
+let totalCoins=0;
+const POINTS_PER_COIN=10;
+
+function drawGifts(){
+ const entries=Object.entries(donors).sort((a,b)=>b[1]-a[1]).slice(0,10);
+ $('giftLeaderboard').innerHTML=entries.length
+ ?entries.map(([name,pts],i)=>`<div class="gift-row"><span>${i+1}. ${name.replace(/[&<>"']/g,'')}</span><b>${pts.toLocaleString('fr-FR')} pts</b></div>`).join('')
+ : 'Aucun cadeau reçu';
+ $('giftTotal').textContent=totalCoins.toLocaleString('fr-FR');
+ $('giftProgress').style.width=Math.min(100,totalCoins/10)+'%';
+}
+
+function processGift(data){
+ if(!data)return;
+ const user=data.uniqueId||data.nickname||data.user?.uniqueId||data.user?.nickname||data.username;
+ const gift=data.giftName||data.gift?.name||data.name||'Cadeau';
+ const coins=Number(data.diamondCount??data.coins??data.gift?.diamondCount??data.gift?.diamond_count);
+ if(!user||!Number.isFinite(coins)||coins<=0)return;
+
+ const points=coins*POINTS_PER_COIN;
+ donors[user]=(donors[user]||0)+points;
+ totalCoins+=coins;
+
+ $('giftLatest').textContent=`🎁 ${user} a envoyé ${gift} · +${points} pts`;
+ $('giftLatest').classList.remove('gift-flash');
+ void $('giftLatest').offsetWidth;
+ $('giftLatest').classList.add('gift-flash');
+ drawGifts();
+}
+
+$('demoRose').addEventListener('click',()=>processGift({
+ uniqueId:'Joueur_Demo',giftName:'Rose (démo)',diamondCount:1
+}));
+$('demoBig').addEventListener('click',()=>processGift({
+ uniqueId:'Grand_Donateur_Demo',giftName:'Gros cadeau (démo)',diamondCount:100
+}));
+
+// Réception des cadeaux si le serveur transmet l'événement "gift".
+const attachGiftListener=()=>{
+ if(window.liveSocket)window.liveSocket.on('gift',processGift);
+};
+window.addEventListener('load',attachGiftListener);
+
+// Le bouton nouveau LIVE remet aussi les cadeaux à zéro.
+$('newLiveReset').addEventListener('click',()=>{
+ donors={};
+ totalCoins=0;
+ $('giftLatest').textContent='En attente du premier cadeau…';
+ drawGifts();
+});
+
+drawGifts();
+})();
+</script>
 </body></html>
