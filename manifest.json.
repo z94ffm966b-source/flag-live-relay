@@ -1,0 +1,10 @@
+{
+  "name": "FLAG LIVE",
+  "short_name": "FLAG LIVE",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080b14",
+  "theme_color": "#080b14"
+}
