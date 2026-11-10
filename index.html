@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#16002e">
 <title>FLAG LIVE</title>
+
 <style>
 :root{
  --violet:#a94dff;--pink:#ef8cff;--cyan:#66eaff;
@@ -12,29 +13,32 @@
  --muted:#d4c3ef;
 }
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:#080014;color:#fff;font-family:system-ui,-apple-system,Arial,sans-serif}
+html,body{
+ margin:0;min-height:100%;background:#080014;color:#fff;
+ font-family:system-ui,-apple-system,Arial,sans-serif
+}
 body{
  min-height:100vh;
  background:radial-gradient(ellipse at 50% 24%,rgba(94,24,155,.55),transparent 52%),linear-gradient(145deg,#080014,#120326 52%,#060012);
- overflow-x:hidden;
+ overflow-x:hidden
 }
 .app{width:100%;max-width:900px;margin:auto;padding:0 10px 20px}
 .broadcast{
  min-height:100vh;min-height:100svh;
  display:flex;flex-direction:column;justify-content:space-between;
- gap:10px;padding:12px 0;
+ gap:10px;padding:12px 0
 }
 .top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:7px}
 .stat{
  min-width:0;padding:8px 5px;border:1px solid var(--line);
  border-radius:13px;background:rgba(18,4,42,.88);
- text-align:center;font-size:10px;line-height:1.35;
+ text-align:center;font-size:10px;line-height:1.35
 }
 .stat b{font-size:13px;color:#fff}
 .logo{
  text-align:center;font-weight:1000;font-size:25px;line-height:.86;
  letter-spacing:1px;font-style:italic;color:#fff;
- text-shadow:0 0 8px var(--pink),0 0 22px #8d35ff;
+ text-shadow:0 0 8px var(--pink),0 0 22px #8d35ff
 }
 .logo small{display:block;margin-top:6px;font-size:8px;letter-spacing:2.5px;color:#e7c8ff}
 .timer{
@@ -42,7 +46,7 @@ body{
  border-radius:50%;display:grid;align-content:center;justify-items:center;
  background:radial-gradient(circle,rgba(90,25,150,.8),rgba(17,3,39,.95));
  font-size:31px;font-weight:950;line-height:1;
- box-shadow:0 0 0 5px rgba(173,70,255,.12),0 0 26px rgba(174,68,255,.65);
+ box-shadow:0 0 0 5px rgba(173,70,255,.12),0 0 26px rgba(174,68,255,.65)
 }
 .timer small{font-size:8px;letter-spacing:1.5px;margin-top:5px;color:#e7cfff}
 .track{height:8px;background:#1c0835;border:1px solid #7e35b7;border-radius:30px;overflow:hidden}
@@ -51,19 +55,19 @@ body{
 .question{
  margin:5px 0 8px;padding:12px;border:1px solid var(--line);
  border-radius:15px;background:linear-gradient(100deg,rgba(44,12,78,.92),rgba(19,5,43,.94));
- text-align:center;font-size:clamp(17px,4vw,22px);font-weight:850;
+ text-align:center;font-size:clamp(17px,4vw,22px);font-weight:850
 }
 .answers{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .answer{
  min-height:48px;border:1px solid #a653ed;border-radius:12px;
  background:linear-gradient(135deg,rgba(54,17,91,.96),rgba(25,7,52,.98));
- color:#fff;padding:10px 5px;font-size:14px;font-weight:800;
+ color:#fff;padding:10px 5px;font-size:14px;font-weight:800
 }
 .answer.good{background:linear-gradient(135deg,#14583f,#123927);border-color:#65f0aa}
 .answer.bad{opacity:.45}
 .panel{
  margin-top:9px;padding:11px;background:var(--panel);
- border:1px solid rgba(149,65,218,.65);border-radius:16px;
+ border:1px solid rgba(149,65,218,.65);border-radius:16px
 }
 .heading{text-align:center;font-size:13px;font-weight:950;letter-spacing:.7px;margin-bottom:8px;color:#f1d9ff}
 .person{display:flex;align-items:center;gap:9px;padding:6px 3px;border-bottom:1px solid rgba(143,83,184,.22);font-size:12px}
@@ -85,28 +89,24 @@ body{
 .gift-latest{text-align:center;padding:11px;background:#16052b;border-radius:12px;margin-bottom:9px;font-weight:800;font-size:13px}
 .gift-bar{height:12px;background:#32134b;border-radius:20px;overflow:hidden;margin:8px 0}
 .gift-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#ef8cff,#66eaff);transition:width .3s}
-.gift-row{display:flex;justify-content:space-between;gap:8px;padding:7px 3px;border-bottom:1px solid #ffffff22;font-size:12px}
 .gift-message{text-align:center;color:#ffd166;font-weight:bold;font-size:13px;padding:9px;background:rgba(255,209,102,.10);border:1px solid rgba(255,209,102,.35);border-radius:12px}
 .admin{margin:18px 0;padding:12px;border:1px solid #7540a5;border-radius:16px;background:#10051e}
 .admin .panel{margin-top:10px}
 .tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
 .tools button,.submit,.connectbox button{
  border:1px solid #b64cff;background:#29094b;color:white;
- border-radius:11px;padding:11px;font-weight:750;
+ border-radius:11px;padding:11px;font-weight:750
 }
 .demoform{display:grid;grid-template-columns:1fr;gap:7px;margin-top:9px}
 .demoform input,.demoform select,.connectbox input{
  min-width:0;border:1px solid #8b39c2;border-radius:10px;
- background:#0c001b;color:white;padding:11px;
+ background:#0c001b;color:white;padding:11px
 }
 .connectbox{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:9px}
 .status{font-size:12px;text-align:center;color:#e3caff;margin:10px 0}
 .livehint{font-size:10px;color:#cdb6e8;text-align:center;margin-top:6px}
 .gift-demo{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
 .gift-demo button{padding:10px;border:1px solid #bd63ff;border-radius:10px;background:#321052;color:white;font-weight:800}
-.gift-flash{animation:giftflash .7s ease}
-@keyframes giftflash{50%{transform:scale(1.04);box-shadow:0 0 30px #ff72e8}}
-.foot{font-size:9px;color:#b99bd7;text-align:center;margin:12px 0}
 @media(min-width:600px){
  .app{padding:0 20px 20px}
  .broadcast{padding-top:18px}
@@ -115,10 +115,12 @@ body{
 }
 </style>
 </head>
+
 <body>
 <main class="app">
 
 <div class="broadcast">
+
 <header class="top">
  <div class="stat">👥 <b id="viewerCount">324</b><br>joueurs</div>
  <div class="logo">🌐 FLAG<br>LIVE<small>QUIZ EN DIRECT</small></div>
@@ -130,6 +132,7 @@ body{
 
 <div class="flag" id="flag">🇳🇵</div>
 <div class="question" id="question">DIFFICILE · Quel pays est représenté par ce drapeau ?</div>
+
 <div class="answers" id="answers">
  <button class="answer" data-choice="A">A · Népal</button>
  <button class="answer" data-choice="B">B · Bhoutan</button>
@@ -160,11 +163,13 @@ body{
  <div id="giftLeaderboard" style="text-align:center;font-size:12px">Aucun cadeau reçu</div>
 </section>
 
-<div class="gift-message">🎁 Envoie des cadeaux pour faire grimper ton score ! Plus le cadeau est gros, plus tu gagnes de points.</div>
+<div class="gift-message" id="giftMessage">🎁 Envoie des cadeaux pour faire grimper ton score ! Plus le cadeau est gros, plus tu gagnes de points.</div>
+
 </div>
 
 <div class="admin">
  <div class="heading">⚙️ COMMANDES DU LIVE (non affichées dans le jeu)</div>
+
  <section class="panel">
   <div class="heading">🔴 CONNEXION TIKTOK LIVE</div>
   <div class="muted">Entre ton pseudo TikTok sans @ pour connecter le lecteur.</div>
@@ -177,16 +182,17 @@ body{
   </div>
   <div class="livehint" id="liveState">Non connecté · serveur Render prêt à recevoir les commentaires.</div>
  </section>
+
  <section class="panel">
   <div class="heading">🧪 TESTER UN VOTE (DÉMO)</div>
   <div class="muted">Ajoute des joueurs fictifs pour tester le jeu.</div>
   <form class="demoform" id="voteForm">
    <input id="pseudo" maxlength="20" placeholder="Pseudo du joueur" required>
    <select id="choice">
-    <option value="A">A · Népal</option>
-    <option value="B">B · Bhoutan</option>
-    <option value="C">C · Kiribati</option>
-    <option value="D">D · Sri Lanka</option>
+    <option value="A">A</option>
+    <option value="B">B</option>
+    <option value="C">C</option>
+    <option value="D">D</option>
    </select>
    <button class="submit">Enregistrer le vote</button>
   </form>
@@ -196,6 +202,7 @@ body{
   </div>
   <div class="status" id="status">Démo disponible · connecte TikTok ci-dessus pour recevoir les vrais votes.</div>
  </section>
+
  <section class="panel">
   <div class="heading">🎁 TESTER LES CADEAUX</div>
   <div class="gift-demo">
@@ -207,13 +214,16 @@ body{
 </div>
 
 <div class="foot">FLAG LIVE · Scores conservés sur cet appareil. Connexion TikTok via Render.</div>
+</main>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
 <script>
-  (()=>{
+(()=>{
 const $=id=>document.getElementById(id);
 const KEY='flaglive_demo_scores_v2';
 
-const countryData = `
+const countryData=`
 NP|Népal|EXPERT
 BT|Bhoutan|EXPERT
 KI|Kiribati|EXPERT
@@ -401,9 +411,10 @@ YE|Yémen|MOYEN
 `.trim();
 
 const countries=countryData.split('\n').map(line=>{
-const [code,name,difficulty]=line.split('|');
-return {code,name,difficulty};
+ const [code,name,difficulty]=line.split('|');
+ return {code,name,difficulty};
 });
+
 let scores={};
 try{scores=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){scores={}}
 
@@ -415,333 +426,350 @@ let roundNumber=0;
 let answeredUsers=new Set();
 let liveSocket=null;
 let usedCountries=[];
+let currentChoices=[];
 
 const flag=code=>String.fromCodePoint(...[...code].map(c=>127397+c.charCodeAt(0)));
 
-function saveScores(){
-localStorage.setItem(KEY,JSON.stringify(scores));
-renderRanking();
-}
-
-function renderRanking(){
-const list=$('ranking');
-if(!list)return;
-const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,10);
-list.innerHTML=sorted.length?sorted.map(([name,score],i)=>`
-<div class="rank-row">
-<span>${i+1}. ${escapeHTML(name)}</span>
-<strong>${score} pts</strong>
-</div>`).join(''):'<div class="muted">En attente des joueurs…</div>';
-}
-
 function escapeHTML(value){
-return String(value).replace(/[&<>"']/g,c=>({
-'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-}[c]));
+ return String(value).replace(/[&<>"']/g,c=>({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+ }[c]));
 }
 
 function setMessage(message){
-const el=$('message');
-if(el)el.textContent=message;
+ const el=$('status');
+ if(el)el.textContent=message;
+}
+
+function saveScores(){
+ try{localStorage.setItem(KEY,JSON.stringify(scores))}catch(e){}
+ renderRanking();
+}
+
+function renderRanking(){
+ const list=$('leaderboard');
+ if(!list)return;
+ const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,10);
+ list.innerHTML=sorted.length?sorted.map(([name,score],i)=>`
+  <div class="person">
+   <span class="rank">${i+1}.</span>
+   <span class="avatar">${escapeHTML(name.charAt(0).toUpperCase())}</span>
+   <span class="name">${escapeHTML(name)}</span>
+   <span class="score">${score} pts</span>
+  </div>
+ `).join(''):'<div class="muted">En attente des joueurs…</div>';
 }
 
 function updateTimer(){
-if($('seconds'))$('seconds').textContent=seconds;
-if($('timerBar'))$('timerBar').style.width=(seconds/20*100)+'%';
+ $('seconds').textContent=seconds;
+ $('fill').style.width=(seconds/20*100)+'%';
 }
 
 function chooseCountry(){
-let available=countries.filter(c=>!usedCountries.includes(c.code));
-if(!available.length){
-usedCountries=[];
-available=countries;
-}
-const chosen=available[Math.floor(Math.random()*available.length)];
-usedCountries.push(chosen.code);
-return chosen;
+ let available=countries.filter(c=>!usedCountries.includes(c.code));
+ if(!available.length){
+  usedCountries=[];
+  available=countries;
+ }
+ const chosen=available[Math.floor(Math.random()*available.length)];
+ usedCountries.push(chosen.code);
+ return chosen;
 }
 
 function startRound(){
-clearInterval(timer);
-currentCountry=chooseCountry();
-roundActive=true;
-answeredUsers.clear();
-roundNumber++;
-seconds=20;
+ clearInterval(timer);
+ currentCountry=chooseCountry();
+ roundActive=true;
+ answeredUsers.clear();
+ roundNumber++;
+ seconds=20;
 
-if($('roundNumber'))$('roundNumber').textContent='QUESTION '+roundNumber;
-if($('flag'))$('flag').textContent=flag(currentCountry.code);
-if($('countryName'))$('countryName').textContent='Quel est ce pays ?';
-if($('difficulty'))$('difficulty').textContent=currentCountry.difficulty;
-if($('roundStatus'))$('roundStatus').textContent='EN COURS';
-setMessage('À vous de jouer ! Répondez dans le chat.');
+ $('flag').textContent=flag(currentCountry.code);
+ $('question').textContent=currentCountry.difficulty+' · Quel pays est représenté par ce drapeau ?';
+ $('boardView').style.display='block';
+ $('resultsView').style.display='none';
 
-const choices=[currentCountry];
-while(choices.length<4){
-const candidate=countries[Math.floor(Math.random()*countries.length)];
-if(!choices.some(c=>c.code===candidate.code))choices.push(candidate);
-}
-choices.sort(()=>Math.random()-.5);
+ const choices=[currentCountry];
+ while(choices.length<4){
+  const candidate=countries[Math.floor(Math.random()*countries.length)];
+  if(!choices.some(c=>c.code===candidate.code))choices.push(candidate);
+ }
+ choices.sort(()=>Math.random()-.5);
+ currentChoices=choices;
 
-['A','B','C','D'].forEach((letter,i)=>{
-const el=$('answer'+letter);
-if(el){
-el.textContent=letter+' · '+choices[i].name;
-el.dataset.code=choices[i].code;
-el.classList.remove('correct','wrong');
-}
-});
+ document.querySelectorAll('#answers .answer').forEach((button,i)=>{
+  button.textContent=['A','B','C','D'][i]+' · '+choices[i].name;
+  button.dataset.choice=['A','B','C','D'][i];
+  button.dataset.code=choices[i].code;
+  button.classList.remove('good','bad');
+ });
 
-updateTimer();
-timer=setInterval(()=>{
-seconds--;
-updateTimer();
-if(seconds<=0){
-clearInterval(timer);
-endRound();
-}
-},1000);
-}
+ $('voters').textContent='👀 Les derniers votes apparaîtront ici…';
+ setMessage('Question '+roundNumber+' · À vous de jouer !');
+ updateTimer();
 
-function endRound(){
-if(!roundActive)return;
-roundActive=false;
-clearInterval(timer);
-
-if($('roundStatus'))$('roundStatus').textContent='TERMINÉ';
-if($('countryName'))$('countryName').textContent=currentCountry.name;
-if($('difficulty'))$('difficulty').textContent='Bonne réponse';
-
-['A','B','C','D'].forEach(letter=>{
-const el=$('answer'+letter);
-if(el&&el.dataset.code===currentCountry.code)el.classList.add('correct');
-});
-
-setMessage('La bonne réponse était : '+currentCountry.name+' !');
-
-setTimeout(()=>{
-startRound();
-},5000);
+ timer=setInterval(()=>{
+  seconds--;
+  updateTimer();
+  if(seconds<=0)endRound();
+ },1000);
 }
 
 function addPoints(username,points){
-if(!username)return;
-scores[username]=(scores[username]||0)+points;
-saveScores();
+ if(!username)return;
+ scores[username]=(scores[username]||0)+points;
+ saveScores();
 }
 
 window.flagLiveAddPoints=addPoints;
-    
 
 function processAnswer(username,answer){
-if(!roundActive||!currentCountry||!username)return;
-username=String(username).replace(/^@/,'').trim();
-if(!username||answeredUsers.has(username))return;
+ if(!roundActive||!currentCountry||!username)return;
 
-const normalized=String(answer).trim().toLowerCase();
-const correct=currentCountry.name.toLowerCase();
-const code=currentCountry.code.toLowerCase();
+ username=String(username).replace(/^@/,'').trim();
+ if(!username||answeredUsers.has(username))return;
 
-if(normalized===correct||normalized===code){
-answeredUsers.add(username);
-const points=Math.max(20,100-(answeredUsers.size-1)*10);
-addPoints(username,points);
-setMessage('🎉 '+username+' a trouvé ! +'+points+' points');
-}
+ const normalized=String(answer).trim().toLowerCase();
+ const button=document.querySelector('#answers .answer[data-choice="'+normalized.toUpperCase()+'"]');
+ const selectedCode=button?button.dataset.code:null;
+
+ const correct=
+  normalized===currentCountry.name.toLowerCase()||
+  normalized===currentCountry.code.toLowerCase()||
+  selectedCode===currentCountry.code;
+
+ answeredUsers.add(username);
+
+ if(correct){
+  const points=Math.max(20,100-(answeredUsers.size-1)*10);
+  addPoints(username,points);
+  setMessage('🎉 '+username+' a trouvé ! +'+points+' points');
+ }else{
+  setMessage('❌ '+username+' a répondu. Continuez !');
+ }
+
+ $('voters').textContent='🗳️ Dernier vote : '+username+' · '+String(answer).toUpperCase();
 }
 
 function handleChat(data){
-if(!data)return;
-const username=data.uniqueId||data.username||data.nickname||data.user;
-const message=data.comment||data.message||data.text||'';
-if(!username||!message)return;
-processAnswer(username,message);
+ if(!data)return;
+ const username=data.uniqueId||data.username||data.nickname||data.user;
+ const message=data.comment||data.message||data.text||'';
+ if(!username||!message)return;
+ processAnswer(username,message);
+}
+
+function endRound(){
+ if(!roundActive)return;
+ roundActive=false;
+ clearInterval(timer);
+
+ $('question').textContent='Bonne réponse : '+currentCountry.name;
+
+ document.querySelectorAll('#answers .answer').forEach(button=>{
+  if(button.dataset.code===currentCountry.code){
+   button.classList.add('good');
+  }else{
+   button.classList.add('bad');
+  }
+ });
+
+ const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,5);
+ $('resultsList').innerHTML=sorted.length?sorted.map(([name,score],i)=>`
+  <div class="result-row">
+   <span>${i+1}. ${escapeHTML(name)}</span>
+   <strong>${score} pts</strong>
+  </div>
+ `).join(''):'<div class="result-empty">Personne n’a encore marqué de points.</div>';
+
+ $('boardView').style.display='none';
+ $('resultsView').style.display='grid';
+ setMessage('La bonne réponse était : '+currentCountry.name+' !');
+
+ setTimeout(()=>{
+  startRound();
+ },5000);
 }
 
 function connectTikTok(){
-const input=$('tiktokUsername');
-const username=input?input.value.trim().replace(/^@/,''):'';
-if(!username){
-setMessage('Entre ton pseudo TikTok.');
-return;
-}
-if(typeof io!=='function'){
-setMessage('Connexion impossible : Socket.IO indisponible.');
-return;
-}
+ const input=$('tiktokUser');
+ const username=input?input.value.trim().replace(/^@/,''):'';
 
-if(liveSocket){
-liveSocket.disconnect();
-liveSocket=null;
-}
+ if(!username){
+  $('liveState').textContent='Entre ton pseudo TikTok.';
+  return;
+ }
 
-liveSocket=io('https://tiktok-chat-reader-obz6.onrender.com');
+ if(typeof io!=='function'){
+  $('liveState').textContent='Socket.IO indisponible. Recharge la page.';
+  return;
+ }
 
-liveSocket.on('connect',()=>{
-liveSocket.emit('setUniqueId',username);
-setMessage('Connexion au serveur en cours…');
-});
+ if(liveSocket){
+  liveSocket.disconnect();
+  liveSocket=null;
+ }
 
-liveSocket.on('tiktokConnected',()=>{
-setMessage('✅ TikTok connecté : @'+username);
-});
+ $('liveState').textContent='Connexion au serveur…';
 
-liveSocket.on('chat',handleChat);
+ liveSocket=io('https://tiktok-chat-reader-obz6.onrender.com');
 
-liveSocket.on('roomUser',data=>{
-const count=data.viewerCount||data.userCount||data.count;
-if(count!==undefined&&$('viewerCount'))$('viewerCount').textContent=count;
-});
+ liveSocket.on('connect',()=>{
+  liveSocket.emit('setUniqueId',username);
+  $('liveState').textContent='Serveur connecté · recherche du LIVE…';
+ });
 
-liveSocket.on('follow',data=>{
-const name=data.uniqueId||data.nickname||data.username||'Nouveau follower';
-if($('lastSub'))$('lastSub').textContent=name;
-});
+ liveSocket.on('tiktokConnected',()=>{
+  $('liveState').textContent='✅ TikTok connecté : @'+username;
+ });
 
-liveSocket.on('tiktokDisconnected',()=>{
-setMessage('TikTok déconnecté.');
-});
+ liveSocket.on('chat',handleChat);
 
-liveSocket.on('streamEnd',()=>{
-setMessage('Le live est terminé.');
-});
+ liveSocket.on('roomUser',data=>{
+  const count=data.viewerCount||data.userCount||data.count;
+  if(count!==undefined)$('viewerCount').textContent=count;
+ });
 
-liveSocket.on('disconnect',()=>{
-setMessage('Connexion au serveur interrompue.');
-});
+ liveSocket.on('follow',data=>{
+  const name=data.uniqueId||data.nickname||data.username||'Nouveau follower';
+  $('lastSub').textContent=name;
+ });
 
-liveSocket.on('connect_error',()=>{
-setMessage('Erreur de connexion au serveur.');
-});
+ liveSocket.on('gift',data=>{
+  if(typeof window.flagLiveProcessGift==='function'){
+   window.flagLiveProcessGift(data);
+  }
+ });
 
-liveSocket.on('gift',data=>{
-if(typeof window.flagLiveProcessGift==='function'){
-window.flagLiveProcessGift(data);
-}
-});
+ liveSocket.on('tiktokDisconnected',()=>{
+  $('liveState').textContent='TikTok déconnecté.';
+ });
+
+ liveSocket.on('streamEnd',()=>{
+  $('liveState').textContent='Le live est terminé.';
+ });
+
+ liveSocket.on('disconnect',()=>{
+  $('liveState').textContent='Connexion au serveur interrompue.';
+ });
+
+ liveSocket.on('connect_error',()=>{
+  $('liveState').textContent='Erreur de connexion au serveur.';
+ });
 }
 
 function resetGame(){
-if(!confirm('Réinitialiser tous les scores ?'))return;
-scores={};
-saveScores();
-if(typeof window.flagLiveResetGifts==='function'){
-window.flagLiveResetGifts();
-}
-setMessage('Scores réinitialisés.');
+ if(!confirm('Réinitialiser les scores et les cadeaux ?'))return;
+
+ scores={};
+ saveScores();
+
+ if(typeof window.flagLiveResetGifts==='function'){
+  window.flagLiveResetGifts();
+ }
+
+ $('lastSub').textContent='En attente…';
+ $('viewerCount').textContent='0';
+ setMessage('Scores et cadeaux réinitialisés.');
+ startRound();
 }
 
-if($('connectButton'))$('connectButton').addEventListener('click',connectTikTok);
-if($('resetButton'))$('resetButton').addEventListener('click',resetGame);
-if($('demoButton'))$('demoButton').addEventListener('click',()=>{
-processAnswer('JoueurDemo',currentCountry?currentCountry.name:'');
+$('tiktokConnect').addEventListener('click',connectTikTok);
+$('newLiveReset').addEventListener('click',resetGame);
+$('start').addEventListener('click',startRound);
+$('reveal').addEventListener('click',endRound);
+
+$('voteForm').addEventListener('submit',event=>{
+ event.preventDefault();
+ const username=$('pseudo').value.trim();
+ const answer=$('choice').value;
+ if(username)processAnswer(username,answer);
+ $('pseudo').value='';
 });
 
 renderRanking();
-updateTimer();
 startRound();
 
 })();
 </script>
+
 <script>
 (()=>{
 const $=id=>document.getElementById(id);
 
 let giftTotal=0;
 let giftDonors={};
-let giftGoal=10000;
-
-function renderGifts(){
-const total=$('giftTotal');
-const goal=$('giftGoal');
-const ranking=$('giftRanking');
-const progress=$('giftProgress');
-
-if(total)total.textContent=giftTotal.toLocaleString('fr-FR');
-if(goal)goal.textContent=giftGoal.toLocaleString('fr-FR');
-
-if(progress){
-progress.style.width=Math.min(100,giftTotal/giftGoal*100)+'%';
-}
-
-if(ranking){
-const donors=Object.entries(giftDonors).sort((a,b)=>b[1]-a[1]).slice(0,5);
-ranking.innerHTML=donors.length
-?donors.map(([name,coins],i)=>`
-<div class="rank-row">
-<span>${i+1}. ${escapeHTML(name)}</span>
-<strong>${coins.toLocaleString('fr-FR')} 🪙</strong>
-</div>`).join('')
-:'<div class="muted">En attente des cadeaux…</div>';
-}
-}
+const giftGoal=1000;
 
 function escapeHTML(value){
-return String(value).replace(/[&<>"']/g,c=>({
-'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-}[c]));
+ return String(value).replace(/[&<>"']/g,c=>({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+ }[c]));
+}
+
+function renderGifts(){
+ $('giftTotal').textContent=giftTotal.toLocaleString('fr-FR');
+ $('giftProgress').style.width=Math.min(100,giftTotal/giftGoal*100)+'%';
+
+ const ranking=$('giftLeaderboard');
+ const donors=Object.entries(giftDonors).sort((a,b)=>b[1]-a[1]).slice(0,5);
+
+ ranking.innerHTML=donors.length
+  ?donors.map(([name,coins],i)=>`
+   <div class="person">
+    <span class="rank">${i+1}.</span>
+    <span class="name">${escapeHTML(name)}</span>
+    <span class="score">${coins.toLocaleString('fr-FR')} 🪙</span>
+   </div>
+  `).join('')
+  :'<div class="muted">En attente des cadeaux…</div>';
 }
 
 function processGift(data){
-if(!data)return;
+ if(!data)return;
 
-const username=data.uniqueId||data.username||data.nickname||data.user||'Anonyme';
-const coins=Number(data.coins||data.diamondCount||data.diamonds||data.value||1);
+ const username=data.uniqueId||data.username||data.nickname||data.user||'Anonyme';
+ const coins=Number(data.coins||data.diamondCount||data.diamonds||data.value||1);
 
-if(!Number.isFinite(coins)||coins<=0)return;
+ if(!Number.isFinite(coins)||coins<=0)return;
 
-giftTotal+=coins;
-giftDonors[username]=(giftDonors[username]||0)+coins;
+ giftTotal+=coins;
+ giftDonors[username]=(giftDonors[username]||0)+coins;
 
-const points=Math.round(10*coins*(1+Math.log10(Math.max(1,coins))/3));
+ const points=Math.round(10*coins*(1+Math.log10(Math.max(1,coins))/3));
 
-if(typeof window.flagLiveAddPoints==='function'){
-window.flagLiveAddPoints(username,points);
-}
+ if(typeof window.flagLiveAddPoints==='function'){
+  window.flagLiveAddPoints(username,points);
+ }
 
-const message=$('giftMessage');
-if(message){
-message.textContent='🎁 '+username+' : cadeau reçu ! +'+points+' points';
-}
+ $('giftLatest').textContent='🎁 '+username+' a envoyé un cadeau !';
+ $('giftMessage').textContent='🎁 '+username+' : cadeau reçu ! +'+points+' points';
 
-renderGifts();
+ renderGifts();
 }
 
 window.flagLiveProcessGift=processGift;
 
 window.flagLiveResetGifts=()=>{
-giftTotal=0;
-giftDonors={};
-renderGifts();
+ giftTotal=0;
+ giftDonors={};
+ $('giftLatest').textContent='En attente du premier cadeau…';
+ $('giftMessage').textContent='🎁 Envoie des cadeaux pour faire grimper ton score !';
+ renderGifts();
 };
 
-function demoGift(username,coins){
-processGift({
-uniqueId:username,
-coins:coins
+$('demoRose').addEventListener('click',()=>{
+ processGift({uniqueId:'JoueurDemo',coins:1});
 });
-}
 
-const demoButtons=[
-['giftRoseButton',1],
-['giftHeartButton',10],
-['giftGalaxyButton',1000]
-];
-
-demoButtons.forEach(([id,coins])=>{
-const button=$(id);
-if(button){
-button.addEventListener('click',()=>{
-demoGift('JoueurDemo',coins);
-});
-}
+$('demoBig').addEventListener('click',()=>{
+ processGift({uniqueId:'JoueurDemo',coins:1000});
 });
 
 renderGifts();
+
 })();
 </script>
 
 </body>
 </html>
-
-
