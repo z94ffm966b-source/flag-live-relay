@@ -4,82 +4,215 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#16002e">
-<link rel="manifest" href="/manifest.json">
 <title>FLAG LIVE</title>
 <style>
-:root{--violet:#a94dff;--pink:#ef8cff;--cyan:#66eaff;--panel:rgba(20,7,48,.88);--line:rgba(184,94,255,.72);--muted:#d4c3ef}
-*{box-sizing:border-box}html{min-height:100%;background:#080014}body{margin:0;min-height:100vh;padding:14px 12px 22px;color:#fff;font-family:system-ui,-apple-system,Arial,sans-serif;background:radial-gradient(ellipse at 50% 24%,rgba(94,24,155,.55),transparent 52%),radial-gradient(ellipse at 50% 90%,rgba(36,9,91,.7),transparent 55%),linear-gradient(145deg,#080014,#120326 52%,#060012);position:relative;overflow-x:hidden}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.16;background-image:linear-gradient(rgba(170,91,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(170,91,255,.12) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,black,transparent 85%)}
-.app{position:relative;max-width:680px;margin:auto;padding:12px;border:1px solid rgba(171,82,255,.42);border-radius:24px;background:linear-gradient(180deg,rgba(20,5,47,.72),rgba(7,0,20,.84));box-shadow:0 0 32px rgba(130,40,255,.22),inset 0 0 35px rgba(119,36,255,.08);overflow:hidden}
-.app:before{content:"";position:absolute;inset:80px -25px 160px;z-index:0;pointer-events:none;opacity:.11;background-repeat:no-repeat;background-position:center;background-size:contain;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 440'%3E%3Cg fill='%23b56bff' stroke='%23d9a5ff' stroke-width='2' opacity='.8'%3E%3Cpath d='M70 105l40-38 58-15 35 20 35-8 28 26-12 27-38 7-17 32-34 7-19 42-31-5-14-32-31-14-20-29zM250 215l37-15 41 15 20 40-17 38-14 57-28 33-22-20-5-55-24-37zM370 95l40-30 54 4 28-22 66 12 35 26 58-4 39 23 58 7 36 33-18 27-54-7-28 23-49-5-21 29-38-8-21 27-42-5-26-37-47 4-25-28-42-3-26-36-33-8zM470 250l47-21 49 18 26 42-19 59-39 37-34-19-10-49-28-25zM690 300l35-14 41 16 13 31-27 23-42-7-25-23z'/%3E%3C/g%3E%3C/svg%3E")}
-.app>*{position:relative;z-index:1}.top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}.stat{min-width:0;padding:8px 9px;border:1px solid var(--line);border-radius:13px;background:rgba(18,4,42,.88);text-align:center;font-size:10px;line-height:1.35;box-shadow:0 0 13px rgba(165,62,255,.24)}.stat b{font-size:13px;color:#fff}.logo{text-align:center;font-weight:1000;font-size:25px;line-height:.86;letter-spacing:1px;font-style:italic;color:#fff;text-shadow:0 0 8px var(--pink),0 0 22px #8d35ff}.logo small{display:block;margin-top:6px;font-size:8px;letter-spacing:2.5px;color:#e7c8ff}.timer{margin:17px auto 9px;width:82px;height:82px;border:4px solid #bd63ff;border-radius:50%;display:grid;align-content:center;justify-items:center;background:radial-gradient(circle,rgba(90,25,150,.8),rgba(17,3,39,.95));font-size:32px;font-weight:950;line-height:1;box-shadow:0 0 0 5px rgba(173,70,255,.12),0 0 26px rgba(174,68,255,.65)}.timer small{font-size:8px;letter-spacing:1.5px;margin-top:5px;color:#e7cfff}.track{height:8px;background:#1c0835;border:1px solid #7e35b7;border-radius:30px;overflow:hidden}.fill{height:100%;width:100%;background:linear-gradient(90deg,#f5a1ff,#9e45ff,#67e9ff);box-shadow:0 0 12px #c45cff;transition:width .25s linear}
-.flag{margin:14px 0 2px;text-align:center;font-size:clamp(76px,16vw,112px);line-height:1.15;filter:drop-shadow(0 0 12px rgba(189,95,255,.75))}.question{margin:7px 0 12px;padding:12px 14px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(100deg,rgba(44,12,78,.92),rgba(19,5,43,.94));text-align:center;font-size:clamp(17px,4vw,22px);font-weight:850;box-shadow:0 0 17px rgba(140,49,220,.25)}.answers{display:grid;grid-template-columns:1fr 1fr;gap:9px}.answer{min-height:48px;border:1px solid #a653ed;border-radius:12px;background:linear-gradient(135deg,rgba(54,17,91,.96),rgba(25,7,52,.98));color:#fff;padding:11px 7px;font-size:14px;font-weight:800;box-shadow:inset 0 0 13px rgba(159,69,255,.12),0 3px 10px rgba(0,0,0,.22)}.answer.good{background:linear-gradient(135deg,#14583f,#123927);border-color:#65f0aa}.answer.bad{opacity:.45}
-.panel{margin-top:13px;padding:12px;background:var(--panel);border:1px solid rgba(149,65,218,.65);border-radius:16px;box-shadow:0 0 15px rgba(87,29,143,.2)}.heading{text-align:center;font-size:13px;font-weight:950;letter-spacing:.7px;margin-bottom:8px;color:#f1d9ff;text-shadow:0 0 10px rgba(181,96,255,.55)}.person{display:flex;align-items:center;gap:9px;padding:6px 3px;border-bottom:1px solid rgba(143,83,184,.22);font-size:12px}.person:last-child{border:0}.rank{width:20px;font-weight:950;color:#e7c6ff}.avatar{width:26px;height:26px;flex:0 0 26px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ffb5eb,#8034ff);color:#26003f;font-weight:950}.name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.score{font-weight:850;color:#d9b5ff}.results{display:none;min-height:190px;align-content:start;gap:8px}.result-title{text-align:center;font-size:19px;font-weight:950;color:#f0c7ff;text-shadow:0 0 12px #b23dff;margin:8px 0 12px}.result-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border:1px solid #7d2ac2;border-radius:12px;background:linear-gradient(90deg,#35105c,#17052f);font-weight:800}.result-row strong{color:#7dffb2;font-size:17px;text-shadow:0 0 10px #39d887}.result-empty{text-align:center;padding:30px 8px;color:#e4c9ff;font-weight:800}.muted{font-size:11px;color:var(--muted);text-align:center}.voters{margin:11px 0 8px;padding:9px 10px;border:1px solid rgba(136,69,194,.5);border-radius:12px;background:rgba(17,4,37,.84);font-size:10px;color:#eadcff;min-height:34px;text-align:center}.cta{margin-top:10px;padding:12px 9px;border:1px solid #d06bff;border-radius:13px;background:linear-gradient(90deg,rgba(97,24,154,.9),rgba(48,12,100,.95));text-align:center;font-size:13px;font-weight:950;letter-spacing:.25px;color:#fff;box-shadow:0 0 17px rgba(176,64,255,.3);text-shadow:0 0 8px #d36bff}.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.tools button,.submit{border:1px solid #b64cff;background:#29094b;color:white;border-radius:11px;padding:11px;font-weight:750}.demoform{display:grid;grid-template-columns:1fr 75px;gap:7px;margin-top:9px}.demoform input,.demoform select{min-width:0;border:1px solid #8b39c2;border-radius:10px;background:#0c001b;color:white;padding:10px}.demoform select,.demoform button{grid-column:1/-1}.status{font-size:12px;text-align:center;color:#e3caff;margin:10px 0}.connectbox{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:9px}.connectbox input{min-width:0;border:1px solid #8b39c2;border-radius:10px;background:#0c001b;color:white;padding:11px}.connectbox button{border:1px solid #b64cff;background:#29094b;color:white;border-radius:11px;padding:10px;font-weight:800}.livehint{font-size:10px;color:#cdb6e8;text-align:center;margin-top:6px}.foot{font-size:9px;color:#b99bd7;text-align:center;margin:12px 0 2px}
-@media(min-width:600px){body{padding:22px}.app{padding:17px 20px}.top{margin-bottom:4px}.answers{gap:12px}.answer{min-height:54px;font-size:16px}}
-.broadcast {
-  min-height: 100vh;
-  min-height: 100svh;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 12px;
+:root{
+ --violet:#a94dff;--pink:#ef8cff;--cyan:#66eaff;
+ --panel:rgba(20,7,48,.92);--line:rgba(184,94,255,.72);
+ --muted:#d4c3ef;
 }
-
-.gift-message {
-  text-align: center;
-  color: #ffd166;
-  font-weight: bold;
-  font-size: 14px;
-  padding: 12px;
-  background: rgba(255, 209, 102, 0.10);
-  border: 1px solid rgba(255, 209, 102, 0.35);
-  border-radius: 12px;
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#080014;color:#fff;font-family:system-ui,-apple-system,Arial,sans-serif}
+body{
+ min-height:100vh;
+ background:radial-gradient(ellipse at 50% 24%,rgba(94,24,155,.55),transparent 52%),linear-gradient(145deg,#080014,#120326 52%,#060012);
+ overflow-x:hidden;
+}
+.app{width:100%;max-width:900px;margin:auto;padding:0 10px 20px}
+.broadcast{
+ min-height:100vh;min-height:100svh;
+ display:flex;flex-direction:column;justify-content:space-between;
+ gap:10px;padding:12px 0;
+}
+.top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:7px}
+.stat{
+ min-width:0;padding:8px 5px;border:1px solid var(--line);
+ border-radius:13px;background:rgba(18,4,42,.88);
+ text-align:center;font-size:10px;line-height:1.35;
+}
+.stat b{font-size:13px;color:#fff}
+.logo{
+ text-align:center;font-weight:1000;font-size:25px;line-height:.86;
+ letter-spacing:1px;font-style:italic;color:#fff;
+ text-shadow:0 0 8px var(--pink),0 0 22px #8d35ff;
+}
+.logo small{display:block;margin-top:6px;font-size:8px;letter-spacing:2.5px;color:#e7c8ff}
+.timer{
+ margin:8px auto 2px;width:76px;height:76px;border:4px solid #bd63ff;
+ border-radius:50%;display:grid;align-content:center;justify-items:center;
+ background:radial-gradient(circle,rgba(90,25,150,.8),rgba(17,3,39,.95));
+ font-size:31px;font-weight:950;line-height:1;
+ box-shadow:0 0 0 5px rgba(173,70,255,.12),0 0 26px rgba(174,68,255,.65);
+}
+.timer small{font-size:8px;letter-spacing:1.5px;margin-top:5px;color:#e7cfff}
+.track{height:8px;background:#1c0835;border:1px solid #7e35b7;border-radius:30px;overflow:hidden}
+.fill{height:100%;width:100%;background:linear-gradient(90deg,#f5a1ff,#9e45ff,#67e9ff);transition:width .25s linear}
+.flag{margin:5px 0 0;text-align:center;font-size:clamp(76px,17vw,112px);line-height:1.15;filter:drop-shadow(0 0 12px rgba(189,95,255,.75))}
+.question{
+ margin:5px 0 8px;padding:12px;border:1px solid var(--line);
+ border-radius:15px;background:linear-gradient(100deg,rgba(44,12,78,.92),rgba(19,5,43,.94));
+ text-align:center;font-size:clamp(17px,4vw,22px);font-weight:850;
+}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.answer{
+ min-height:48px;border:1px solid #a653ed;border-radius:12px;
+ background:linear-gradient(135deg,rgba(54,17,91,.96),rgba(25,7,52,.98));
+ color:#fff;padding:10px 5px;font-size:14px;font-weight:800;
+}
+.answer.good{background:linear-gradient(135deg,#14583f,#123927);border-color:#65f0aa}
+.answer.bad{opacity:.45}
+.panel{
+ margin-top:9px;padding:11px;background:var(--panel);
+ border:1px solid rgba(149,65,218,.65);border-radius:16px;
+}
+.heading{text-align:center;font-size:13px;font-weight:950;letter-spacing:.7px;margin-bottom:8px;color:#f1d9ff}
+.person{display:flex;align-items:center;gap:9px;padding:6px 3px;border-bottom:1px solid rgba(143,83,184,.22);font-size:12px}
+.person:last-child{border:0}
+.rank{width:20px;font-weight:950;color:#e7c6ff}
+.avatar{width:26px;height:26px;flex:0 0 26px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ffb5eb,#8034ff);color:#26003f;font-weight:950}
+.name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.score{font-weight:850;color:#d9b5ff}
+.results{display:none;min-height:120px;align-content:start;gap:8px}
+.result-title{text-align:center;font-size:19px;font-weight:950;color:#f0c7ff;margin:8px 0}
+.result-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border:1px solid #7d2ac2;border-radius:12px;background:linear-gradient(90deg,#35105c,#17052f);font-weight:800}
+.result-row strong{color:#7dffb2;font-size:17px}
+.result-empty{text-align:center;padding:20px 8px;color:#e4c9ff;font-weight:800}
+.muted{font-size:11px;color:var(--muted);text-align:center}
+.voters{margin:8px 0;padding:9px;border:1px solid rgba(136,69,194,.5);border-radius:12px;background:rgba(17,4,37,.84);font-size:10px;color:#eadcff;min-height:34px;text-align:center}
+.cta{padding:12px 9px;border:1px solid #d06bff;border-radius:13px;background:linear-gradient(90deg,rgba(97,24,154,.9),rgba(48,12,100,.95));text-align:center;font-size:13px;font-weight:950;color:#fff;box-shadow:0 0 17px rgba(176,64,255,.3)}
+.gift-panel{padding:12px;border:1px solid #bd63ff;border-radius:16px;background:linear-gradient(145deg,#260747,#100020)}
+.gift-title{text-align:center;font-weight:950;color:#f0c7ff;margin-bottom:9px}
+.gift-latest{text-align:center;padding:11px;background:#16052b;border-radius:12px;margin-bottom:9px;font-weight:800;font-size:13px}
+.gift-bar{height:12px;background:#32134b;border-radius:20px;overflow:hidden;margin:8px 0}
+.gift-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#ef8cff,#66eaff);transition:width .3s}
+.gift-row{display:flex;justify-content:space-between;gap:8px;padding:7px 3px;border-bottom:1px solid #ffffff22;font-size:12px}
+.gift-message{text-align:center;color:#ffd166;font-weight:bold;font-size:13px;padding:9px;background:rgba(255,209,102,.10);border:1px solid rgba(255,209,102,.35);border-radius:12px}
+.admin{margin:18px 0;padding:12px;border:1px solid #7540a5;border-radius:16px;background:#10051e}
+.admin .panel{margin-top:10px}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.tools button,.submit,.connectbox button{
+ border:1px solid #b64cff;background:#29094b;color:white;
+ border-radius:11px;padding:11px;font-weight:750;
+}
+.demoform{display:grid;grid-template-columns:1fr;gap:7px;margin-top:9px}
+.demoform input,.demoform select,.connectbox input{
+ min-width:0;border:1px solid #8b39c2;border-radius:10px;
+ background:#0c001b;color:white;padding:11px;
+}
+.connectbox{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:9px}
+.status{font-size:12px;text-align:center;color:#e3caff;margin:10px 0}
+.livehint{font-size:10px;color:#cdb6e8;text-align:center;margin-top:6px}
+.gift-demo{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.gift-demo button{padding:10px;border:1px solid #bd63ff;border-radius:10px;background:#321052;color:white;font-weight:800}
+.gift-flash{animation:giftflash .7s ease}
+@keyframes giftflash{50%{transform:scale(1.04);box-shadow:0 0 30px #ff72e8}}
+.foot{font-size:9px;color:#b99bd7;text-align:center;margin:12px 0}
+@media(min-width:600px){
+ .app{padding:0 20px 20px}
+ .broadcast{padding-top:18px}
+ .answers{gap:12px}
+ .answer{min-height:54px;font-size:16px}
 }
 </style>
 </head>
-<body><main class="app">
+<body>
+<main class="app">
+
 <div class="broadcast">
-<header class="top"><div class="stat">👥 <b id="viewerCount">324</b><br>joueurs</div><div class="logo">🌐 FLAG<br>LIVE<small>QUIZ EN DIRECT</small></div><div class="stat">Dernier abonné<br><b id="lastSub">En attente…</b></div></header>
-<div class="timer"><span id="seconds">20</span><small>SECONDES</small></div><div class="track"><div class="fill" id="fill"></div></div>
-<div class="flag" id="flag">🇳🇵</div><div class="question" id="question">DIFFICILE · Quel pays est représenté par ce drapeau ?</div>
-<div class="answers" id="answers"><button class="answer" data-choice="A">A · Népal</button><button class="answer" data-choice="B">B · Bhoutan</button><button class="answer" data-choice="C">C · Kiribati</button><button class="answer" data-choice="D">D · Sri Lanka</button></div>
-<section class="panel"><div id="boardView"><div class="heading">🏆 CLASSEMENT GÉNÉRAL</div><div id="leaderboard"></div></div><div class="results" id="resultsView"><div class="result-title">🎉 BONNES RÉPONSES !</div><div id="resultsList"></div></div></section>
-<div class="voters" id="voters">👀 Les derniers votes apparaîtront ici…</div><div class="cta">🌍 REJOINS LE LIVE ET TENTE TA CHANCE !</div>
-<section class="panel"><div class="heading">🔴 CONNEXION TIKTOK LIVE</div><div class="muted">Entre ton pseudo TikTok (sans @), puis connecte le lecteur directement à ce jeu.</div><div class="connectbox"><input id="tiktokUser" maxlength="40" placeholder="Pseudo TikTok (ex. monpseudo)"><button id="tiktokConnect">Connecter</button></div>
-<div class="tools"><button id="newLiveReset" type="button">🔄 Nouveau LIVE · remettre le classement à zéro</button></div><div class="livehint" id="liveState">Non connecté · serveur Render prêt à recevoir les commentaires.</div></section>
-<section class="panel"><div class="heading">🧪 Tester un vote (démo)</div><div class="muted">Ajoute des joueurs fictifs pour tester le chrono et les points.</div><form class="demoform" id="voteForm"><input id="pseudo" maxlength="20" placeholder="Pseudo du joueur" required><select id="choice"><option value="A">A · Népal</option><option value="B">B · Bhoutan</option><option value="C">C · Kiribati</option><option value="D">D · Sri Lanka</option></select><button class="submit">Enregistrer le vote</button></form><div class="tools"><button id="start">Relancer 20 s</button><button id="reveal">Terminer / révéler</button></div><div class="status" id="status">Démo disponible · connecte TikTok ci-dessus pour recevoir les vrais votes.</div></section>
+<header class="top">
+ <div class="stat">👥 <b id="viewerCount">324</b><br>joueurs</div>
+ <div class="logo">🌐 FLAG<br>LIVE<small>QUIZ EN DIRECT</small></div>
+ <div class="stat">Dernier abonné<br><b id="lastSub">En attente…</b></div>
+</header>
+
+<div class="timer"><span id="seconds">20</span><small>SECONDES</small></div>
+<div class="track"><div class="fill" id="fill"></div></div>
+
+<div class="flag" id="flag">🇳🇵</div>
+<div class="question" id="question">DIFFICILE · Quel pays est représenté par ce drapeau ?</div>
+<div class="answers" id="answers">
+ <button class="answer" data-choice="A">A · Népal</button>
+ <button class="answer" data-choice="B">B · Bhoutan</button>
+ <button class="answer" data-choice="C">C · Kiribati</button>
+ <button class="answer" data-choice="D">D · Sri Lanka</button>
+</div>
+
+<section class="panel">
+ <div id="boardView">
+  <div class="heading">🏆 CLASSEMENT GÉNÉRAL</div>
+  <div id="leaderboard"></div>
+ </div>
+ <div class="results" id="resultsView">
+  <div class="result-title">🎉 BONNES RÉPONSES !</div>
+  <div id="resultsList"></div>
+ </div>
+</section>
+
+<div class="voters" id="voters">👀 Les derniers votes apparaîtront ici…</div>
+<div class="cta">🌍 REJOINS LE LIVE ET TENTE TA CHANCE !</div>
+
+<section class="gift-panel" id="giftPanel">
+ <div class="gift-title">🎁 CADEAUX DU LIVE</div>
+ <div class="gift-latest" id="giftLatest">En attente du premier cadeau…</div>
+ <div style="text-align:center;font-size:12px">🎯 Objectif : <b id="giftTotal">0</b> / 1000 pièces</div>
+ <div class="gift-bar"><div class="gift-bar-fill" id="giftProgress"></div></div>
+ <div class="gift-title">🏆 TOP DONATEURS</div>
+ <div id="giftLeaderboard" style="text-align:center;font-size:12px">Aucun cadeau reçu</div>
+</section>
+
 <div class="gift-message">🎁 Envoie des cadeaux pour faire grimper ton score ! Plus le cadeau est gros, plus tu gagnes de points.</div>
 </div>
+
+<div class="admin">
+ <div class="heading">⚙️ COMMANDES DU LIVE (non affichées dans le jeu)</div>
+ <section class="panel">
+  <div class="heading">🔴 CONNEXION TIKTOK LIVE</div>
+  <div class="muted">Entre ton pseudo TikTok sans @ pour connecter le lecteur.</div>
+  <div class="connectbox">
+   <input id="tiktokUser" maxlength="40" placeholder="Pseudo TikTok">
+   <button id="tiktokConnect" type="button">Connecter</button>
+  </div>
+  <div class="tools">
+   <button id="newLiveReset" type="button">🔄 Nouveau LIVE · remettre à zéro</button>
+  </div>
+  <div class="livehint" id="liveState">Non connecté · serveur Render prêt à recevoir les commentaires.</div>
+ </section>
+ <section class="panel">
+  <div class="heading">🧪 TESTER UN VOTE (DÉMO)</div>
+  <div class="muted">Ajoute des joueurs fictifs pour tester le jeu.</div>
+  <form class="demoform" id="voteForm">
+   <input id="pseudo" maxlength="20" placeholder="Pseudo du joueur" required>
+   <select id="choice">
+    <option value="A">A · Népal</option>
+    <option value="B">B · Bhoutan</option>
+    <option value="C">C · Kiribati</option>
+    <option value="D">D · Sri Lanka</option>
+   </select>
+   <button class="submit">Enregistrer le vote</button>
+  </form>
+  <div class="tools">
+   <button id="start" type="button">Relancer 20 s</button>
+   <button id="reveal" type="button">Terminer / révéler</button>
+  </div>
+  <div class="status" id="status">Démo disponible · connecte TikTok ci-dessus pour recevoir les vrais votes.</div>
+ </section>
+ <section class="panel">
+  <div class="heading">🎁 TESTER LES CADEAUX</div>
+  <div class="gift-demo">
+   <button type="button" id="demoRose">🌹 Tester une rose</button>
+   <button type="button" id="demoBig">💎 Tester un gros cadeau</button>
+  </div>
+  <div class="muted">Cadeaux fictifs de démonstration : ils ne sont pas envoyés sur TikTok.</div>
+ </section>
+</div>
+
 <div class="foot">FLAG LIVE · Scores conservés sur cet appareil. Connexion TikTok via Render.</div>
-</main>
+
 <script>
-// Charge Socket.IO depuis plusieurs CDN : si l'un échoue, le suivant prend le relais.
-window.socketIoReady = new Promise(resolve => {
- const sources = [
-  'https://cdn.socket.io/4.4.1/socket.io.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js',
-  'https://cdn.jsdelivr.net/npm/socket.io-client@4.4.1/dist/socket.io.min.js'
- ];
- function loadSource(index) {
-  if (typeof window.io === 'function') { resolve(true); return; }
-  if (index >= sources.length) { resolve(false); return; }
-  const script = document.createElement('script');
-  script.src = sources[index];
-  script.onload = () => resolve(typeof window.io === 'function');
-  script.onerror = () => loadSource(index + 1);
-  document.head.appendChild(script);
- }
- loadSource(0);
-});
-</script>
-<script>
-(()=>{
+  (()=>{
 const $=id=>document.getElementById(id);
 const KEY='flaglive_demo_scores_v2';
-let scores={};try{scores=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){scores={}}
-// Banque élargie : 150 pays environ, répartis par difficulté.
-// Les drapeaux sont générés à partir des codes ISO pour rester légers.
+
 const countryData = `
 NP|Népal|EXPERT
 BT|Bhoutan|EXPERT
@@ -266,159 +399,350 @@ US|États-Unis|FACILE
 VN|Vietnam|FACILE
 YE|Yémen|MOYEN
 `.trim();
-const flagFromCode = code => String.fromCodePoint(...[...code].map(ch=>127397+ch.charCodeAt(0)));
-const questions = countryData.split('\n').map(line=>line.trim()).filter(Boolean).map(line=>{
- const [code,country,level]=line.split('|');
- return {flag:flagFromCode(code),country,level,hint:'Quel pays est représenté par ce drapeau ?'};
+
+const countries=countryData.split('\n').map(line=>{
+const [code,name,difficulty]=line.split('|');
+return {code,name,difficulty};
 });
-const allCountries=questions.map(q=>q.country);
-let deck=[],current=null,correct='A',votes={},left=20,timer=null,closed=false,roundNumber=0;
-let liveSocket=null, liveConnected=false;
-const duration=20;
-function save(){try{localStorage.setItem(KEY,JSON.stringify(scores))}catch(e){}}
-function resetLiveScores(){scores={};save();drawBoard();$('status').textContent='Nouveau LIVE : classement remis à zéro.';}
-$('newLiveReset').addEventListener('click',()=>{if(confirm('Commencer un nouveau LIVE et remettre tous les scores à zéro ?'))resetLiveScores()});
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function drawBoard(){let rows=Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,10);$('leaderboard').innerHTML=rows.length?rows.map(([n,s],i)=>`<div class="person"><span class="rank">${i+1}</span><span class="avatar">${escapeHtml(n[0].toUpperCase())}</span><span class="name">${escapeHtml(n)}</span><span class="score">${s} pts</span></div>`).join(''):'<div class="muted">Aucun joueur pour le moment</div>'}
-function drawVoters(){let recent=Object.keys(votes).slice(-8);$('voters').textContent=recent.length?'🗳️ Ont voté : '+recent.join(' · '):'👀 Les derniers votes apparaîtront ici…'}
-function tick(){$('seconds').textContent=left;$('fill').style.width=(left/duration*100)+'%'}
-function stop(){if(timer){clearInterval(timer);timer=null}}
-function shuffle(a){let b=a.slice();for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
-function nextQuestion(){if(!deck.length)deck=shuffle(questions);current=deck.pop();let distractors=shuffle(allCountries.filter(c=>c!==current.country)).slice(0,3);let choices=shuffle([current.country,...distractors]);correct='ABCD'[choices.indexOf(current.country)];$('flag').textContent=current.flag;$('question').textContent=current.level+' · '+current.hint;$('answers').innerHTML=choices.map((c,i)=>`<button class="answer" data-choice="${'ABCD'[i]}">${'ABCD'[i]} · ${escapeHtml(c)}</button>`).join('');$('choice').innerHTML=choices.map((c,i)=>`<option value="${'ABCD'[i]}">${'ABCD'[i]} · ${escapeHtml(c)}</option>`).join('');roundNumber++;}
-function start(){stop();if(window.resultsTimeout)clearTimeout(window.resultsTimeout);$('resultsView').style.display='none';$('boardView').style.display='block';nextQuestion();votes={};closed=false;left=duration;drawVoters();$('status').textContent=`Manche ${roundNumber} · ${current.level} · ${questions.length} pays dans la banque.`;$('pseudo').disabled=false;$('choice').disabled=false;tick();timer=setInterval(()=>{left=Math.max(0,left-1);tick();if(left===0){stop();finish()}},1000)}
-function finish(){if(closed)return;closed=true;stop();let correctVotes=Object.entries(votes).filter(([,v])=>v.choice===correct).sort((a,b)=>a[1].time-b[1].time);let awards=[100,80,70,60,50,40,30,20,10];let roundResults=[];correctVotes.forEach(([name],i)=>{let pts=awards[i]||5;scores[name]=(scores[name]||0)+pts;roundResults.push({name,pts})});save();drawBoard();document.querySelectorAll('.answer').forEach(b=>{b.classList.toggle('good',b.dataset.choice===correct);b.classList.toggle('bad',b.dataset.choice!==correct)});showRoundResults(roundResults);$('status').textContent=`Bonne réponse : ${correct} · ${correctVotes.length} bonne(s) réponse(s) · manche suivante dans 5 s.`;$('pseudo').disabled=true;$('choice').disabled=true;}
-function showRoundResults(rows){$('boardView').style.display='none';$('resultsView').style.display='grid';$('resultsList').innerHTML=rows.length?rows.map((r,i)=>`<div class="result-row"><span>${i+1}. ${escapeHtml(r.name)}</span><strong>+${r.pts} PTS</strong></div>`).join(''):'<div class="result-empty">😅 Personne n’a trouvé cette fois !</div>';if(window.resultsTimeout)clearTimeout(window.resultsTimeout);window.resultsTimeout=setTimeout(start,5000)}
-function normalizeAnswer(value){return String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’']/g,"'").replace(/[^a-z0-9]/g,'').trim()}
-function processLiveComment(msg){
- if(closed||!current||!msg)return;
- const name=String(msg.uniqueId||msg.nickname||msg.user?.uniqueId||'').trim();
- const raw=String(msg.comment||'').trim();
- if(!name||!raw||votes[name])return;
- const answer=normalizeAnswer(raw);
- let choice=null;
- if(/^[abcd]$/.test(answer)) choice=answer.toUpperCase();
- else {
-  const choices=[...$('answers').querySelectorAll('.answer')];
-  const match=choices.find(b=>normalizeAnswer(b.textContent.replace(/^[A-D]\s*[·.-]\s*/,''))===answer);
-  if(match) choice=match.dataset.choice;
- }
- if(!choice)return;
- votes[name]={choice,time:Date.now()};drawVoters();
- $('status').textContent='Vote TikTok reçu : '+name+' · '+choice;
+let scores={};
+try{scores=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){scores={}}
+
+let currentCountry=null;
+let roundActive=false;
+let timer=null;
+let seconds=20;
+let roundNumber=0;
+let answeredUsers=new Set();
+let liveSocket=null;
+let usedCountries=[];
+
+const flag=code=>String.fromCodePoint(...[...code].map(c=>127397+c.charCodeAt(0)));
+
+function saveScores(){
+localStorage.setItem(KEY,JSON.stringify(scores));
+renderRanking();
 }
-async function connectTikTok(){
- const username=$('tiktokUser').value.trim().replace(/^@/,'');
- if(!username){$('liveState').textContent='Entre ton pseudo TikTok sans @.';return}
- $('liveState').textContent='Chargement du module réseau…';
- const moduleReady = await window.socketIoReady;
- if(!moduleReady || typeof window.io!=='function'){$('liveState').textContent='Module réseau indisponible. Vérifie Internet puis recharge la page.';return}
- if(liveSocket){liveSocket.disconnect();liveSocket=null;}
- $('liveState').textContent='Connexion au serveur Render…';
- liveSocket=io('https://tiktok-chat-reader-obz6.onrender.com',{transports:['websocket','polling'],reconnection:true,timeout:20000});
- liveSocket.on('connect',()=>{liveSocket.emit('setUniqueId',username);$('liveState').textContent='Serveur Render joint · attente de la connexion au LIVE…';});
- liveSocket.on('tiktokConnected',()=>{liveConnected=true;$('liveState').textContent='🟢 TikTok connecté · les commentaires A/B/C/D sont pris en compte.';$('tiktokConnect').textContent='Reconnecter';});
- liveSocket.on('chat',msg=>processLiveComment(msg));
- liveSocket.on('roomUser',msg=>{const count=Number(msg?.viewerCount ?? msg?.data?.viewerCount);if(Number.isFinite(count)&&count>=0)$('viewerCount').textContent=count.toLocaleString('fr-FR');});
- liveSocket.on('follow',data=>{const user=data?.uniqueId||data?.user?.uniqueId||data?.nickname||data?.user?.nickname||data?.displayName||data?.user?.displayName;if(user)$('lastSub').textContent='@'+String(user).replace(/^@/,'');});
- liveSocket.on('tiktokDisconnected',reason=>{liveConnected=false;$('liveState').textContent='Connexion refusée : '+String(reason||'erreur inconnue')+'.';});
- liveSocket.on('streamEnd',()=>{liveConnected=false;$('liveState').textContent='Le LIVE est terminé. Reconnecte après le prochain lancement.';});
- liveSocket.on('disconnect',()=>{liveConnected=false;$('liveState').textContent='Connexion interrompue · tentative de reconnexion…';});
+
+function renderRanking(){
+const list=$('ranking');
+if(!list)return;
+const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,10);
+list.innerHTML=sorted.length?sorted.map(([name,score],i)=>`
+<div class="rank-row">
+<span>${i+1}. ${escapeHTML(name)}</span>
+<strong>${score} pts</strong>
+</div>`).join(''):'<div class="muted">En attente des joueurs…</div>';
 }
-$('tiktokConnect').addEventListener('click',connectTikTok);
-$('tiktokUser').addEventListener('keydown',e=>{if(e.key==='Enter')connectTikTok()});
-$('voteForm').addEventListener('submit',e=>{e.preventDefault();if(closed){$('status').textContent='La question est terminée. Attends la prochaine manche.';return}let name=$('pseudo').value.trim(),choice=$('choice').value;if(!name)return;if(votes[name]){$('status').textContent=name+' a déjà voté pour cette question.';return}votes[name]={choice,time:Date.now()};drawVoters();$('status').textContent='Vote enregistré pour '+name+' (démo).';$('pseudo').value='';});
-$('start').addEventListener('click',start);$('reveal').addEventListener('click',finish);
-drawBoard();start();
+
+function escapeHTML(value){
+return String(value).replace(/[&<>"']/g,c=>({
+'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+}[c]));
+}
+
+function setMessage(message){
+const el=$('message');
+if(el)el.textContent=message;
+}
+
+function updateTimer(){
+if($('seconds'))$('seconds').textContent=seconds;
+if($('timerBar'))$('timerBar').style.width=(seconds/20*100)+'%';
+}
+
+function chooseCountry(){
+let available=countries.filter(c=>!usedCountries.includes(c.code));
+if(!available.length){
+usedCountries=[];
+available=countries;
+}
+const chosen=available[Math.floor(Math.random()*available.length)];
+usedCountries.push(chosen.code);
+return chosen;
+}
+
+function startRound(){
+clearInterval(timer);
+currentCountry=chooseCountry();
+roundActive=true;
+answeredUsers.clear();
+roundNumber++;
+seconds=20;
+
+if($('roundNumber'))$('roundNumber').textContent='QUESTION '+roundNumber;
+if($('flag'))$('flag').textContent=flag(currentCountry.code);
+if($('countryName'))$('countryName').textContent='Quel est ce pays ?';
+if($('difficulty'))$('difficulty').textContent=currentCountry.difficulty;
+if($('roundStatus'))$('roundStatus').textContent='EN COURS';
+setMessage('À vous de jouer ! Répondez dans le chat.');
+
+const choices=[currentCountry];
+while(choices.length<4){
+const candidate=countries[Math.floor(Math.random()*countries.length)];
+if(!choices.some(c=>c.code===candidate.code))choices.push(candidate);
+}
+choices.sort(()=>Math.random()-.5);
+
+['A','B','C','D'].forEach((letter,i)=>{
+const el=$('answer'+letter);
+if(el){
+el.textContent=letter+' · '+choices[i].name;
+el.dataset.code=choices[i].code;
+el.classList.remove('correct','wrong');
+}
+});
+
+updateTimer();
+timer=setInterval(()=>{
+seconds--;
+updateTimer();
+if(seconds<=0){
+clearInterval(timer);
+endRound();
+}
+},1000);
+}
+
+function endRound(){
+if(!roundActive)return;
+roundActive=false;
+clearInterval(timer);
+
+if($('roundStatus'))$('roundStatus').textContent='TERMINÉ';
+if($('countryName'))$('countryName').textContent=currentCountry.name;
+if($('difficulty'))$('difficulty').textContent='Bonne réponse';
+
+['A','B','C','D'].forEach(letter=>{
+const el=$('answer'+letter);
+if(el&&el.dataset.code===currentCountry.code)el.classList.add('correct');
+});
+
+setMessage('La bonne réponse était : '+currentCountry.name+' !');
+
+setTimeout(()=>{
+startRound();
+},5000);
+}
+
+function addPoints(username,points){
+if(!username)return;
+scores[username]=(scores[username]||0)+points;
+saveScores();
+}
+
+window.flagLiveAddPoints=addPoints;
+    
+function processAnswer(username,answer){
+
+function processAnswer(username,answer){
+if(!roundActive||!currentCountry||!username)return;
+username=String(username).replace(/^@/,'').trim();
+if(!username||answeredUsers.has(username))return;
+
+const normalized=String(answer).trim().toLowerCase();
+const correct=currentCountry.name.toLowerCase();
+const code=currentCountry.code.toLowerCase();
+
+if(normalized===correct||normalized===code){
+answeredUsers.add(username);
+const points=Math.max(20,100-(answeredUsers.size-1)*10);
+addPoints(username,points);
+setMessage('🎉 '+username+' a trouvé ! +'+points+' points');
+}
+}
+
+function handleChat(data){
+if(!data)return;
+const username=data.uniqueId||data.username||data.nickname||data.user;
+const message=data.comment||data.message||data.text||'';
+if(!username||!message)return;
+processAnswer(username,message);
+}
+
+function connectTikTok(){
+const input=$('tiktokUsername');
+const username=input?input.value.trim().replace(/^@/,''):'';
+if(!username){
+setMessage('Entre ton pseudo TikTok.');
+return;
+}
+if(typeof io!=='function'){
+setMessage('Connexion impossible : Socket.IO indisponible.');
+return;
+}
+
+if(liveSocket){
+liveSocket.disconnect();
+liveSocket=null;
+}
+
+liveSocket=io('https://tiktok-chat-reader-obz6.onrender.com');
+
+liveSocket.on('connect',()=>{
+liveSocket.emit('setUniqueId',username);
+setMessage('Connexion au serveur en cours…');
+});
+
+liveSocket.on('tiktokConnected',()=>{
+setMessage('✅ TikTok connecté : @'+username);
+});
+
+liveSocket.on('chat',handleChat);
+
+liveSocket.on('roomUser',data=>{
+const count=data.viewerCount||data.userCount||data.count;
+if(count!==undefined&&$('viewerCount'))$('viewerCount').textContent=count;
+});
+
+liveSocket.on('follow',data=>{
+const name=data.uniqueId||data.nickname||data.username||'Nouveau follower';
+if($('lastSub'))$('lastSub').textContent=name;
+});
+
+liveSocket.on('tiktokDisconnected',()=>{
+setMessage('TikTok déconnecté.');
+});
+
+liveSocket.on('streamEnd',()=>{
+setMessage('Le live est terminé.');
+});
+
+liveSocket.on('disconnect',()=>{
+setMessage('Connexion au serveur interrompue.');
+});
+
+liveSocket.on('connect_error',()=>{
+setMessage('Erreur de connexion au serveur.');
+});
+
+liveSocket.on('gift',data=>{
+if(typeof window.flagLiveProcessGift==='function'){
+window.flagLiveProcessGift(data);
+}
+});
+}
+
+function resetGame(){
+if(!confirm('Réinitialiser tous les scores ?'))return;
+scores={};
+saveScores();
+if(typeof window.flagLiveResetGifts==='function'){
+window.flagLiveResetGifts();
+}
+setMessage('Scores réinitialisés.');
+}
+
+if($('connectButton'))$('connectButton').addEventListener('click',connectTikTok);
+if($('resetButton'))$('resetButton').addEventListener('click',resetGame);
+if($('demoButton'))$('demoButton').addEventListener('click',()=>{
+processAnswer('JoueurDemo',currentCountry?currentCountry.name:'');
+});
+
+renderRanking();
+updateTimer();
+startRound();
+
 })();
-</script><script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => { navigator.serviceWorker.register("/sw.js").catch(err => console.log("Service worker:", err)); });
-}
 </script>
-
-<style>
-.gift-panel{margin-top:13px;padding:13px;border:1px solid #bd63ff;border-radius:16px;background:linear-gradient(145deg,#260747,#100020);box-shadow:0 0 18px #8b35bb55}
-.gift-title{text-align:center;font-weight:950;color:#f0c7ff;margin-bottom:10px}
-.gift-latest{text-align:center;padding:12px;background:#16052b;border-radius:12px;margin-bottom:10px;font-weight:800}
-.gift-bar{height:12px;background:#32134b;border-radius:20px;overflow:hidden;margin:8px 0}
-.gift-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#ef8cff,#66eaff);transition:width .3s}
-.gift-row{display:flex;justify-content:space-between;padding:7px 3px;border-bottom:1px solid #ffffff22;font-size:12px}
-.gift-demo{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.gift-demo button{padding:10px;border:1px solid #bd63ff;border-radius:10px;background:#321052;color:white;font-weight:800}
-.gift-flash{animation:giftflash .7s ease}
-@keyframes giftflash{50%{transform:scale(1.04);box-shadow:0 0 30px #ff72e8}}
-</style>
-
-<section class="gift-panel" id="giftPanel">
-  <div class="gift-title">🎁 CADEAUX DU LIVE</div>
-  <div class="gift-latest" id="giftLatest">En attente du premier cadeau…</div>
-  <div style="text-align:center;font-size:12px">🎯 Objectif : <b id="giftTotal">0</b> / 1000 pièces</div>
-  <div class="gift-bar"><div class="gift-bar-fill" id="giftProgress"></div></div>
-  <div class="gift-title">🏆 TOP DONATEURS</div>
-  <div id="giftLeaderboard" style="text-align:center;font-size:12px">Aucun cadeau reçu</div>
-  <div class="gift-demo">
-    <button type="button" id="demoRose">🌹 Tester une rose</button>
-    <button type="button" id="demoBig">💎 Tester un gros cadeau</button>
-  </div>
-  <div style="font-size:10px;text-align:center;color:#d4c3ef;margin-top:8px">Boutons de test : cadeaux fictifs, non envoyés sur TikTok.</div>
-</section>
-
 <script>
 (()=>{
 const $=id=>document.getElementById(id);
-let donors={};
-let totalCoins=0;
-const POINTS_PER_COIN=10;
 
-function drawGifts(){
- const entries=Object.entries(donors).sort((a,b)=>b[1]-a[1]).slice(0,10);
- $('giftLeaderboard').innerHTML=entries.length
- ?entries.map(([name,pts],i)=>`<div class="gift-row"><span>${i+1}. ${name.replace(/[&<>"']/g,'')}</span><b>${pts.toLocaleString('fr-FR')} pts</b></div>`).join('')
- : 'Aucun cadeau reçu';
- $('giftTotal').textContent=totalCoins.toLocaleString('fr-FR');
- $('giftProgress').style.width=Math.min(100,totalCoins/10)+'%';
+let giftTotal=0;
+let giftDonors={};
+let giftGoal=10000;
+
+function renderGifts(){
+const total=$('giftTotal');
+const goal=$('giftGoal');
+const ranking=$('giftRanking');
+const progress=$('giftProgress');
+
+if(total)total.textContent=giftTotal.toLocaleString('fr-FR');
+if(goal)goal.textContent=giftGoal.toLocaleString('fr-FR');
+
+if(progress){
+progress.style.width=Math.min(100,giftTotal/giftGoal*100)+'%';
+}
+
+if(ranking){
+const donors=Object.entries(giftDonors).sort((a,b)=>b[1]-a[1]).slice(0,5);
+ranking.innerHTML=donors.length
+?donors.map(([name,coins],i)=>`
+<div class="rank-row">
+<span>${i+1}. ${escapeHTML(name)}</span>
+<strong>${coins.toLocaleString('fr-FR')} 🪙</strong>
+</div>`).join('')
+:'<div class="muted">En attente des cadeaux…</div>';
+}
+}
+
+function escapeHTML(value){
+return String(value).replace(/[&<>"']/g,c=>({
+'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+}[c]));
 }
 
 function processGift(data){
- if(!data)return;
- const user=data.uniqueId||data.nickname||data.user?.uniqueId||data.user?.nickname||data.username;
- const gift=data.giftName||data.gift?.name||data.name||'Cadeau';
- const coins=Number(data.diamondCount??data.coins??data.gift?.diamondCount??data.gift?.diamond_count);
- if(!user||!Number.isFinite(coins)||coins<=0)return;
+if(!data)return;
 
- const points=coins*POINTS_PER_COIN;
- donors[user]=(donors[user]||0)+points;
- totalCoins+=coins;
+const username=data.uniqueId||data.username||data.nickname||data.user||'Anonyme';
+const coins=Number(data.coins||data.diamondCount||data.diamonds||data.value||1);
 
- $('giftLatest').textContent=`🎁 ${user} a envoyé ${gift} · +${points} pts`;
- $('giftLatest').classList.remove('gift-flash');
- void $('giftLatest').offsetWidth;
- $('giftLatest').classList.add('gift-flash');
- drawGifts();
+if(!Number.isFinite(coins)||coins<=0)return;
+
+giftTotal+=coins;
+giftDonors[username]=(giftDonors[username]||0)+coins;
+
+const points=Math.round(10*coins*(1+Math.log10(Math.max(1,coins))/3));
+
+if(typeof window.flagLiveAddPoints==='function'){
+window.flagLiveAddPoints(username,points);
 }
 
-$('demoRose').addEventListener('click',()=>processGift({
- uniqueId:'Joueur_Demo',giftName:'Rose (démo)',diamondCount:1
-}));
-$('demoBig').addEventListener('click',()=>processGift({
- uniqueId:'Grand_Donateur_Demo',giftName:'Gros cadeau (démo)',diamondCount:100
-}));
+const message=$('giftMessage');
+if(message){
+message.textContent='🎁 '+username+' : cadeau reçu ! +'+points+' points';
+}
 
-// Réception des cadeaux si le serveur transmet l'événement "gift".
-const attachGiftListener=()=>{
- if(window.liveSocket)window.liveSocket.on('gift',processGift);
+renderGifts();
+}
+
+window.flagLiveProcessGift=processGift;
+
+window.flagLiveResetGifts=()=>{
+giftTotal=0;
+giftDonors={};
+renderGifts();
 };
-window.addEventListener('load',attachGiftListener);
 
-// Le bouton nouveau LIVE remet aussi les cadeaux à zéro.
-$('newLiveReset').addEventListener('click',()=>{
- donors={};
- totalCoins=0;
- $('giftLatest').textContent='En attente du premier cadeau…';
- drawGifts();
+function demoGift(username,coins){
+processGift({
+uniqueId:username,
+coins:coins
+});
+}
+
+const demoButtons=[
+['giftRoseButton',1],
+['giftHeartButton',10],
+['giftGalaxyButton',1000]
+];
+
+demoButtons.forEach(([id,coins])=>{
+const button=$(id);
+if(button){
+button.addEventListener('click',()=>{
+demoGift('JoueurDemo',coins);
+});
+}
 });
 
-drawGifts();
+renderGifts();
 })();
 </script>
-</body></html>
+
+</body>
+</html>
+
+
