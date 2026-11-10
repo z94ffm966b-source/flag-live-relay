@@ -586,7 +586,179 @@ body{
  .donor-name{font-size:12px}
  .donor-score{font-size:10px}
 }
+
+/* MODE OVERLAY TIKTOK LIVE : CANVAS VERTICAL 9:16 */
+html.overlay-mode,
+html.overlay-mode body{
+ width:100%;
+ height:100%;
+ min-height:0;
+ margin:0;
+ overflow:hidden;
+}
+html.overlay-mode body{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+html.overlay-mode .app{
+ width:min(100vw,56.25vh);
+ height:min(100vh,177.7778vw);
+ max-width:none;
+ min-height:0;
+ margin:0;
+ padding:8px;
+ overflow:hidden;
+}
+html.overlay-mode .broadcast{
+ height:100%;
+ min-height:0;
+ display:grid;
+ grid-template-rows:auto minmax(0,1fr) auto auto;
+ gap:7px;
+ padding:0;
+}
+html.overlay-mode .top{gap:5px}
+html.overlay-mode .stat{padding:5px 3px;font-size:9px}
+html.overlay-mode .stat b{font-size:12px}
+html.overlay-mode .logo{font-size:20px}
+html.overlay-mode .logo small{font-size:6px}
+html.overlay-mode .game-grid{
+ min-height:0;
+ display:grid;
+ grid-template-columns:minmax(0,1fr);
+ grid-template-rows:minmax(0,1fr) auto;
+ gap:6px;
+}
+html.overlay-mode .quiz-column{
+ min-height:0;
+ padding:5px;
+ justify-content:center;
+ overflow:hidden;
+}
+html.overlay-mode .timer{
+ width:54px;
+ height:54px;
+ margin:2px auto 6px;
+ font-size:24px;
+}
+html.overlay-mode .timer small{font-size:6px}
+html.overlay-mode .flag{
+ margin:5px 0;
+ font-size:clamp(72px,17vw,145px);
+ line-height:1;
+}
+html.overlay-mode .flag img{
+ display:block;
+ width:clamp(100px,27vw,220px);
+ max-height:14vh;
+ margin:auto;
+ object-fit:contain;
+}
+html.overlay-mode .question{
+ margin:5px 0 7px;
+ padding:8px 5px;
+ font-size:clamp(12px,2.1vw,20px);
+}
+html.overlay-mode .answers{gap:6px}
+html.overlay-mode .answer{
+ min-height:42px;
+ padding:5px 3px;
+ font-size:clamp(10px,1.7vw,16px);
+}
+html.overlay-mode .gift-message{
+ margin-top:6px;
+ padding:5px 3px;
+ font-size:9px;
+}
+html.overlay-mode .donor-panel{
+ min-height:0;
+ padding:5px;
+ display:grid;
+ grid-template-columns:minmax(0,1fr);
+ gap:3px;
+}
+html.overlay-mode .donor-title{
+ margin:0;
+ font-size:10px;
+}
+html.overlay-mode #giftLeaderboard{
+ display:grid;
+ grid-template-columns:repeat(5,minmax(0,1fr));
+ gap:3px;
+}
+html.overlay-mode .donor-row{
+ min-width:0;
+ padding:3px 1px;
+ display:flex;
+ flex-direction:column;
+ justify-content:center;
+ gap:2px;
+ border:1px solid rgba(143,83,184,.3);
+ border-radius:6px;
+}
+html.overlay-mode .donor-rank{width:auto;font-size:8px}
+html.overlay-mode .donor-avatar{width:22px;height:22px;flex-basis:22px}
+html.overlay-mode .donor-name{
+ width:100%;
+ text-align:center;
+ font-size:7px;
+}
+html.overlay-mode .donor-score{font-size:7px}
+html.overlay-mode .donor-empty{
+ grid-column:1/-1;
+ padding:5px;
+ font-size:8px;
+}
+html.overlay-mode .gift-latest{
+ margin:0;
+ padding:4px;
+ font-size:8px;
+}
+html.overlay-mode .gift-goal{
+ margin:0;
+ font-size:8px;
+}
+html.overlay-mode .gift-bar{height:6px;margin:0}
+html.overlay-mode .bottom-zone{
+ min-height:0;
+ grid-template-columns:1fr 1fr;
+ gap:5px;
+}
+html.overlay-mode .panel,
+html.overlay-mode .voters{padding:5px}
+html.overlay-mode .heading{font-size:9px;margin-bottom:4px}
+html.overlay-mode .person{gap:3px;padding:3px 0;font-size:8px}
+html.overlay-mode .rank{width:12px}
+html.overlay-mode .avatar{width:17px;height:17px;flex-basis:17px;font-size:8px}
+html.overlay-mode .score{font-size:8px}
+html.overlay-mode .vote-line{padding:3px 0;font-size:8px}
+html.overlay-mode .gift-rules{padding:5px}
+html.overlay-mode .gift-rules-title{font-size:9px;margin-bottom:4px}
+html.overlay-mode .rules-grid{gap:4px}
+html.overlay-mode .rule{padding:4px 2px}
+html.overlay-mode .rule-icon{font-size:14px;margin:0}
+html.overlay-mode .rule-name{font-size:7px}
+html.overlay-mode .rule-points{font-size:9px;margin-top:1px}
+html.overlay-mode .rules-note{font-size:7px;margin-top:3px}
+html.overlay-mode .admin,
+html.overlay-mode .foot{display:none!important}
+@media(max-height:760px){
+ html.overlay-mode .broadcast{gap:4px}
+ html.overlay-mode .timer{width:42px;height:42px;font-size:20px}
+ html.overlay-mode .flag{font-size:70px;margin:2px 0}
+ html.overlay-mode .question{padding:5px;margin:3px 0}
+ html.overlay-mode .answer{min-height:34px}
+ html.overlay-mode .gift-rules{padding:3px}
+}
+
 </style>
+
+<script>
+if(new URLSearchParams(location.search).get('overlay')==='1'){
+ document.documentElement.classList.add('overlay-mode');
+}
+</script>
 </head>
 
 <body>
@@ -1086,7 +1258,7 @@ function startRound(){
  roundNumber++;
  seconds=20;
 
- $('flag').textContent=flag(currentCountry.code);
+ $('flag').innerHTML='<img src="https://flagcdn.com/w320/'+currentCountry.code.toLowerCase()+'.png" alt="'+escapeHTML(currentCountry.name)+'">';
  $('question').textContent=currentCountry.difficulty+' · Quel pays est représenté par ce drapeau ?';
  $('boardView').style.display='block';
  $('resultsView').style.display='none';
