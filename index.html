@@ -1009,7 +1009,225 @@ html.overlay-mode .admin,
 html.overlay-mode .foot{
   display:none!important;
 }
+/* ===== FLAG LIVE - CORRECTION AFFICHAGE ===== */
 
+html.overlay-mode .app{
+  width:min(100vw,56.25vh);
+  height:min(100vh,177.7778vw);
+  padding:6px;
+  overflow:hidden;
+}
+
+html.overlay-mode .broadcast{
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) 125px 92px;
+  gap:5px;
+  height:100%;
+  min-height:0;
+  overflow:hidden;
+}
+
+html.overlay-mode .game-grid{
+  min-height:0;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:minmax(0,1fr) 96px;
+  gap:5px;
+}
+
+html.overlay-mode .quiz-column{
+  min-height:0;
+  display:flex;
+  justify-content:center;
+  overflow:hidden;
+  padding:4px;
+}
+
+html.overlay-mode .timer{
+  width:48px;
+  height:48px;
+  flex-shrink:0;
+  font-size:23px;
+  margin:2px auto 5px;
+}
+
+html.overlay-mode .track{
+  height:7px;
+  flex-shrink:0;
+}
+
+html.overlay-mode .flag{
+  margin:3px 0;
+  font-size:clamp(60px,13vw,110px);
+  line-height:1;
+  flex-shrink:1;
+  min-height:0;
+}
+
+html.overlay-mode .flag img{
+  display:block;
+  width:min(75%,190px);
+  height:auto;
+  max-height:19vh;
+  object-fit:contain;
+  margin:auto;
+}
+
+html.overlay-mode .question{
+  flex-shrink:0;
+  font-size:clamp(11px,1.7vw,17px);
+  padding:6px 4px;
+  margin:3px 0 5px;
+}
+
+html.overlay-mode .answers{
+  flex-shrink:0;
+  gap:5px;
+}
+
+html.overlay-mode .answer{
+  min-height:36px;
+  padding:4px 3px;
+  font-size:clamp(10px,1.5vw,14px);
+  line-height:1.15;
+}
+
+html.overlay-mode .answer.good{
+  opacity:1;
+  border:2px solid #65f0aa;
+  background:linear-gradient(135deg,#14583f,#123927);
+}
+
+html.overlay-mode .answer.bad{
+  opacity:.7;
+  filter:grayscale(.35);
+}
+
+html.overlay-mode .gift-message{
+  flex-shrink:0;
+  font-size:8px;
+  padding:4px 2px;
+  margin-top:4px;
+}
+
+html.overlay-mode .donor-panel{
+  min-height:0;
+  overflow:hidden;
+  padding:4px;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto auto auto;
+  gap:2px;
+}
+
+html.overlay-mode .donor-title{
+  font-size:9px;
+  margin:0;
+}
+
+html.overlay-mode #giftLeaderboard{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:3px;
+  min-height:0;
+  overflow:hidden;
+}
+
+html.overlay-mode .donor-row{
+  min-width:0;
+  padding:2px 1px;
+  flex-direction:column;
+  justify-content:center;
+  gap:1px;
+  overflow:hidden;
+}
+
+html.overlay-mode .donor-avatar{
+  width:19px;
+  height:19px;
+  flex-basis:19px;
+}
+
+html.overlay-mode .donor-name{font-size:7px}
+html.overlay-mode .donor-score{font-size:6px}
+
+html.overlay-mode .gift-latest{
+  margin:0;
+  padding:3px;
+  font-size:7px;
+}
+
+html.overlay-mode .gift-goal{font-size:7px}
+html.overlay-mode .gift-bar{height:5px;margin:0}
+
+html.overlay-mode .bottom-zone{
+  height:125px;
+  min-height:0;
+  grid-template-columns:1fr 1fr;
+  gap:4px;
+  overflow:hidden;
+}
+
+html.overlay-mode .panel,
+html.overlay-mode .voters{
+  min-height:0;
+  overflow:hidden;
+  padding:4px;
+}
+
+html.overlay-mode .heading{
+  font-size:8px;
+  margin-bottom:3px;
+}
+
+html.overlay-mode #leaderboard{
+  height:94px;
+  overflow:hidden;
+}
+
+html.overlay-mode .person{
+  height:15px;
+  min-height:15px;
+  padding:1px 0;
+  gap:3px;
+  font-size:7px;
+  overflow:hidden;
+}
+
+html.overlay-mode .rank{width:11px}
+
+html.overlay-mode .avatar{
+  width:13px;
+  height:13px;
+  flex-basis:13px;
+  font-size:7px;
+}
+
+html.overlay-mode .score{font-size:7px}
+html.overlay-mode #voteHistory{overflow:hidden}
+html.overlay-mode .vote-line{font-size:7px;padding:3px 0}
+
+html.overlay-mode .gift-rules{
+  min-height:0;
+  height:92px;
+  overflow:hidden;
+  padding:4px;
+}
+
+html.overlay-mode .gift-rules-title{
+  font-size:9px;
+  margin-bottom:3px;
+}
+
+html.overlay-mode .rules-grid{gap:3px}
+html.overlay-mode .rule{padding:3px 1px}
+html.overlay-mode .rule-icon{font-size:13px}
+html.overlay-mode .rule-name{font-size:6px}
+html.overlay-mode .rule-points{font-size:8px}
+html.overlay-mode .rules-note{font-size:6px;margin-top:2px}
+
+html.overlay-mode .admin,
+html.overlay-mode .foot{
+  display:none!important;
+}
 </style>
 
 <script>
@@ -1618,7 +1836,8 @@ function endRound(){
 
  roundActive=false;
  clearInterval(timer);
-
+seconds=0;
+updateTimer();
  $('question').textContent='Bonne réponse : '+currentCountry.name;
 
  document.querySelectorAll('#answers .answer').forEach(button=>{
