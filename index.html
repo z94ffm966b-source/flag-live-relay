@@ -1,1439 +1,1183 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#16002e">
 <title>FLAG LIVE</title>
 
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
 <style>
-:root{
- --violet:#a94dff;
- --pink:#ef8cff;
- --cyan:#66eaff;
- --panel:rgba(20,7,48,.94);
- --line:rgba(184,94,255,.72);
- --muted:#d4c3ef;
-}
-*{box-sizing:border-box}
-html,body{
- margin:0;
- min-height:100%;
- background:#080014;
- color:#fff;
- font-family:system-ui,-apple-system,Arial,sans-serif;
-}
-body{
- min-height:100vh;
- background:
- radial-gradient(ellipse at 50% 24%,rgba(94,24,155,.55),transparent 52%),
- linear-gradient(145deg,#080014,#120326 52%,#060012);
- overflow-x:hidden;
-}
-.app{
- width:100%;
- max-width:1200px;
- margin:auto;
- padding:8px 12px 18px;
-}
-.broadcast{
- min-height:100vh;
- min-height:100svh;
- display:flex;
- flex-direction:column;
- gap:12px;
- padding:8px 0;
+:root {
+  --bg: #10051d;
+  --panel: #1c0b2d;
+  --panel-light: #29113d;
+  --purple: #a855f7;
+  --purple-light: #c084fc;
+  --pink: #ec4899;
+  --gold: #facc15;
+  --green: #22c55e;
+  --red: #ef4444;
+  --white: #ffffff;
+  --muted: #b8a6c9;
+  --border: rgba(255,255,255,.12);
+  --shadow: 0 8px 25px rgba(0,0,0,.28);
 }
 
-/* EN-TÊTE */
-.top{
- display:grid;
- grid-template-columns:1fr auto 1fr;
- align-items:center;
- gap:10px;
-}
-.stat{
- min-width:0;
- padding:7px;
- border:1px solid var(--line);
- border-radius:11px;
- background:rgba(18,4,42,.88);
- text-align:center;
- font-size:11px;
- line-height:1.3;
-}
-.stat b{
- font-size:15px;
- color:#fff;
-}
-.logo{
- text-align:center;
- font-weight:1000;
- font-size:25px;
- line-height:.85;
- letter-spacing:1px;
- font-style:italic;
- color:#fff;
- text-shadow:0 0 8px var(--pink),0 0 18px #8d35ff;
-}
-.logo small{
- display:block;
- margin-top:5px;
- font-size:8px;
- letter-spacing:2px;
- color:#e7c8ff;
+* {
+  box-sizing: border-box;
 }
 
-/* ZONE PRINCIPALE */
-.game-grid{
- display:grid;
- grid-template-columns:minmax(0,1fr) 220px;
- gap:14px;
- align-items:stretch;
-}
-.quiz-column{
- min-width:0;
- display:flex;
- flex-direction:column;
- justify-content:center;
- padding:8px 10px;
- border:1px solid rgba(184,94,255,.35);
- border-radius:17px;
- background:rgba(17,4,38,.48);
-}
-.donor-panel{
- padding:12px 9px;
- border:1px solid #bd63ff;
- border-radius:15px;
- background:linear-gradient(145deg,#260747,#100020);
- min-width:0;
- display:flex;
- flex-direction:column;
-}
-.donor-title{
- text-align:center;
- font-size:14px;
- font-weight:950;
- color:#f0c7ff;
- margin-bottom:10px;
-}
-.donor-row{
- display:flex;
- align-items:center;
- gap:6px;
- padding:9px 0;
- border-bottom:1px solid rgba(143,83,184,.3);
- min-width:0;
-}
-.donor-row:last-child{border:0}
-.donor-rank{
- font-size:12px;
- font-weight:950;
- color:#e7c6ff;
- width:15px;
-}
-.donor-avatar{
- width:29px;
- height:29px;
- flex:0 0 29px;
- border-radius:50%;
- object-fit:cover;
- background:linear-gradient(135deg,#ffb5eb,#8034ff);
- display:grid;
- place-items:center;
- color:#26003f;
- font-size:11px;
- font-weight:950;
-}
-.donor-name{
- flex:1;
- min-width:0;
- overflow:hidden;
- text-overflow:ellipsis;
- white-space:nowrap;
- font-size:10px;
- font-weight:800;
-}
-.donor-score{
- font-size:9px;
- font-weight:900;
- color:#d9b5ff;
- white-space:nowrap;
-}
-.donor-empty{
- text-align:center;
- color:var(--muted);
- font-size:10px;
- padding:12px 0;
-}
-.gift-latest{
- text-align:center;
- padding:9px 4px;
- background:#16052b;
- border-radius:9px;
- margin-top:auto;
- font-size:10px;
- font-weight:800;
-}
-.gift-goal{
- text-align:center;
- font-size:10px;
- margin-top:10px;
-}
-.gift-bar{
- height:9px;
- background:#32134b;
- border-radius:20px;
- overflow:hidden;
- margin:6px 0;
-}
-.gift-bar-fill{
- height:100%;
- width:0%;
- background:linear-gradient(90deg,#ef8cff,#66eaff);
- transition:width .3s;
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  width: 100%;
+  background:
+    radial-gradient(circle at 50% 0%, #351052 0%, transparent 42%),
+    var(--bg);
+  color: var(--white);
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-/* QUESTION ET DRAPEAU */
-.timer{
- margin:4px auto 10px;
- width:70px;
- height:70px;
- border:3px solid #bd63ff;
- border-radius:50%;
- display:grid;
- align-content:center;
- justify-items:center;
- background:radial-gradient(circle,rgba(90,25,150,.8),rgba(17,3,39,.95));
- font-size:32px;
- font-weight:950;
- line-height:1;
- box-shadow:0 0 0 5px rgba(173,70,255,.12),0 0 22px rgba(174,68,255,.65);
-}
-.timer small{
- font-size:8px;
- letter-spacing:1px;
- margin-top:4px;
- color:#e7cfff;
-}
-.track{
- height:9px;
- background:#1c0835;
- border:1px solid #7e35b7;
- border-radius:30px;
- overflow:hidden;
-}
-.fill{
- height:100%;
- width:100%;
- background:linear-gradient(90deg,#f5a1ff,#9e45ff,#67e9ff);
- transition:width .25s linear;
-}
-.flag{
- margin:12px 0 5px;
- text-align:center;
- font-size:clamp(100px,17vw,155px);
- line-height:1.15;
- filter:drop-shadow(0 0 17px rgba(189,95,255,.75));
-}
-.question{
- margin:8px 0 13px;
- padding:15px 8px;
- border:1px solid var(--line);
- border-radius:14px;
- background:linear-gradient(100deg,rgba(44,12,78,.92),rgba(19,5,43,.94));
- text-align:center;
- font-size:clamp(16px,2.5vw,24px);
- font-weight:900;
-}
-.answers{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:10px;
-}
-.answer{
- min-width:0;
- min-height:65px;
- border:1px solid #a653ed;
- border-radius:13px;
- background:linear-gradient(135deg,rgba(54,17,91,.96),rgba(25,7,52,.98));
- color:#fff;
- padding:10px 6px;
- font-size:clamp(13px,2vw,18px);
- font-weight:850;
- overflow-wrap:anywhere;
-}
-.answer.good{
- background:linear-gradient(135deg,#14583f,#123927);
- border-color:#65f0aa;
-}
-.answer.bad{opacity:.45}
-.gift-message{
- text-align:center;
- color:#ffd166;
- font-weight:bold;
- font-size:12px;
- padding:10px 6px;
- margin-top:12px;
- background:rgba(255,209,102,.10);
- border:1px solid rgba(255,209,102,.35);
- border-radius:10px;
+body {
+  padding: 14px;
+  overflow-x: hidden;
 }
 
-/* CLASSEMENT ET VOTES */
-.bottom-zone{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:12px;
- align-items:stretch;
-}
-.panel{
- padding:11px;
- background:var(--panel);
- border:1px solid rgba(149,65,218,.65);
- border-radius:13px;
- min-width:0;
-}
-.heading{
- text-align:center;
- font-size:13px;
- font-weight:950;
- letter-spacing:.5px;
- margin-bottom:9px;
- color:#f1d9ff;
-}
-.person{
- display:flex;
- align-items:center;
- gap:8px;
- padding:7px 2px;
- border-bottom:1px solid rgba(143,83,184,.22);
- font-size:12px;
-}
-.person:last-child{border:0}
-.rank{
- width:20px;
- font-weight:950;
- color:#e7c6ff;
-}
-.avatar{
- width:25px;
- height:25px;
- flex:0 0 25px;
- border-radius:50%;
- display:grid;
- place-items:center;
- background:linear-gradient(135deg,#ffb5eb,#8034ff);
- color:#26003f;
- font-weight:950;
-}
-.name{
- flex:1;
- min-width:0;
- overflow:hidden;
- text-overflow:ellipsis;
- white-space:nowrap;
-}
-.score{
- font-weight:850;
- color:#d9b5ff;
- white-space:nowrap;
-}
-.results{
- display:none;
- align-content:start;
- gap:7px;
-}
-.result-title{
- text-align:center;
- font-size:17px;
- font-weight:950;
- color:#f0c7ff;
- margin:5px 0;
-}
-.result-row{
- display:flex;
- align-items:center;
- justify-content:space-between;
- gap:8px;
- padding:8px 10px;
- border:1px solid #7d2ac2;
- border-radius:10px;
- background:linear-gradient(90deg,#35105c,#17052f);
- font-weight:800;
- font-size:12px;
-}
-.result-row strong{
- color:#7dffb2;
- font-size:15px;
-}
-.result-empty{
- text-align:center;
- padding:15px 8px;
- color:#e4c9ff;
- font-weight:800;
-}
-.muted{
- font-size:10px;
- color:var(--muted);
- text-align:center;
-}
-.voters{
- min-width:0;
- padding:11px;
- border:1px solid rgba(136,69,194,.5);
- border-radius:13px;
- background:rgba(17,4,37,.84);
- font-size:11px;
- color:#eadcff;
-}
-.vote-line{
- padding:6px 2px;
- border-bottom:1px solid rgba(143,83,184,.18);
- overflow:hidden;
- text-overflow:ellipsis;
- white-space:nowrap;
-}
-.vote-line:last-child{border:0}
-
-/* BARÈME DES CADEAUX */
-.gift-rules{
- padding:12px;
- border:1px solid rgba(239,140,255,.65);
- border-radius:13px;
- background:linear-gradient(110deg,rgba(47,12,75,.94),rgba(18,5,42,.95));
-}
-.gift-rules-title{
- text-align:center;
- font-size:14px;
- font-weight:950;
- color:#ffd5fa;
- margin-bottom:9px;
-}
-.rules-grid{
- display:grid;
- grid-template-columns:repeat(3,1fr);
- gap:8px;
-}
-.rule{
- text-align:center;
- padding:9px 5px;
- border:1px solid rgba(189,99,255,.45);
- border-radius:10px;
- background:rgba(10,0,25,.48);
-}
-.rule-icon{
- font-size:21px;
- margin-bottom:3px;
-}
-.rule-name{
- font-size:10px;
- color:#e9d5ff;
- font-weight:750;
-}
-.rule-points{
- font-size:14px;
- font-weight:950;
- color:#ffd166;
- margin-top:3px;
-}
-.rules-note{
- text-align:center;
- font-size:10px;
- color:#d9c3ed;
- margin-top:8px;
+button,
+input,
+select {
+  font: inherit;
 }
 
-/* ADMINISTRATION */
-.admin{
- margin:22px 0;
- padding:12px;
- border:1px solid #7540a5;
- border-radius:16px;
- background:#10051e;
-}
-.admin .panel{margin-top:10px}
-.tools{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:8px;
- margin-top:9px;
-}
-.tools button,.submit,.connectbox button{
- border:1px solid #b64cff;
- background:#29094b;
- color:white;
- border-radius:11px;
- padding:11px;
- font-weight:750;
-}
-.demoform{
- display:grid;
- grid-template-columns:1fr;
- gap:7px;
- margin-top:9px;
-}
-.demoform input,.demoform select,.connectbox input{
- min-width:0;
- border:1px solid #8b39c2;
- border-radius:10px;
- background:#0c001b;
- color:white;
- padding:11px;
-}
-.connectbox{
- display:grid;
- grid-template-columns:1fr auto;
- gap:7px;
- margin-top:9px;
-}
-.status{
- font-size:12px;
- text-align:center;
- color:#e3caff;
- margin:10px 0;
-}
-.livehint{
- font-size:10px;
- color:#cdb6e8;
- text-align:center;
- margin-top:6px;
-}
-.gift-demo{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:8px;
- margin-top:10px;
-}
-.gift-demo button{
- padding:10px;
- border:1px solid #bd63ff;
- border-radius:10px;
- background:#321052;
- color:white;
- font-weight:800;
-}
-.foot{
- text-align:center;
- font-size:10px;
- color:#cdb6e8;
- padding:10px;
+button {
+  cursor: pointer;
 }
 
-/* PETITS ECRANS */
-@media(max-width:600px){
- .app{padding:5px 6px 14px}
- .broadcast{gap:8px}
- .top{gap:5px}
- .stat{font-size:9px;padding:5px 3px}
- .stat b{font-size:12px}
- .logo{font-size:20px}
- .logo small{font-size:6px}
- .game-grid{
-  grid-template-columns:minmax(0,1fr) 132px;
-  gap:6px;
- }
- .quiz-column{padding:7px 5px}
- .donor-panel{padding:8px 5px}
- .donor-title{font-size:10px;margin-bottom:5px}
- .donor-row{gap:3px;padding:7px 0}
- .donor-rank{font-size:9px;width:11px}
- .donor-avatar{width:21px;height:21px;flex-basis:21px;font-size:9px}
- .donor-name{font-size:8px}
- .donor-score{font-size:7px}
- .gift-latest{font-size:8px;padding:6px 2px}
- .gift-goal{font-size:8px}
- .timer{width:56px;height:56px;font-size:25px;margin:3px auto 7px}
- .timer small{font-size:7px}
- .flag{font-size:clamp(65px,15vw,100px);margin:7px 0 3px}
- .question{font-size:clamp(12px,3vw,16px);padding:10px 4px;margin:5px 0 8px}
- .answers{gap:5px}
- .answer{min-height:48px;font-size:clamp(10px,2.5vw,13px);padding:6px 2px}
- .gift-message{font-size:9px;padding:7px 3px;margin-top:7px}
- .bottom-zone{gap:6px}
- .panel,.voters{padding:7px}
- .heading{font-size:10px;margin-bottom:6px}
- .person{font-size:9px;gap:4px;padding:5px 0}
- .rank{width:14px}
- .avatar{width:19px;height:19px;flex-basis:19px;font-size:9px}
- .score{font-size:9px}
- .vote-line{font-size:9px;padding:5px 0}
- .gift-rules{padding:8px}
- .gift-rules-title{font-size:11px}
- .rules-grid{gap:4px}
- .rule{padding:6px 2px}
- .rule-icon{font-size:17px}
- .rule-name{font-size:8px}
- .rule-points{font-size:11px}
- .rules-note{font-size:8px}
-}
-@media(max-width:360px){
- .game-grid{grid-template-columns:minmax(0,1fr) 116px;gap:4px}
- .donor-name{font-size:7px}
- .donor-score{font-size:6px}
- .answer{font-size:9px}
- .bottom-zone{grid-template-columns:1fr}
-}
-@media(min-width:800px){
- .quiz-column{padding:18px 24px}
- .flag{font-size:155px}
- .question{font-size:23px;padding:18px}
- .answer{min-height:70px;font-size:18px}
- .timer{width:76px;height:76px;font-size:34px}
- .donor-panel{padding:15px}
- .donor-row{padding:11px 0}
- .donor-avatar{width:34px;height:34px;flex-basis:34px}
- .donor-name{font-size:12px}
- .donor-score{font-size:10px}
+.app {
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
 }
 
-/* MODE OVERLAY TIKTOK LIVE : CANVAS VERTICAL 9:16 */
+.top {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.top-card {
+  min-width: 0;
+  min-height: 74px;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  background: linear-gradient(145deg, #2a1040, #1b0a2a);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.top-label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.top-value {
+  margin-top: 5px;
+  font-size: clamp(19px, 2.5vw, 30px);
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.brand {
+  color: var(--purple-light);
+  font-size: clamp(21px, 3vw, 36px);
+  font-weight: 1000;
+  letter-spacing: 2px;
+  text-shadow: 0 0 18px rgba(168,85,247,.55);
+}
+
+.game-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  gap: 12px;
+  align-items: stretch;
+}
+
+.quiz-column {
+  min-width: 0;
+  min-height: 500px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: linear-gradient(150deg, #251039, #180923);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+}
+
+.quiz-heading {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.quiz-title {
+  font-size: clamp(17px, 2vw, 25px);
+  font-weight: 900;
+  color: var(--purple-light);
+  text-align: left;
+}
+
+.round-number {
+  padding: 7px 12px;
+  border-radius: 30px;
+  background: rgba(168,85,247,.18);
+  border: 1px solid rgba(192,132,252,.3);
+  color: #e9d5ff;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.timer {
+  width: clamp(75px, 9vw, 105px);
+  height: clamp(75px, 9vw, 105px);
+  flex-shrink: 0;
+  margin: 4px auto 10px;
+  border-radius: 50%;
+  border: 5px solid rgba(192,132,252,.25);
+  background: radial-gradient(circle, #35134e, #1b0a2a);
+  box-shadow: 0 0 24px rgba(168,85,247,.22);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#seconds {
+  font-size: clamp(29px, 4vw, 43px);
+  font-weight: 1000;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-label {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.track {
+  width: 100%;
+  height: 9px;
+  overflow: hidden;
+  margin: 3px 0 12px;
+  border-radius: 20px;
+  background: rgba(255,255,255,.1);
+}
+
+#fill {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--pink), var(--purple-light));
+  transition: width .3s linear;
+}
+
+.flag {
+  width: 100%;
+  min-height: 100px;
+  max-height: 300px;
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  overflow: hidden;
+}
+
+.flag img {
+  display: block;
+  max-width: min(75%, 390px);
+  max-height: 250px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.35);
+}
+
+#question {
+  width: 100%;
+  margin: 8px 0 14px;
+  color: #f3e8ff;
+  font-size: clamp(15px, 2vw, 22px);
+  font-weight: 900;
+  line-height: 1.3;
+}
+
+.answers {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.answer {
+  min-width: 0;
+  min-height: 54px;
+  padding: 12px 10px;
+  border: 1px solid rgba(192,132,252,.25);
+  border-radius: 13px;
+  background: linear-gradient(145deg, #35164d, #271038);
+  color: white;
+  font-size: clamp(13px, 1.5vw, 17px);
+  font-weight: 800;
+  overflow-wrap: anywhere;
+  transition: transform .15s, background .15s, border .15s;
+}
+
+.answer:hover {
+  transform: translateY(-2px);
+  border-color: var(--purple-light);
+  background: #472064;
+}
+
+.answer.good {
+  background: rgba(34,197,94,.22);
+  border: 2px solid var(--green);
+  color: #bbf7d0;
+}
+
+.answer.bad {
+  opacity: .55;
+}
+
+#giftMessage {
+  width: 100%;
+  min-height: 22px;
+  margin-top: 12px;
+  color: #f9a8d4;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.donor-panel {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: linear-gradient(150deg, #251039, #180923);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-title {
+  margin: 0 0 12px;
+  color: var(--purple-light);
+  font-size: 18px;
+  font-weight: 1000;
+  text-align: center;
+}
+
+.gift-total-card {
+  padding: 12px;
+  border-radius: 13px;
+  background: rgba(168,85,247,.13);
+  text-align: center;
+}
+
+.gift-total-label {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+#giftTotal {
+  margin-top: 5px;
+  color: var(--gold);
+  font-size: 29px;
+  font-weight: 1000;
+}
+
+.gift-progress-track {
+  height: 9px;
+  margin: 10px 0 15px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: rgba(255,255,255,.1);
+}
+
+#giftProgress {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #f59e0b, #facc15);
+  transition: width .3s;
+}
+
+.donor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.donor-row {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 29px 38px minmax(0,1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.055);
+}
+
+.donor-rank {
+  color: var(--gold);
+  font-size: 14px;
+  font-weight: 1000;
+  text-align: center;
+}
+
+.donor-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #43205d;
+  border: 1px solid rgba(255,255,255,.18);
+}
+
+.donor-initial {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #57277a;
+  color: white;
+  font-weight: 900;
+}
+
+.donor-name {
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.donor-coins {
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.donor-empty {
+  padding: 20px 5px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+#giftLatest {
+  margin-top: auto;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(236,72,153,.1);
+  color: #f9a8d4;
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.bottom-zone {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.bottom-card {
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  background: linear-gradient(145deg, #251039, #180923);
+  box-shadow: var(--shadow);
+}
+
+.bottom-card h2 {
+  margin: 0 0 12px;
+  color: var(--purple-light);
+  font-size: 17px;
+  font-weight: 1000;
+  text-align: center;
+}
+
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.rank-row {
+  display: grid;
+  grid-template-columns: 32px minmax(0,1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.055);
+}
+
+.rank-number {
+  color: var(--gold);
+  font-size: 14px;
+  font-weight: 1000;
+  text-align: center;
+}
+
+.rank-name {
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rank-points {
+  color: #d8b4fe;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.empty-state {
+  padding: 16px 5px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.vote-history {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.vote-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.055);
+  font-size: 12px;
+}
+
+.vote-user {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 800;
+}
+
+.vote-result {
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.vote-result.correct {
+  color: var(--green);
+}
+
+.vote-result.wrong {
+  color: #fca5a5;
+}
+
+.gift-rules {
+  margin-top: 12px;
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: rgba(255,255,255,.04);
+}
+
+.gift-rules h3 {
+  margin: 0 0 9px;
+  color: var(--gold);
+  font-size: 13px;
+  text-align: center;
+}
+
+.gift-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 8px;
+}
+
+.gift-rule {
+  padding: 9px 5px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.05);
+  text-align: center;
+}
+
+.gift-rule strong {
+  display: block;
+  color: white;
+  font-size: 12px;
+}
+
+.gift-rule span {
+  display: block;
+  margin-top: 4px;
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.admin {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  background: #180923;
+}
+
+.admin h2 {
+  margin: 0 0 14px;
+  color: var(--purple-light);
+  font-size: 18px;
+}
+
+.admin-section {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.admin-section h3 {
+  margin: 0 0 10px;
+  color: #e9d5ff;
+  font-size: 14px;
+}
+
+.admin-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin input,
+.admin select {
+  min-width: 0;
+  flex: 1 1 180px;
+  padding: 11px 12px;
+  border: 1px solid rgba(192,132,252,.3);
+  border-radius: 9px;
+  outline: none;
+  background: #2b123d;
+  color: white;
+}
+
+.admin button {
+  padding: 11px 14px;
+  border: 0;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #9333ea, #c026d3);
+  color: white;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.admin button:hover {
+  filter: brightness(1.15);
+}
+
+.admin button.danger {
+  background: linear-gradient(135deg, #b91c1c, #ef4444);
+}
+
+.admin button.secondary {
+  background: #43205d;
+}
+
+#status {
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+#resultsView {
+  display: none;
+}
+
+.footer {
+  padding: 15px 5px 5px;
+  color: rgba(255,255,255,.4);
+  font-size: 10px;
+  text-align: center;
+}
+
+/* AFFICHAGE VERTICAL POUR TIKTOK LIVE STUDIO */
 html.overlay-mode,
-html.overlay-mode body{
- width:100%;
- height:100%;
- min-height:0;
- margin:0;
- overflow:hidden;
-}
-html.overlay-mode body{
- display:flex;
- align-items:center;
- justify-content:center;
-}
-html.overlay-mode .app{
- width:min(100vw,56.25vh);
- height:min(100vh,177.7778vw);
- max-width:none;
- min-height:0;
- margin:0;
- padding:8px;
- overflow:hidden;
-}
-html.overlay-mode .broadcast{
- height:100%;
- min-height:0;
- display:grid;
- grid-template-rows:auto minmax(0,1fr) auto auto;
- gap:7px;
- padding:0;
-}
-html.overlay-mode .top{gap:5px}
-html.overlay-mode .stat{padding:5px 3px;font-size:9px}
-html.overlay-mode .stat b{font-size:12px}
-html.overlay-mode .logo{font-size:20px}
-html.overlay-mode .logo small{font-size:6px}
-html.overlay-mode .game-grid{
- min-height:0;
- display:grid;
- grid-template-columns:minmax(0,1fr);
- grid-template-rows:minmax(0,1fr) auto;
- gap:6px;
-}
-html.overlay-mode .quiz-column{
- min-height:0;
- padding:5px;
- justify-content:center;
- overflow:hidden;
-}
-html.overlay-mode .timer{
- width:54px;
- height:54px;
- margin:2px auto 6px;
- font-size:24px;
-}
-html.overlay-mode .timer small{font-size:6px}
-html.overlay-mode .flag{
- margin:5px 0;
- font-size:clamp(72px,17vw,145px);
- line-height:1;
-}
-html.overlay-mode .flag img{
- display:block;
- width:clamp(100px,27vw,220px);
- max-height:14vh;
- margin:auto;
- object-fit:contain;
-}
-html.overlay-mode .question{
- margin:5px 0 7px;
- padding:8px 5px;
- font-size:clamp(12px,2.1vw,20px);
-}
-html.overlay-mode .answers{gap:6px}
-html.overlay-mode .answer{
- min-height:42px;
- padding:5px 3px;
- font-size:clamp(10px,1.7vw,16px);
-}
-html.overlay-mode .gift-message{
- margin-top:6px;
- padding:5px 3px;
- font-size:9px;
-}
-html.overlay-mode .donor-panel{
- min-height:0;
- padding:5px;
- display:grid;
- grid-template-columns:minmax(0,1fr);
- gap:3px;
-}
-html.overlay-mode .donor-title{
- margin:0;
- font-size:10px;
-}
-html.overlay-mode #giftLeaderboard{
- display:grid;
- grid-template-columns:repeat(5,minmax(0,1fr));
- gap:3px;
-}
-html.overlay-mode .donor-row{
- min-width:0;
- padding:3px 1px;
- display:flex;
- flex-direction:column;
- justify-content:center;
- gap:2px;
- border:1px solid rgba(143,83,184,.3);
- border-radius:6px;
-}
-html.overlay-mode .donor-rank{width:auto;font-size:8px}
-html.overlay-mode .donor-avatar{width:22px;height:22px;flex-basis:22px}
-html.overlay-mode .donor-name{
- width:100%;
- text-align:center;
- font-size:7px;
-}
-html.overlay-mode .donor-score{font-size:7px}
-html.overlay-mode .donor-empty{
- grid-column:1/-1;
- padding:5px;
- font-size:8px;
-}
-html.overlay-mode .gift-latest{
- margin:0;
- padding:4px;
- font-size:8px;
-}
-html.overlay-mode .gift-goal{
- margin:0;
- font-size:8px;
-}
-html.overlay-mode .gift-bar{height:6px;margin:0}
-html.overlay-mode .bottom-zone{
- min-height:0;
- grid-template-columns:1fr 1fr;
- gap:5px;
-}
-html.overlay-mode .panel,
-html.overlay-mode .voters{padding:5px}
-html.overlay-mode .heading{font-size:9px;margin-bottom:4px}
-html.overlay-mode .person{gap:3px;padding:3px 0;font-size:8px}
-html.overlay-mode .rank{width:12px}
-html.overlay-mode .avatar{width:17px;height:17px;flex-basis:17px;font-size:8px}
-html.overlay-mode .score{font-size:8px}
-html.overlay-mode .vote-line{padding:3px 0;font-size:8px}
-html.overlay-mode .gift-rules{padding:5px}
-html.overlay-mode .gift-rules-title{font-size:9px;margin-bottom:4px}
-html.overlay-mode .rules-grid{gap:4px}
-html.overlay-mode .rule{padding:4px 2px}
-html.overlay-mode .rule-icon{font-size:14px;margin:0}
-html.overlay-mode .rule-name{font-size:7px}
-html.overlay-mode .rule-points{font-size:9px;margin-top:1px}
-html.overlay-mode .rules-note{font-size:7px;margin-top:3px}
-html.overlay-mode .admin,
-html.overlay-mode .foot{display:none!important}
-@media(max-height:760px){
- html.overlay-mode .broadcast{gap:4px}
- html.overlay-mode .timer{width:42px;height:42px;font-size:20px}
- html.overlay-mode .flag{font-size:70px;margin:2px 0}
- html.overlay-mode .question{padding:5px;margin:3px 0}
- html.overlay-mode .answer{min-height:34px}
- html.overlay-mode .gift-rules{padding:3px}
+html.overlay-mode body {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
 }
 
-/* ===== CORRECTION OVERLAY VERTICAL 9:16 ===== */
-html.overlay-mode .app{
-  width:min(100vw,56.25vh);
-  height:min(100vh,177.7778vw);
-  padding:6px;
+html.overlay-mode body {
+  padding: 8px;
 }
 
-html.overlay-mode .broadcast{
-  display:grid;
-  grid-template-rows:auto minmax(0,1fr) 125px 92px;
-  gap:5px;
-  height:100%;
-  min-height:0;
-  overflow:hidden;
+html.overlay-mode .app {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  display: grid;
+  grid-template-rows: clamp(43px, 6vh, 70px) minmax(0,1fr) clamp(125px,17vh,190px) auto;
+  gap: 7px;
+  overflow: hidden;
 }
 
-html.overlay-mode .game-grid{
-  min-height:0;
-  grid-template-columns:minmax(0,1fr);
-  grid-template-rows:minmax(0,1fr) 96px;
-  gap:5px;
+html.overlay-mode .top {
+  grid-template-columns: 1fr 1.1fr 1fr;
+  gap: 6px;
+  margin: 0;
+  min-height: 0;
 }
 
-html.overlay-mode .quiz-column{
-  min-height:0;
-  display:flex;
-  justify-content:center;
-  overflow:hidden;
-  padding:4px;
+html.overlay-mode .top-card {
+  min-height: 0;
+  padding: 4px;
+  border-radius: 10px;
+  background: rgba(22,5,37,.92);
 }
 
-html.overlay-mode .timer{
-  width:48px;
-  height:48px;
-  flex-shrink:0;
-  font-size:23px;
-  margin:2px auto 5px;
+html.overlay-mode .top-label {
+  font-size: clamp(7px,1.1vh,10px);
+  letter-spacing: .5px;
 }
 
-html.overlay-mode .track{
-  height:7px;
-  flex-shrink:0;
+html.overlay-mode .top-value {
+  margin-top: 2px;
+  font-size: clamp(12px,2vh,21px);
 }
 
-html.overlay-mode .flag{
-  margin:3px 0;
-  font-size:clamp(60px,13vw,110px);
-  line-height:1;
-  flex-shrink:1;
-  min-height:0;
+html.overlay-mode .brand {
+  font-size: clamp(14px,2.2vh,23px);
+  letter-spacing: 1px;
 }
 
-html.overlay-mode .flag img{
-  display:block;
-  width:min(75%,190px);
-  height:auto;
-  max-height:19vh;
-  object-fit:contain;
-  margin:auto;
+html.overlay-mode .game-grid {
+  min-height: 0;
+  grid-template-columns: minmax(0,1fr);
+  grid-template-rows: minmax(0,1fr);
+  gap: 0;
 }
 
-html.overlay-mode .question{
-  flex-shrink:0;
-  font-size:clamp(11px,1.7vw,17px);
-  padding:6px 4px;
-  margin:3px 0 5px;
+html.overlay-mode .quiz-column {
+  min-height: 0;
+  padding: 8px;
+  border-radius: 12px;
+  background: rgba(24,9,35,.94);
+  overflow: hidden;
 }
 
-html.overlay-mode .answers{
-  flex-shrink:0;
-  gap:5px;
+html.overlay-mode .quiz-heading {
+  margin-bottom: 2px;
 }
 
-html.overlay-mode .answer{
-  min-height:36px;
-  padding:4px 3px;
-  font-size:clamp(10px,1.5vw,14px);
-  line-height:1.15;
+html.overlay-mode .quiz-title {
+  font-size: clamp(12px,1.8vh,17px);
 }
 
-html.overlay-mode .answer.good{
-  opacity:1;
-  border:2px solid #65f0aa;
-  background:linear-gradient(135deg,#14583f,#123927);
+html.overlay-mode .round-number {
+  padding: 4px 7px;
+  font-size: 9px;
 }
 
-html.overlay-mode .answer.bad{
-  opacity:.7;
-  filter:grayscale(.35);
+html.overlay-mode .timer {
+  width: clamp(48px,7vh,70px);
+  height: clamp(48px,7vh,70px);
+  margin: 2px auto 4px;
+  border-width: 3px;
 }
 
-html.overlay-mode .gift-message{
-  flex-shrink:0;
-  font-size:8px;
-  padding:4px 2px;
-  margin-top:4px;
+html.overlay-mode #seconds {
+  font-size: clamp(21px,3vh,29px);
 }
 
-html.overlay-mode .donor-panel{
-  min-height:0;
-  overflow:hidden;
-  padding:4px;
-  display:grid;
-  grid-template-rows:auto minmax(0,1fr) auto auto auto;
-  gap:2px;
+html.overlay-mode .timer-label {
+  font-size: 7px;
 }
 
-html.overlay-mode .donor-title{
-  font-size:9px;
-  margin:0;
+html.overlay-mode .track {
+  height: 6px;
+  margin: 2px 0 5px;
 }
 
-html.overlay-mode #giftLeaderboard{
-  display:grid;
-  grid-template-columns:repeat(5,minmax(0,1fr));
-  gap:3px;
-  min-height:0;
-  overflow:hidden;
+html.overlay-mode .flag {
+  min-height: 0;
+  max-height: none;
+  flex: 1 1 auto;
+  padding: 4px;
 }
 
-html.overlay-mode .donor-row{
-  min-width:0;
-  padding:2px 1px;
-  flex-direction:column;
-  justify-content:center;
-  gap:1px;
-  overflow:hidden;
+html.overlay-mode .flag img {
+  max-width: min(75%,190px);
+  max-height: clamp(100px,26vh,260px);
+  width: auto;
+  height: auto;
 }
 
-html.overlay-mode .donor-avatar{
-  width:19px;
-  height:19px;
-  flex-basis:19px;
+html.overlay-mode #question {
+  margin: 4px 0 7px;
+  font-size: clamp(11px,1.7vh,16px);
 }
 
-html.overlay-mode .donor-name{
-  font-size:7px;
+html.overlay-mode .answers {
+  gap: 6px;
 }
 
-html.overlay-mode .donor-score{
-  font-size:6px;
+html.overlay-mode .answer {
+  min-height: clamp(34px,5vh,48px);
+  padding: 5px 4px;
+  border-radius: 8px;
+  font-size: clamp(10px,1.5vh,14px);
 }
 
-html.overlay-mode .gift-latest{
-  margin:0;
-  padding:3px;
-  font-size:7px;
+html.overlay-mode #giftMessage {
+  min-height: 14px;
+  margin-top: 5px;
+  font-size: clamp(9px,1.3vh,12px);
 }
 
-html.overlay-mode .gift-goal{
-  font-size:7px;
+html.overlay-mode .donor-panel {
+  min-height: 0;
+  padding: 7px;
+  border-radius: 12px;
+  background: rgba(24,9,35,.94);
+  overflow: hidden;
 }
 
-html.overlay-mode .gift-bar{
-  height:5px;
-  margin:0;
+html.overlay-mode .panel-title {
+  margin-bottom: 5px;
+  font-size: clamp(11px,1.7vh,16px);
 }
 
-html.overlay-mode .bottom-zone{
-  height:125px;
-  min-height:0;
-  grid-template-columns:1fr 1fr;
-  gap:4px;
-  overflow:hidden;
+html.overlay-mode .gift-total-card {
+  padding: 5px;
 }
 
-html.overlay-mode .panel,
-html.overlay-mode .voters{
-  min-height:0;
-  overflow:hidden;
-  padding:4px;
+html.overlay-mode .gift-total-label {
+  font-size: 8px;
 }
 
-html.overlay-mode .heading{
-  font-size:8px;
-  margin-bottom:3px;
+html.overlay-mode #giftTotal {
+  margin-top: 1px;
+  font-size: clamp(15px,2.5vh,23px);
 }
 
-html.overlay-mode #leaderboard{
-  height:94px;
-  overflow:hidden;
+html.overlay-mode .gift-progress-track {
+  height: 5px;
+  margin: 5px 0 6px;
 }
 
-html.overlay-mode .person{
-  height:15px;
-  min-height:15px;
-  padding:1px 0;
-  gap:3px;
-  font-size:7px;
-  overflow:hidden;
+html.overlay-mode .donor-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
 }
 
-html.overlay-mode .rank{
-  width:11px;
+html.overlay-mode .donor-row {
+  grid-template-columns: 17px 23px minmax(0,1fr);
+  gap: 4px;
+  padding: 4px;
+  border-radius: 6px;
 }
 
-html.overlay-mode .avatar{
-  width:13px;
-  height:13px;
-  flex-basis:13px;
-  font-size:7px;
+html.overlay-mode .donor-rank {
+  font-size: 9px;
 }
 
-html.overlay-mode .score{
-  font-size:7px;
+html.overlay-mode .donor-avatar,
+html.overlay-mode .donor-initial {
+  width: 22px;
+  height: 22px;
+  font-size: 9px;
 }
 
-html.overlay-mode #voteHistory{
-  overflow:hidden;
+html.overlay-mode .donor-name {
+  font-size: clamp(8px,1.1vh,10px);
 }
 
-html.overlay-mode .vote-line{
-  font-size:7px;
-  padding:3px 0;
+html.overlay-mode .donor-coins {
+  display: none;
 }
 
-html.overlay-mode .gift-rules{
-  min-height:0;
-  height:92px;
-  overflow:hidden;
-  padding:4px;
+html.overlay-mode .donor-empty {
+  grid-column: 1 / -1;
+  padding: 8px;
+  font-size: 9px;
 }
 
-html.overlay-mode .gift-rules-title{
-  font-size:9px;
-  margin-bottom:3px;
+html.overlay-mode #giftLatest {
+  margin-top: 5px;
+  padding: 5px;
+  font-size: clamp(8px,1.1vh,10px);
 }
 
-html.overlay-mode .rules-grid{
-  gap:3px;
+html.overlay-mode .bottom-zone {
+  min-height: 0;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: 0;
 }
 
-html.overlay-mode .rule{
-  padding:3px 1px;
+html.overlay-mode .bottom-card {
+  min-height: 0;
+  padding: 7px;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-html.overlay-mode .rule-icon{
-  font-size:13px;
+html.overlay-mode .bottom-card h2 {
+  margin-bottom: 5px;
+  font-size: clamp(10px,1.5vh,14px);
 }
 
-html.overlay-mode .rule-name{
-  font-size:6px;
+html.overlay-mode .ranking-list,
+html.overlay-mode .vote-history {
+  gap: 3px;
 }
 
-html.overlay-mode .rule-points{
-  font-size:8px;
+html.overlay-mode .rank-row,
+html.overlay-mode .vote-row {
+  grid-template-columns: 19px minmax(0,1fr) auto;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 5px;
 }
 
-html.overlay-mode .rules-note{
-  font-size:6px;
-  margin-top:2px;
+html.overlay-mode .rank-number {
+  font-size: 9px;
+}
+
+html.overlay-mode .rank-name,
+html.overlay-mode .vote-user {
+  font-size: clamp(8px,1.1vh,10px);
+}
+
+html.overlay-mode .rank-points,
+html.overlay-mode .vote-result {
+  font-size: clamp(7px,1vh,9px);
+}
+
+html.overlay-mode .empty-state {
+  padding: 6px;
+  font-size: 9px;
+}
+
+html.overlay-mode .gift-rules {
+  display: none;
 }
 
 html.overlay-mode .admin,
-html.overlay-mode .foot{
-  display:none!important;
-}
-/* ===== FLAG LIVE - CORRECTION AFFICHAGE ===== */
-
-html.overlay-mode .app{
-  width:min(100vw,56.25vh);
-  height:min(100vh,177.7778vw);
-  padding:6px;
-  overflow:hidden;
+html.overlay-mode .footer {
+  display: none !important;
 }
 
-html.overlay-mode .broadcast{
-  display:grid;
-  grid-template-rows:auto minmax(0,1fr) 125px 92px;
-  gap:5px;
-  height:100%;
-  min-height:0;
-  overflow:hidden;
+/* ÉCRANS PLUS PETITS */
+@media (max-width: 700px) {
+  body {
+    padding: 8px;
+  }
+
+  .game-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quiz-column {
+    min-height: 480px;
+  }
+
+  .donor-panel {
+    min-height: 250px;
+  }
+
+  .bottom-zone {
+    grid-template-columns: 1fr;
+  }
 }
 
-html.overlay-mode .game-grid{
-  min-height:0;
-  grid-template-columns:minmax(0,1fr);
-  grid-template-rows:minmax(0,1fr) 96px;
-  gap:5px;
+@media (max-width: 380px) {
+  .top {
+    gap: 5px;
+  }
+
+  .top-card {
+    padding: 8px 4px;
+  }
+
+  .answers {
+    gap: 6px;
+  }
+
+  .answer {
+    min-height: 48px;
+    padding: 8px 5px;
+  }
 }
 
-html.overlay-mode .quiz-column{
-  min-height:0;
-  display:flex;
-  justify-content:center;
-  overflow:hidden;
-  padding:4px;
-}
+@media (max-height: 650px) and (min-width: 701px) {
+  .quiz-column {
+    min-height: 420px;
+  }
 
-html.overlay-mode .timer{
-  width:48px;
-  height:48px;
-  flex-shrink:0;
-  font-size:23px;
-  margin:2px auto 5px;
-}
-
-html.overlay-mode .track{
-  height:7px;
-  flex-shrink:0;
-}
-
-html.overlay-mode .flag{
-  margin:3px 0;
-  font-size:clamp(60px,13vw,110px);
-  line-height:1;
-  flex-shrink:1;
-  min-height:0;
-}
-
-html.overlay-mode .flag img{
-  display:block;
-  width:min(75%,190px);
-  height:auto;
-  max-height:19vh;
-  object-fit:contain;
-  margin:auto;
-}
-
-html.overlay-mode .question{
-  flex-shrink:0;
-  font-size:clamp(11px,1.7vw,17px);
-  padding:6px 4px;
-  margin:3px 0 5px;
-}
-
-html.overlay-mode .answers{
-  flex-shrink:0;
-  gap:5px;
-}
-
-html.overlay-mode .answer{
-  min-height:36px;
-  padding:4px 3px;
-  font-size:clamp(10px,1.5vw,14px);
-  line-height:1.15;
-}
-
-html.overlay-mode .answer.good{
-  opacity:1;
-  border:2px solid #65f0aa;
-  background:linear-gradient(135deg,#14583f,#123927);
-}
-
-html.overlay-mode .answer.bad{
-  opacity:.7;
-  filter:grayscale(.35);
-}
-
-html.overlay-mode .gift-message{
-  flex-shrink:0;
-  font-size:8px;
-  padding:4px 2px;
-  margin-top:4px;
-}
-
-html.overlay-mode .donor-panel{
-  min-height:0;
-  overflow:hidden;
-  padding:4px;
-  display:grid;
-  grid-template-rows:auto minmax(0,1fr) auto auto auto;
-  gap:2px;
-}
-
-html.overlay-mode .donor-title{
-  font-size:9px;
-  margin:0;
-}
-
-html.overlay-mode #giftLeaderboard{
-  display:grid;
-  grid-template-columns:repeat(5,minmax(0,1fr));
-  gap:3px;
-  min-height:0;
-  overflow:hidden;
-}
-
-html.overlay-mode .donor-row{
-  min-width:0;
-  padding:2px 1px;
-  flex-direction:column;
-  justify-content:center;
-  gap:1px;
-  overflow:hidden;
-}
-
-html.overlay-mode .donor-avatar{
-  width:19px;
-  height:19px;
-  flex-basis:19px;
-}
-
-html.overlay-mode .donor-name{font-size:7px}
-html.overlay-mode .donor-score{font-size:6px}
-
-html.overlay-mode .gift-latest{
-  margin:0;
-  padding:3px;
-  font-size:7px;
-}
-
-html.overlay-mode .gift-goal{font-size:7px}
-html.overlay-mode .gift-bar{height:5px;margin:0}
-
-html.overlay-mode .bottom-zone{
-  height:125px;
-  min-height:0;
-  grid-template-columns:1fr 1fr;
-  gap:4px;
-  overflow:hidden;
-}
-
-html.overlay-mode .panel,
-html.overlay-mode .voters{
-  min-height:0;
-  overflow:hidden;
-  padding:4px;
-}
-
-html.overlay-mode .heading{
-  font-size:8px;
-  margin-bottom:3px;
-}
-
-html.overlay-mode #leaderboard{
-  height:94px;
-  overflow:hidden;
-}
-
-html.overlay-mode .person{
-  height:15px;
-  min-height:15px;
-  padding:1px 0;
-  gap:3px;
-  font-size:7px;
-  overflow:hidden;
-}
-
-html.overlay-mode .rank{width:11px}
-
-html.overlay-mode .avatar{
-  width:13px;
-  height:13px;
-  flex-basis:13px;
-  font-size:7px;
-}
-
-html.overlay-mode .score{font-size:7px}
-html.overlay-mode #voteHistory{overflow:hidden}
-html.overlay-mode .vote-line{font-size:7px;padding:3px 0}
-
-html.overlay-mode .gift-rules{
-  min-height:0;
-  height:92px;
-  overflow:hidden;
-  padding:4px;
-}
-
-html.overlay-mode .gift-rules-title{
-  font-size:9px;
-  margin-bottom:3px;
-}
-
-html.overlay-mode .rules-grid{gap:3px}
-html.overlay-mode .rule{padding:3px 1px}
-html.overlay-mode .rule-icon{font-size:13px}
-html.overlay-mode .rule-name{font-size:6px}
-html.overlay-mode .rule-points{font-size:8px}
-html.overlay-mode .rules-note{font-size:6px;margin-top:2px}
-
-html.overlay-mode .admin,
-html.overlay-mode .foot{
-  display:none!important;
+  .flag img {
+    max-height: 170px;
+  }
 }
 </style>
-
-<script>
-if(new URLSearchParams(location.search).get('overlay')==='1'){
- document.documentElement.classList.add('overlay-mode');
-}
-</script>
 </head>
 
 <body>
-<main class="app">
+<div class="app">
 
-<div class="broadcast">
+  <header class="top">
+    <div class="top-card">
+      <div class="top-label">Spectateurs</div>
+      <div class="top-value" id="viewerCount">0</div>
+    </div>
 
-<header class="top">
- <div class="stat">👥 <b id="viewerCount">324</b><br>joueurs</div>
- <div class="logo">🌐 FLAG<br>LIVE<small>QUIZ EN DIRECT</small></div>
- <div class="stat">Dernier abonné<br><b id="lastSub">En attente…</b></div>
-</header>
+    <div class="top-card">
+      <div class="brand">FLAG LIVE</div>
+      <div class="top-label">Le quiz des drapeaux</div>
+    </div>
 
-<div class="game-grid">
+    <div class="top-card">
+      <div class="top-label">Dernier abonné</div>
+      <div class="top-value" id="lastSub">En attente…</div>
+    </div>
+  </header>
 
- <div class="quiz-column">
+  <main class="game-grid">
 
-  <div class="timer">
-   <span id="seconds">20</span>
-   <small>SECONDES</small>
-  </div>
+    <section class="quiz-column">
+      <div class="quiz-heading">
+        <div class="quiz-title">🌍 DEVINE LE PAYS</div>
+        <div class="round-number" id="roundNumber">QUESTION 1</div>
+      </div>
 
-  <div class="track"><div class="fill" id="fill"></div></div>
+      <div class="timer">
+        <div id="seconds">20</div>
+        <div class="timer-label">SECONDES</div>
+      </div>
 
-  <div class="flag" id="flag">🇳🇵</div>
+      <div class="track">
+        <div id="fill"></div>
+      </div>
 
-  <div class="question" id="question">
-   DIFFICILE · Quel pays est représenté par ce drapeau ?
-  </div>
+      <div class="flag" id="flag">
+        <span>🌍</span>
+      </div>
 
-  <div class="answers" id="answers">
-   <button class="answer" data-choice="A">A · Népal</button>
-   <button class="answer" data-choice="B">B · Bhoutan</button>
-   <button class="answer" data-choice="C">C · Kiribati</button>
-   <button class="answer" data-choice="D">D · Sri Lanka</button>
-  </div>
+      <div id="question">
+        Quel pays est représenté par ce drapeau ?
+      </div>
 
-  <div class="gift-message" id="giftMessage">
-   🎁 Les cadeaux rapportent des points supplémentaires !
-  </div>
+      <div class="answers" id="answers">
+        <button class="answer" type="button">A · Réponse 1</button>
+        <button class="answer" type="button">B · Réponse 2</button>
+        <button class="answer" type="button">C · Réponse 3</button>
+        <button class="answer" type="button">D · Réponse 4</button>
+      </div>
 
- </div>
+      <div id="giftMessage">
+        🎁 Les cadeaux rapportent des points supplémentaires !
+      </div>
+    </section>
 
- <aside class="donor-panel">
-  <div class="donor-title">🏆 TOP 5 DONATEURS</div>
+    <aside class="donor-panel">
+      <h2 class="panel-title">🏆 TOP 5 DONATEURS</h2>
 
-  <div id="giftLeaderboard">
-   <div class="donor-empty">En attente des cadeaux…</div>
-  </div>
+      <div class="gift-total-card">
+        <div class="gift-total-label">TOTAL DES PIÈCES REÇUES</div>
+        <div id="giftTotal">0</div>
+      </div>
 
-  <div class="gift-latest" id="giftLatest">
-   🎁 En attente du premier cadeau…
-  </div>
+      <div class="gift-progress-track">
+        <div id="giftProgress"></div>
+      </div>
 
-  <div class="gift-goal">
-   🎯 Objectif : <b id="giftTotal">0</b> / 1000 pièces
-  </div>
+      <div class="donor-list" id="giftLeaderboard">
+        <div class="donor-empty">En attente des cadeaux…</div>
+      </div>
 
-  <div class="gift-bar">
-   <div class="gift-bar-fill" id="giftProgress"></div>
-  </div>
- </aside>
+      <div id="giftLatest">
+        🎁 En attente du premier cadeau…
+      </div>
+    </aside>
+
+  </main>
+
+  <section class="bottom-zone">
+
+    <div class="bottom-card" id="boardView">
+      <h2>🏆 CLASSEMENT GÉNÉRAL — TOP 6</h2>
+      <div class="ranking-list" id="leaderboard">
+        <div class="empty-state">Les joueurs apparaîtront ici.</div>
+      </div>
+    </div>
+
+    <div class="bottom-card" id="resultsView">
+      <h2>📊 RÉSULTATS</h2>
+      <div class="ranking-list" id="resultsList"></div>
+    </div>
+
+    <div class="bottom-card">
+      <h2>🗳️ DERNIERS VOTES</h2>
+      <div class="vote-history" id="voteHistory">
+        <div class="empty-state">En attente des premiers votes…</div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="gift-rules">
+    <h3>🎁 BARÈME DES CADEAUX TIKTOK</h3>
+    <div class="gift-rules-grid">
+      <div class="gift-rule">
+        <strong>🌹 Rose</strong>
+        <span>1 pièce = 10 points</span>
+      </div>
+      <div class="gift-rule">
+        <strong>🎁 Cadeau 10 pièces</strong>
+        <span>10 pièces = 100 points</span>
+      </div>
+      <div class="gift-rule">
+        <strong>💎 Gros cadeau</strong>
+        <span>100 pièces = 1 000 points</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="admin">
+    <h2>⚙️ PANNEAU ADMINISTRATEUR</h2>
+
+    <div class="admin-section">
+      <h3>Connexion au live TikTok</h3>
+      <div class="admin-row">
+        <input
+          type="text"
+          id="tiktokUser"
+          placeholder="Pseudo TikTok (sans @)"
+          autocomplete="off"
+        >
+        <button type="button" id="tiktokConnect">
+          CONNECTER LE LIVE
+        </button>
+        <button type="button" class="danger" id="newLiveReset">
+          NOUVEAU LIVE / RESET
+        </button>
+      </div>
+      <div id="status">Statut : en attente de connexion.</div>
+    </div>
+
+    <div class="admin-section">
+      <h3>Tester les votes</h3>
+      <form id="voteForm" class="admin-row">
+        <input
+          type="text"
+          id="pseudo"
+          placeholder="Pseudo du joueur"
+          autocomplete="off"
+        >
+        <select id="choice">
+          <option value="A">Réponse A</option>
+          <option value="B">Réponse B</option>
+          <option value="C">Réponse C</option>
+          <option value="D">Réponse D</option>
+        </select>
+        <button type="submit">ENVOYER LE VOTE</button>
+      </form>
+      <div class="admin-row" style="margin-top:8px">
+        <button type="button" id="start">QUESTION SUIVANTE</button>
+        <button type="button" id="reveal" class="secondary">RÉVÉLER LA RÉPONSE</button>
+      </div>
+    </div>
+
+    <div class="admin-section">
+      <h3>Tester les cadeaux</h3>
+      <div class="admin-row">
+        <button type="button" id="demoRose">🌹 SIMULER UNE ROSE</button>
+        <button type="button" id="demoBig">💎 SIMULER UN GROS CADEAU</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    FLAG LIVE — Quiz interactif TikTok
+  </footer>
 
 </div>
 
-<!-- CLASSEMENT GENERAL ET DERNIERS VOTES -->
-<div class="bottom-zone">
 
- <section class="panel">
-  <div id="boardView">
-   <div class="heading">🏆 CLASSEMENT GÉNÉRAL</div>
-   <div id="leaderboard"></div>
-  </div>
 
-  <div class="results" id="resultsView">
-   <div class="result-title">🎉 BONNES RÉPONSES !</div>
-   <div id="resultsList"></div>
-  </div>
- </section>
+</script>
 
- <div class="voters">
-  <div class="heading">🗳️ DERNIERS VOTES</div>
-  <div id="voteHistory">
-   <div class="vote-line">👀 Les derniers votes apparaîtront ici…</div>
-  </div>
- </div>
 
-</div>
+/* =========================================================
+   FLAG LIVE — CONFIGURATION
+========================================================= */
 
-<!-- BAREME DES CADEAUX -->
-<section class="gift-rules">
- <div class="gift-rules-title">🎁 BARÈME DES CADEAUX</div>
+(() => {
+  const $ = id => document.getElementById(id);
 
- <div class="rules-grid">
+  const SCORE_KEY = 'flaglive_demo_scores_v2';
+  const POINTS_PER_COIN = 10;
+  const ROUND_DURATION = 20;
+  const NEXT_ROUND_DELAY = 5000;
+  const GIFT_GOAL = 1000;
 
-  <div class="rule">
-   <div class="rule-icon">🌹</div>
-   <div class="rule-name">Rose · 1 pièce</div>
-   <div class="rule-points">+10 points</div>
-  </div>
-
-  <div class="rule">
-   <div class="rule-icon">🎁</div>
-   <div class="rule-name">Cadeau · 10 pièces</div>
-   <div class="rule-points">+100 points</div>
-  </div>
-
-  <div class="rule">
-   <div class="rule-icon">💎</div>
-   <div class="rule-name">Gros cadeau · 100 pièces</div>
-   <div class="rule-points">+1 000 points</div>
-  </div>
-
- </div>
-
- <div class="rules-note">
-  Chaque pièce TikTok offerte rapporte 10 points au classement général.
-  Plus le cadeau est cher, plus il rapporte de points.
- </div>
-</section>
-
-</div>
-
-<!-- COMMANDES ADMIN : HORS ECRAN DU LIVE -->
-<div class="admin">
-
- <div class="heading">⚙️ COMMANDES DU LIVE (non affichées dans le jeu)</div>
-
- <section class="panel">
-  <div class="heading">🔴 CONNEXION TIKTOK LIVE</div>
-  <div class="muted">Entre ton pseudo TikTok sans @ pour connecter le lecteur.</div>
-
-  <div class="connectbox">
-   <input id="tiktokUser" maxlength="40" placeholder="Pseudo TikTok">
-   <button id="tiktokConnect" type="button">Connecter</button>
-  </div>
-
-  <div class="tools">
-   <button id="newLiveReset" type="button">🔄 Nouveau LIVE · remettre à zéro</button>
-  </div>
-
-  <div class="livehint" id="liveState">
-   Non connecté · serveur Render prêt à recevoir les commentaires.
-  </div>
- </section>
-
- <section class="panel">
-  <div class="heading">🧪 TESTER UN VOTE (DÉMO)</div>
-  <div class="muted">Ajoute des joueurs fictifs pour tester le jeu.</div>
-
-  <form class="demoform" id="voteForm">
-   <input id="pseudo" maxlength="20" placeholder="Pseudo du joueur" required>
-   <select id="choice">
-    <option value="A">A</option>
-    <option value="B">B</option>
-    <option value="C">C</option>
-    <option value="D">D</option>
-   </select>
-   <button class="submit">Enregistrer le vote</button>
-  </form>
-
-  <div class="tools">
-   <button id="start" type="button">Relancer 20 s</button>
-   <button id="reveal" type="button">Terminer / révéler</button>
-  </div>
-
-  <div class="status" id="status">
-   Démo disponible · connecte TikTok ci-dessus pour recevoir les vrais votes.
-  </div>
- </section>
-
- <section class="panel">
-  <div class="heading">🎁 TESTER LES CADEAUX</div>
-  <div class="gift-demo">
-   <button type="button" id="demoRose">🌹 Tester une rose</button>
-   <button type="button" id="demoBig">💎 Tester un gros cadeau</button>
-  </div>
-  <div class="muted">
-   Cadeaux fictifs de démonstration : ils ne sont pas envoyés sur TikTok.
-  </div>
- </section>
-
-</div>
-
-<div class="foot">
- FLAG LIVE · Scores conservés sur cet appareil. Connexion TikTok via Render.
-</div>
-
-</main>
-
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-
-<script>
-(()=>{
-const $=id=>document.getElementById(id);
-const KEY='flaglive_demo_scores_v2';
-
-/* LISTE DES PAYS CONSERVEE */
-const countryData=`
+  const countryData = `
 NP|Népal|EXPERT
 BT|Bhoutan|EXPERT
 KI|Kiribati|EXPERT
@@ -1620,525 +1364,802 @@ VN|Vietnam|FACILE
 YE|Yémen|MOYEN
 `.trim();
 
-const countries=countryData.split('\n').map(line=>{
- const [code,name,difficulty]=line.split('|');
- return {code,name,difficulty};
-});
+  const countries = countryData.split('\n').map(line => {
+    const [code, name, difficulty] = line.split('|');
+    return { code, name, difficulty };
+  });
 
-let scores={};
-try{
- scores=JSON.parse(localStorage.getItem(KEY)||'{}');
-}catch(e){
- scores={};
-}
+  /* =========================================================
+     ÉTAT DU JEU
+  ========================================================= */
 
-let currentCountry=null;
-let roundActive=false;
-let timer=null;
-let nextRoundTimeout=null;
-let seconds=20;
-let roundNumber=0;
-let answeredUsers=new Set();
-let liveSocket=null;
-let usedCountries=[];
-let currentChoices=[];
-let voteHistory=[];
+  let scores = {};
 
-const flag=code=>String.fromCodePoint(...[...code].map(c=>127397+c.charCodeAt(0)));
-
-function escapeHTML(value){
- return String(value).replace(/[&<>"']/g,c=>({
-  '&':'&amp;',
-  '<':'&lt;',
-  '>':'&gt;',
-  '"':'&quot;',
-  "'":'&#39;'
- }[c]));
-}
-
-function setMessage(message){
- const el=$('status');
- if(el)el.textContent=message;
-}
-
-function saveScores(){
- try{
-  localStorage.setItem(KEY,JSON.stringify(scores));
- }catch(e){}
- renderRanking();
-}
-
-function renderRanking(){
- const list=$('leaderboard');
- if(!list)return;
-
- const sorted=Object.entries(scores)
-  .sort((a,b)=>b[1]-a[1])
-  .slice(0,6);
-
- list.innerHTML=sorted.length?sorted.map(([name,score],i)=>`
-  <div class="person">
-   <span class="rank">${i+1}.</span>
-   <span class="avatar">${escapeHTML(name.charAt(0).toUpperCase())}</span>
-   <span class="name">${escapeHTML(name)}</span>
-   <span class="score">${score} pts</span>
-  </div>
- `).join(''):'<div class="muted">En attente des joueurs…</div>';
-}
-
-function renderVotes(){
- const list=$('voteHistory');
- if(!list)return;
-
- list.innerHTML=voteHistory.length
-  ?voteHistory.map(v=>`
-   <div class="vote-line">
-    ${v.correct?'✅':'❌'} ${escapeHTML(v.name)} · ${escapeHTML(v.answer)}
-   </div>
-  `).join('')
-  :'<div class="vote-line">👀 Les derniers votes apparaîtront ici…</div>';
-}
-
-function addVoteHistory(name,answer,correct){
- voteHistory.unshift({name,answer,correct});
- voteHistory=voteHistory.slice(0,5);
- renderVotes();
-}
-
-function updateTimer(){
- $('seconds').textContent=seconds;
- $('fill').style.width=(seconds/20*100)+'%';
-}
-
-function chooseCountry(){
- let available=countries.filter(c=>!usedCountries.includes(c.code));
-
- if(!available.length){
-  usedCountries=[];
-  available=countries;
- }
-
- const chosen=available[Math.floor(Math.random()*available.length)];
- usedCountries.push(chosen.code);
- return chosen;
-}
-
-function startRound(){
- clearInterval(timer);
- clearTimeout(nextRoundTimeout);
- nextRoundTimeout=null;
-
- currentCountry=chooseCountry();
- roundActive=true;
- answeredUsers.clear();
- roundNumber++;
- seconds=20;
-
- $('flag').innerHTML='<img src="https://flagcdn.com/w320/'+currentCountry.code.toLowerCase()+'.png" alt="'+escapeHTML(currentCountry.name)+'">';
- $('question').textContent=currentCountry.difficulty+' · Quel pays est représenté par ce drapeau ?';
- $('boardView').style.display='block';
- $('resultsView').style.display='none';
-
- const choices=[currentCountry];
-
- while(choices.length<4){
-  const candidate=countries[Math.floor(Math.random()*countries.length)];
-
-  if(!choices.some(c=>c.code===candidate.code)){
-   choices.push(candidate);
+  try {
+    scores = JSON.parse(localStorage.getItem(SCORE_KEY) || '{}');
+    if (!scores || typeof scores !== 'object') scores = {};
+  } catch (error) {
+    scores = {};
   }
- }
 
- choices.sort(()=>Math.random()-.5);
- currentChoices=choices;
+  let currentCountry = null;
+  let currentChoices = [];
+  let roundActive = false;
+  let seconds = ROUND_DURATION;
+  let roundNumber = 0;
+  let timer = null;
+  let nextRoundTimeout = null;
+  let liveSocket = null;
 
- document.querySelectorAll('#answers .answer').forEach((button,i)=>{
-  button.textContent=['A','B','C','D'][i]+' · '+choices[i].name;
-  button.dataset.choice=['A','B','C','D'][i];
-  button.dataset.code=choices[i].code;
-  button.classList.remove('good','bad');
- });
+  const answeredUsers = new Set();
+  const usedCountries = [];
+  const voteHistory = [];
 
- setMessage('Question '+roundNumber+' · À vous de jouer !');
- updateTimer();
+  /* =========================================================
+     OUTILS
+  ========================================================= */
 
- timer=setInterval(()=>{
-  seconds--;
-  updateTimer();
-
-  if(seconds<=0){
-   endRound();
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, character => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    })[character]);
   }
- },1000);
-}
 
-function addPoints(username,points){
- if(!username)return;
-
- scores[username]=(scores[username]||0)+points;
- saveScores();
-}
-
-window.flagLiveAddPoints=addPoints;
-
-function processAnswer(username,answer){
- if(!roundActive||!currentCountry||!username)return;
-
- username=String(username).replace(/^@/,'').trim();
-
- if(!username||answeredUsers.has(username))return;
-
- const normalized=String(answer).trim().toLowerCase();
-
- const letter=normalized
-  .replace(/^(vote|réponse|reponse|!vote)\s*/i,'')
-  .trim();
-
- const button=document.querySelector(
-  '#answers .answer[data-choice="'+letter.toUpperCase()+'"]'
- );
-
- const selectedCode=button?button.dataset.code:null;
-
- const correct=
-  normalized===currentCountry.name.toLowerCase()||
-  normalized===currentCountry.code.toLowerCase()||
-  selectedCode===currentCountry.code;
-
- answeredUsers.add(username);
-
- let points=0;
-
- if(correct){
-  points=Math.max(20,100-(answeredUsers.size-1)*10);
-  addPoints(username,points);
-  setMessage('🎉 '+username+' a trouvé ! +'+points+' points');
- }else{
-  setMessage('❌ '+username+' a répondu. Continuez !');
- }
-
- addVoteHistory(username,String(answer),correct);
-}
-
-function handleChat(data){
- if(!data)return;
-
- const username=data.uniqueId||data.username||data.nickname||data.user;
- const message=data.comment||data.message||data.text||'';
-
- if(!username||!message)return;
-
- processAnswer(username,message);
-}
-
-function endRound(){
- if(!roundActive)return;
-
- roundActive=false;
- clearInterval(timer);
-seconds=0;
-updateTimer();
- $('question').textContent='Bonne réponse : '+currentCountry.name;
-
- document.querySelectorAll('#answers .answer').forEach(button=>{
-  if(button.dataset.code===currentCountry.code){
-   button.classList.add('good');
-  }else{
-   button.classList.add('bad');
+  function setMessage(message) {
+    const element = $('giftMessage');
+    if (element) element.textContent = message;
   }
- });
 
- const sorted=Object.entries(scores)
-  .sort((a,b)=>b[1]-a[1])
-  .slice(0,5);
+  function setStatus(message) {
+    const element = $('status');
+    if (element) element.textContent = 'Statut : ' + message;
+  }
 
- $('resultsList').innerHTML=sorted.length?sorted.map(([name,score],i)=>`
-  <div class="result-row">
-   <span>${i+1}. ${escapeHTML(name)}</span>
-   <strong>${score} pts</strong>
-  </div>
- `).join(''):'<div class="result-empty">Personne n’a encore marqué de points.</div>';
+  function saveScores() {
+    try {
+      localStorage.setItem(SCORE_KEY, JSON.stringify(scores));
+    } catch (error) {
+      console.warn('Impossible de sauvegarder les scores.', error);
+    }
+  }
 
- $('boardView').style.display='block';
-$('resultsView').style.display='none';
+  function flagEmoji(code) {
+    return String.fromCodePoint(
+      ...[...code].map(character => 127397 + character.charCodeAt(0))
+    );
+  }
 
- setMessage('La bonne réponse était : '+currentCountry.name+' !');
+  function getCountryFlagURL(code) {
+    return 'https://flagcdn.com/w640/' + code.toLowerCase() + '.png';
+  }
 
- nextRoundTimeout=setTimeout(()=>{
+  /* =========================================================
+     CLASSEMENT GÉNÉRAL
+  ========================================================= */
+
+  function renderRanking() {
+    const container = $('leaderboard');
+    if (!container) return;
+
+    const sorted = Object.entries(scores)
+      .filter(([name, score]) => name && Number.isFinite(Number(score)))
+      .sort((a, b) => Number(b[1]) - Number(a[1]))
+      .slice(0, 6);
+
+    if (!sorted.length) {
+      container.innerHTML =
+        '<div class="empty-state">Les joueurs apparaîtront ici.</div>';
+      return;
+    }
+
+    container.innerHTML = sorted.map(([name, points], index) => `
+      <div class="rank-row">
+        <div class="rank-number">${index + 1}</div>
+        <div class="rank-name">${escapeHTML(name)}</div>
+        <div class="rank-points">${Number(points).toLocaleString('fr-FR')} pts</div>
+      </div>
+    `).join('');
+  }
+
+  function addPoints(username, points) {
+    const name = String(username || 'Anonyme')
+      .replace(/^@/, '')
+      .trim()
+      .slice(0, 40);
+
+    const amount = Number(points);
+
+    if (!name || !Number.isFinite(amount) || amount <= 0) return;
+
+    if (!scores[name]) scores[name] = 0;
+
+    scores[name] += Math.round(amount);
+
+    saveScores();
+    renderRanking();
+  }
+
+  window.flagLiveAddPoints = addPoints;
+
+  /* =========================================================
+     HISTORIQUE DES VOTES
+  ========================================================= */
+
+  function renderVotes() {
+    const container = $('voteHistory');
+    if (!container) return;
+
+    if (!voteHistory.length) {
+      container.innerHTML =
+        '<div class="empty-state">En attente des premiers votes…</div>';
+      return;
+    }
+
+    container.innerHTML = voteHistory.slice(0, 5).map(vote => `
+      <div class="vote-row">
+        <div class="vote-user">
+          ${escapeHTML(vote.name)} · ${escapeHTML(vote.answer)}
+        </div>
+        <div class="vote-result ${vote.correct ? 'correct' : 'wrong'}">
+          ${vote.correct ? '✓ +100 pts' : '✕ Incorrect'}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function addVoteHistory(name, answer, correct) {
+    voteHistory.unshift({
+      name,
+      answer,
+      correct
+    });
+
+    if (voteHistory.length > 5) {
+      voteHistory.length = 5;
+    }
+
+    renderVotes();
+  }
+
+  /* =========================================================
+     CHRONOMÈTRE
+  ========================================================= */
+
+  function updateTimer() {
+    const secondsElement = $('seconds');
+    const fillElement = $('fill');
+
+    if (secondsElement) {
+      secondsElement.textContent = seconds;
+    }
+
+    if (fillElement) {
+      const percentage = Math.max(
+        0,
+        Math.min(100, seconds / ROUND_DURATION * 100)
+      );
+
+      fillElement.style.width = percentage + '%';
+    }
+  }
+
+  /* =========================================================
+     SÉLECTION DU PAYS
+  ========================================================= */
+
+  function chooseCountry() {
+    let available = countries.filter(country =>
+      !usedCountries.includes(country.code)
+    );
+
+    if (!available.length) {
+      usedCountries.length = 0;
+      available = [...countries];
+    }
+
+    const selected = available[
+      Math.floor(Math.random() * available.length)
+    ];
+
+    usedCountries.push(selected.code);
+
+    if (usedCountries.length > Math.floor(countries.length * 0.7)) {
+      usedCountries.shift();
+    }
+
+    return selected;
+  }
+
+  function shuffle(array) {
+    const result = [...array];
+
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+
+    return result;
+  }
+
+  /* =========================================================
+     LANCEMENT D'UNE QUESTION
+  ========================================================= */
+
+  function startRound() {
+    clearInterval(timer);
+    clearTimeout(nextRoundTimeout);
+    nextRoundTimeout = null;
+
+    currentCountry = chooseCountry();
+    roundActive = true;
+    answeredUsers.clear();
+
+    roundNumber++;
+    seconds = ROUND_DURATION;
+
+    const flagContainer = $('flag');
+
+    if (flagContainer) {
+      const image = document.createElement('img');
+
+      image.src = getCountryFlagURL(currentCountry.code);
+      image.alt = currentCountry.name;
+      image.loading = 'eager';
+
+      image.onerror = () => {
+        flagContainer.textContent = flagEmoji(currentCountry.code);
+        flagContainer.style.fontSize = '75px';
+      };
+
+      flagContainer.style.fontSize = '';
+      flagContainer.replaceChildren(image);
+    }
+
+    $('question').textContent =
+      currentCountry.difficulty +
+      ' · Quel pays est représenté par ce drapeau ?';
+
+    $('roundNumber').textContent = 'QUESTION ' + roundNumber;
+
+    $('boardView').style.display = 'block';
+    $('resultsView').style.display = 'none';
+
+    const choices = [currentCountry];
+
+    while (choices.length < 4) {
+      const candidate = countries[
+        Math.floor(Math.random() * countries.length)
+      ];
+
+      if (!choices.some(country => country.code === candidate.code)) {
+        choices.push(candidate);
+      }
+    }
+
+    currentChoices = shuffle(choices);
+
+    const letters = ['A', 'B', 'C', 'D'];
+
+    document.querySelectorAll('#answers .answer').forEach((button, index) => {
+      const country = currentChoices[index];
+
+      button.textContent = letters[index] + ' · ' + country.name;
+      button.dataset.choice = letters[index];
+      button.dataset.code = country.code;
+
+      button.classList.remove('good', 'bad');
+    });
+
+    setMessage('Question ' + roundNumber + ' · À vous de jouer !');
+
+    updateTimer();
+
+    timer = setInterval(() => {
+      seconds--;
+      updateTimer();
+
+      if (seconds <= 0) {
+        endRound();
+      }
+    }, 1000);
+  }
+
+  /* =========================================================
+     TRAITEMENT DES VOTES
+  ========================================================= */
+
+  function processAnswer(username, answer) {
+    if (!roundActive || !currentCountry) return;
+
+    const name = String(username || 'Anonyme')
+      .replace(/^@/, '')
+      .trim()
+      .slice(0, 40);
+
+    if (!name) return;
+
+    const userKey = name.toLowerCase();
+
+    if (answeredUsers.has(userKey)) return;
+
+    answeredUsers.add(userKey);
+
+    let normalized = String(answer || '')
+      .trim()
+      .toUpperCase();
+
+    normalized = normalized
+      .replace(/^!VOTE\s*/, '')
+      .replace(/^VOTE\s*/, '')
+      .replace(/^RÉPONSE\s*/, '')
+      .replace(/^REPONSE\s*/, '')
+      .replace(/[.!?]/g, '')
+      .trim();
+
+    let selectedCountry = null;
+
+    if (['A', 'B', 'C', 'D'].includes(normalized)) {
+      const index = ['A', 'B', 'C', 'D'].indexOf(normalized);
+      selectedCountry = currentChoices[index];
+    } else {
+      selectedCountry = currentChoices.find(country =>
+        country.name.toUpperCase() === normalized ||
+        country.code.toUpperCase() === normalized
+      );
+    }
+
+    const correct = Boolean(
+      selectedCountry &&
+      selectedCountry.code === currentCountry.code
+    );
+
+    if (correct) {
+      addPoints(name, 100);
+    }
+
+    addVoteHistory(name, normalized || '?', correct);
+
+    if (correct) {
+      setMessage('✅ ' + name + ' a trouvé la bonne réponse !');
+    }
+  }
+
+  /* =========================================================
+     FIN DE QUESTION
+  ========================================================= */
+
+  function endRound() {
+    if (!roundActive || !currentCountry) return;
+
+    roundActive = false;
+
+    clearInterval(timer);
+    seconds = 0;
+    updateTimer();
+
+    $('question').textContent =
+      'Bonne réponse : ' + currentCountry.name;
+
+    document.querySelectorAll('#answers .answer').forEach(button => {
+      if (button.dataset.code === currentCountry.code) {
+        button.classList.add('good');
+        button.classList.remove('bad');
+      } else {
+        button.classList.add('bad');
+        button.classList.remove('good');
+      }
+    });
+
+    $('boardView').style.display = 'block';
+    $('resultsView').style.display = 'none';
+
+    setMessage('La bonne réponse était : ' + currentCountry.name + ' !');
+
+    nextRoundTimeout = setTimeout(() => {
+      startRound();
+    }, NEXT_ROUND_DELAY);
+  }
+
+  /* =========================================================
+     LECTURE DES MESSAGES TIKTOK
+  ========================================================= */
+
+  function handleChat(data) {
+    if (!data) return;
+
+    const username =
+      data.uniqueId ||
+      data.nickname ||
+      data.username ||
+      data.user?.uniqueId ||
+      'Anonyme';
+
+    const comment =
+      data.comment ||
+      data.text ||
+      data.message ||
+      '';
+
+    if (!comment) return;
+
+    processAnswer(username, comment);
+  }
+
+  /* =========================================================
+     CONNEXION TIKTOK
+  ========================================================= */
+
+  function connectTikTok() {
+    const input = $('tiktokUser');
+
+    const username = input
+      ? input.value.trim().replace(/^@/, '')
+      : '';
+
+    if (!username) {
+      setStatus('entre un pseudo TikTok.');
+      return;
+    }
+
+    if (typeof io !== 'function') {
+      setStatus('erreur : Socket.IO ne s’est pas chargé.');
+      return;
+    }
+
+    if (liveSocket) {
+      liveSocket.disconnect();
+      liveSocket = null;
+    }
+
+    setStatus('connexion au serveur…');
+
+    liveSocket = io(
+      'https://tiktok-chat-reader-obz6.onrender.com',
+      {
+        transports: ['websocket', 'polling'],
+        reconnection: true,
+        reconnectionAttempts: 10,
+        timeout: 20000
+      }
+    );
+
+    liveSocket.on('connect', () => {
+      setStatus('serveur connecté, connexion à @' + username + '…');
+      liveSocket.emit('setUniqueId', username);
+    });
+
+    liveSocket.on('tiktokConnected', () => {
+      setStatus('live TikTok connecté : @' + username);
+    });
+
+    liveSocket.on('chat', handleChat);
+
+    liveSocket.on('roomUser', data => {
+      if (!data) return;
+
+      const count =
+        data.viewerCount ??
+        data.userCount ??
+        data.count;
+
+      if (count !== undefined && $('viewerCount')) {
+        $('viewerCount').textContent =
+          Number(count).toLocaleString('fr-FR');
+      }
+    });
+
+    liveSocket.on('follow', data => {
+      if (!data) return;
+
+      const name =
+        data.uniqueId ||
+        data.nickname ||
+        data.username ||
+        'Nouveau follower';
+
+      $('lastSub').textContent = name;
+    });
+
+    liveSocket.on('gift', data => {
+      if (typeof window.flagLiveProcessGift === 'function') {
+        window.flagLiveProcessGift(data);
+      }
+    });
+
+    liveSocket.on('tiktokDisconnected', () => {
+      setStatus('le live TikTok est déconnecté.');
+    });
+
+    liveSocket.on('streamEnd', () => {
+      setStatus('le live TikTok est terminé.');
+    });
+
+    liveSocket.on('disconnect', () => {
+      setStatus('déconnecté du serveur.');
+    });
+
+    liveSocket.on('connect_error', error => {
+      setStatus('erreur de connexion au serveur.');
+      console.error('Socket.IO:', error);
+    });
+  }
+
+  /* =========================================================
+     RÉINITIALISATION DU LIVE
+  ========================================================= */
+
+  function resetGame() {
+    if (!confirm('Réinitialiser le classement et les cadeaux ?')) {
+      return;
+    }
+
+    scores = {};
+    voteHistory.length = 0;
+    usedCountries.length = 0;
+
+    saveScores();
+    renderRanking();
+    renderVotes();
+
+    if (typeof window.flagLiveResetGifts === 'function') {
+      window.flagLiveResetGifts();
+    }
+
+    $('lastSub').textContent = 'En attente…';
+    $('viewerCount').textContent = '0';
+
+    roundNumber = 0;
+
+    setMessage('Nouveau live : les scores ont été réinitialisés.');
+
+    startRound();
+  }
+
+  /* =========================================================
+     ÉVÉNEMENTS DES BOUTONS
+  ========================================================= */
+
+  $('tiktokConnect').addEventListener('click', connectTikTok);
+  $('newLiveReset').addEventListener('click', resetGame);
+  $('start').addEventListener('click', startRound);
+  $('reveal').addEventListener('click', endRound);
+
+  $('voteForm').addEventListener('submit', event => {
+    event.preventDefault();
+
+    const username = $('pseudo').value.trim();
+    const answer = $('choice').value;
+
+    if (username) {
+      processAnswer(username, answer);
+    }
+
+    $('pseudo').value = '';
+  });
+
+  /* =========================================================
+     INITIALISATION
+  ========================================================= */
+
+  renderRanking();
+  renderVotes();
   startRound();
- },5000);
-}
-
-function connectTikTok(){
- const input=$('tiktokUser');
- const username=input?input.value.trim().replace(/^@/,''):'';
-
- if(!username){
-  $('liveState').textContent='Entre ton pseudo TikTok.';
-  return;
- }
-
- if(typeof io!=='function'){
-  $('liveState').textContent='Socket.IO indisponible. Recharge la page.';
-  return;
- }
-
- if(liveSocket){
-  liveSocket.disconnect();
-  liveSocket=null;
- }
-
- $('liveState').textContent='Connexion au serveur…';
-
- liveSocket=io('https://tiktok-chat-reader-obz6.onrender.com');
-
- liveSocket.on('connect',()=>{
-  liveSocket.emit('setUniqueId',username);
-  $('liveState').textContent='Serveur connecté · recherche du LIVE…';
- });
-
- liveSocket.on('tiktokConnected',()=>{
-  $('liveState').textContent='✅ TikTok connecté : @'+username;
- });
-
- liveSocket.on('chat',handleChat);
-
- liveSocket.on('roomUser',data=>{
-  const count=data.viewerCount||data.userCount||data.count;
-
-  if(count!==undefined){
-   $('viewerCount').textContent=count;
-  }
- });
-
- liveSocket.on('follow',data=>{
-  const name=data.uniqueId||data.nickname||data.username||'Nouveau follower';
-  $('lastSub').textContent=name;
- });
-
- liveSocket.on('gift',data=>{
-  if(typeof window.flagLiveProcessGift==='function'){
-   window.flagLiveProcessGift(data);
-  }
- });
-
- liveSocket.on('tiktokDisconnected',()=>{
-  $('liveState').textContent='TikTok déconnecté.';
- });
-
- liveSocket.on('streamEnd',()=>{
-  $('liveState').textContent='Le live est terminé.';
- });
-
- liveSocket.on('disconnect',()=>{
-  $('liveState').textContent='Connexion au serveur interrompue.';
- });
-
- liveSocket.on('connect_error',()=>{
-  $('liveState').textContent='Erreur de connexion au serveur.';
- });
-}
-
-function resetGame(){
- if(!confirm('Réinitialiser les scores et les cadeaux ?'))return;
-
- scores={};
- saveScores();
-
- voteHistory=[];
- renderVotes();
-
- if(typeof window.flagLiveResetGifts==='function'){
-  window.flagLiveResetGifts();
- }
-
- $('lastSub').textContent='En attente…';
- $('viewerCount').textContent='0';
-
- setMessage('Scores et cadeaux réinitialisés.');
- startRound();
-}
-
-$('tiktokConnect').addEventListener('click',connectTikTok);
-$('newLiveReset').addEventListener('click',resetGame);
-$('start').addEventListener('click',startRound);
-$('reveal').addEventListener('click',endRound);
-
-$('voteForm').addEventListener('submit',event=>{
- event.preventDefault();
-
- const username=$('pseudo').value.trim();
- const answer=$('choice').value;
-
- if(username){
-  processAnswer(username,answer);
- }
-
- $('pseudo').value='';
-});
-
-renderRanking();
-renderVotes();
-startRound();
 
 })();
-</script>
 
-<script>
-(()=>{
-const $=id=>document.getElementById(id);
 
-let giftTotal=0;
-let giftDonors={};
-const giftGoal=1000;
+/* ===========================================================
+   FLAG LIVE — SYSTÈME DES CADEAUX
+=========================================================== */
 
-/* 10 POINTS PAR PIECE TIKTOK */
-const POINTS_PER_COIN=10;
+(() => {
+  const $ = id => document.getElementById(id);
 
-function escapeHTML(value){
- return String(value).replace(/[&<>"']/g,c=>({
-  '&':'&amp;',
-  '<':'&lt;',
-  '>':'&gt;',
-  '"':'&quot;',
-  "'":'&#39;'
- }[c]));
-}
+  let giftTotal = 0;
+  let giftDonors = {};
 
-function getProfileImage(data){
- if(!data)return '';
+  const giftGoal = 1000;
+  const POINTS_PER_COIN = 10;
 
- const possible=[
-  data.profilePictureUrl,
-  data.profilePicture,
-  data.avatarUrl,
-  data.profilePictureURL,
-  data.user?.profilePictureUrl,
-  data.user?.avatarUrl
- ];
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, character => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    })[character]);
+  }
 
- const url=possible.find(v=>
-  typeof v==='string'&&/^https?:\/\//i.test(v)
- );
+  function getProfileImage(data) {
+    if (!data) return '';
 
- return url||'';
-}
+    return (
+      data.profilePictureUrl ||
+      data.profilePicture ||
+      data.avatarUrl ||
+      data.user?.profilePictureUrl ||
+      data.user?.avatarUrl ||
+      ''
+    );
+  }
 
-function renderGifts(){
- $('giftTotal').textContent=giftTotal.toLocaleString('fr-FR');
+  /* =========================================================
+     AFFICHAGE DU TOP 5 DONATEURS
+  ========================================================= */
 
- $('giftProgress').style.width=
-  Math.min(100,giftTotal/giftGoal*100)+'%';
+  function renderGifts() {
+    $('giftTotal').textContent =
+      giftTotal.toLocaleString('fr-FR');
 
- const ranking=$('giftLeaderboard');
+    const percentage = Math.min(
+      100,
+      giftTotal / giftGoal * 100
+    );
 
- const donors=Object.entries(giftDonors)
-  .sort((a,b)=>b[1].coins-a[1].coins)
-  .slice(0,5);
+    $('giftProgress').style.width = percentage + '%';
 
- ranking.innerHTML=donors.length
-  ?donors.map(([name,donor],i)=>{
-   const avatar=donor.image
-    ?`<img class="donor-avatar" src="${escapeHTML(donor.image)}" alt="">`
-    :`<span class="donor-avatar">${escapeHTML(name.charAt(0).toUpperCase())}</span>`;
+    const donors = Object.entries(giftDonors)
+      .sort((a, b) => b[1].coins - a[1].coins)
+      .slice(0, 5);
 
-   return `
-    <div class="donor-row">
-     <span class="donor-rank">${i+1}.</span>
-     ${avatar}
-     <span class="donor-name">${escapeHTML(name)}</span>
-     <span class="donor-score">${donor.points.toLocaleString('fr-FR')} pts</span>
-    </div>
-   `;
-  }).join('')
-  :'<div class="donor-empty">En attente des cadeaux…</div>';
-}
+    const container = $('giftLeaderboard');
 
-function processGift(data){
- if(!data)return;
+    if (!donors.length) {
+      container.innerHTML =
+        '<div class="donor-empty">En attente des cadeaux…</div>';
+      return;
+    }
 
- const username=String(
-  data.uniqueId||data.username||data.nickname||data.user||'Anonyme'
- ).replace(/^@/,'');
+    container.innerHTML = donors.map(([name, donor], index) => {
+      const avatar = donor.image
+        ? `<img class="donor-avatar" src="${escapeHTML(donor.image)}" alt="" onerror="this.style.display='none'">`
+        : `<div class="donor-initial">${escapeHTML(name.charAt(0).toUpperCase())}</div>`;
 
- const diamondCount=Number(
-  data.coins||data.diamondCount||data.diamonds||data.value||1
- );
+      return `
+        <div class="donor-row">
+          <div class="donor-rank">${index + 1}</div>
+          ${avatar}
+          <div class="donor-name">${escapeHTML(name)}</div>
+          <div class="donor-coins">
+            ${donor.coins.toLocaleString('fr-FR')} 🪙
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
 
- const repeatCount=Number(data.repeatCount||1);
- const coins=diamondCount*repeatCount;
+  /* =========================================================
+     TRAITEMENT D'UN CADEAU
+  ========================================================= */
 
- if(!Number.isFinite(coins)||coins<=0)return;
+  function processGift(data) {
+    if (!data) return;
 
- const points=coins*POINTS_PER_COIN;
- const image=getProfileImage(data);
+    /*
+      TikTok peut envoyer plusieurs événements pour un cadeau
+      répété. On attend la fin de la série pour éviter de
+      compter plusieurs fois le même cadeau.
+    */
+    if (data.repeatEnd === false) return;
 
- giftTotal+=coins;
+    const username = String(
+      data.uniqueId ||
+      data.username ||
+      data.nickname ||
+      data.user?.uniqueId ||
+      data.user ||
+      'Anonyme'
+    ).replace(/^@/, '').trim().slice(0, 40);
 
- if(!giftDonors[username]){
-  giftDonors[username]={
-   coins:0,
-   points:0,
-   image:''
+    const diamondCount = Number(
+      data.coins ??
+      data.diamondCount ??
+      data.diamonds ??
+      data.value ??
+      1
+    );
+
+    const repeatCount = Number(data.repeatCount || 1);
+
+    const coins = diamondCount * repeatCount;
+
+    if (!Number.isFinite(coins) || coins <= 0) return;
+
+    const points = coins * POINTS_PER_COIN;
+    const image = getProfileImage(data);
+
+    giftTotal += coins;
+
+    if (!giftDonors[username]) {
+      giftDonors[username] = {
+        coins: 0,
+        points: 0,
+        image: ''
+      };
+    }
+
+    giftDonors[username].coins += coins;
+    giftDonors[username].points += points;
+
+    if (image) {
+      giftDonors[username].image = image;
+    }
+
+    if (typeof window.flagLiveAddPoints === 'function') {
+      window.flagLiveAddPoints(username, points);
+    }
+
+    $('giftLatest').textContent =
+      '🎁 ' + username + ' : ' +
+      coins.toLocaleString('fr-FR') + ' pièces';
+
+    $('giftMessage').textContent =
+      '🎁 ' + username + ' gagne ' +
+      points.toLocaleString('fr-FR') + ' points !';
+
+    renderGifts();
+  }
+
+  window.flagLiveProcessGift = processGift;
+
+  /* =========================================================
+     RESET DES CADEAUX
+  ========================================================= */
+
+  window.flagLiveResetGifts = () => {
+    giftTotal = 0;
+    giftDonors = {};
+
+    $('giftLatest').textContent =
+      '🎁 En attente du premier cadeau…';
+
+    $('giftMessage').textContent =
+      '🎁 Les cadeaux rapportent des points supplémentaires !';
+
+    renderGifts();
   };
- }
 
- giftDonors[username].coins+=coins;
- giftDonors[username].points+=points;
+  /* =========================================================
+     CADEAUX DE DÉMONSTRATION
+  ========================================================= */
 
- if(image){
-  giftDonors[username].image=image;
- }
+  $('demoRose').addEventListener('click', () => {
+    processGift({
+      uniqueId: 'JoueurDemo',
+      coins: 1,
+      repeatCount: 1,
+      repeatEnd: true
+    });
+  });
 
- /* LES CADEAUX AJOUTENT DES POINTS AU CLASSEMENT GENERAL */
- if(typeof window.flagLiveAddPoints==='function'){
-  window.flagLiveAddPoints(username,points);
- }
+  $('demoBig').addEventListener('click', () => {
+    processGift({
+      uniqueId: 'JoueurDemo',
+      coins: 100,
+      repeatCount: 1,
+      repeatEnd: true
+    });
+  });
 
- $('giftLatest').textContent=
-  '🎁 '+username+' : '+coins.toLocaleString('fr-FR')+' pièces';
-
- $('giftMessage').textContent=
-  '🎁 '+username+' gagne '+points.toLocaleString('fr-FR')+' points !';
-
- renderGifts();
-}
-
-window.flagLiveProcessGift=processGift;
-
-window.flagLiveResetGifts=()=>{
- giftTotal=0;
- giftDonors={};
-
- $('giftLatest').textContent='🎁 En attente du premier cadeau…';
-
- $('giftMessage').textContent=
-  '🎁 Les cadeaux rapportent des points supplémentaires !';
-
- renderGifts();
-};
-
-/* TESTS FICTIFS */
-$('demoRose').addEventListener('click',()=>{
- processGift({
-  uniqueId:'JoueurDemo',
-  coins:1,
-  profilePictureUrl:''
- });
-});
-
-$('demoBig').addEventListener('click',()=>{
- processGift({
-  uniqueId:'JoueurDemo',
-  coins:1000,
-  profilePictureUrl:''
- });
-});
-
-renderGifts();
+  renderGifts();
 
 })();
-</script>
 
-</body>
-</html>
+
+/* ===========================================================
+   MODE OVERLAY TIKTOK LIVE STUDIO
+=========================================================== */
+
+(() => {
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.get('overlay') === '1') {
+    document.documentElement.classList.add('overlay-mode');
+  }
+})();
+</script>
