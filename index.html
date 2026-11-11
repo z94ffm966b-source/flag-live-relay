@@ -458,7 +458,14 @@ html.overlay-mode .donor-person img{
 html.overlay-mode .score{font-size:clamp(8px,.8vw,10px)}
 html.overlay-mode .donor-coins{font-size:clamp(8px,.8vw,10px)}
 html.overlay-mode .voters{grid-row:8;padding:7px;font-size:11px}
-html.overlay-mode .cta{grid-row:9;padding:8px;font-size:clamp(11px,1.1vw,14px)}
+html.overlay-mode .cta{
+  grid-row:9;
+  padding:5px 1px;
+  font-size:7px;
+  letter-spacing:-0.4px;
+  white-space:nowrap;
+  overflow:hidden;
+}
 
 /* AFFICHAGE COMPACT DES 5 BONNES RÉPONSES */
 html.overlay-mode #resultsView{
@@ -645,8 +652,8 @@ html.overlay-mode .below-controls .foot{
     font-size:9px;
   }
   html.overlay-mode .cta{
-    font-size:8px !important;
-    letter-spacing:-0.3px;
+    font-size:7px !important;
+    letter-spacing:-0.4px;
     transform:scaleX(0.95);
     transform-origin:center;
   }
@@ -698,8 +705,8 @@ html.overlay-mode .below-controls .foot{
 
 <div class="voters" id="voters">👀 Les derniers votes apparaîtront ici…</div>
 
-<div class="cta" style="white-space:nowrap;overflow:hidden;text-overflow:clip;padding:5px 2px;font-size:9px">
-  🎁 1 pièce = 50 pts · 10 = 600 pts · 100 = 6 500 pts · 500 = 35 000 pts · 🌹 1 pièce = passer la question
+<div class="cta" style="white-space:nowrap;overflow:hidden;padding:5px 1px;font-size:7px;letter-spacing:-0.4px">
+  🌹 1 ROSE = PASSER LA QUESTION · 🎁 1 PIÈCE = 50 PTS · 10 = 600 · 100 = 6 500 · 500 = 35 000
 </div>
 </main>
 
@@ -736,6 +743,7 @@ html.overlay-mode .below-controls .foot{
 
 <div class="foot">FLAG LIVE · Les scores et cadeaux sont sauvegardés sur cet appareil.</div>
 </div>
+
 <script>
 window.socketIoReady=new Promise(resolve=>{
   const urls=[
@@ -755,7 +763,6 @@ window.socketIoReady=new Promise(resolve=>{
   load(0);
 });
 </script>
-
 <script>
 (()=>{
 'use strict';
