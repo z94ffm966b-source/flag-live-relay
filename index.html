@@ -255,11 +255,24 @@ body{
 .result-row{
   display:flex;
   justify-content:space-between;
+  align-items:center;
+  gap:5px;
   padding:7px;
   border-bottom:1px solid #ffffff22;
   font-weight:800;
+  min-width:0;
 }
-.result-row strong{color:#7dffb2}
+.result-row span{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.result-row strong{
+  color:#7dffb2;
+  white-space:nowrap;
+  flex-shrink:0;
+}
 .tools{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -447,6 +460,29 @@ html.overlay-mode .donor-coins{font-size:clamp(8px,.8vw,10px)}
 html.overlay-mode .voters{grid-row:8;padding:7px;font-size:11px}
 html.overlay-mode .cta{grid-row:9;padding:8px;font-size:clamp(11px,1.1vw,14px)}
 
+/* AFFICHAGE COMPACT DES 5 BONNES RÉPONSES */
+html.overlay-mode #resultsView{
+  min-width:0;
+  overflow:hidden;
+}
+html.overlay-mode #resultsList{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  min-width:0;
+  overflow:hidden;
+}
+html.overlay-mode .result-row{
+  min-height:19px;
+  padding:3px 4px;
+  gap:4px;
+  font-size:clamp(8px,.75vw,10px);
+  line-height:1.1;
+}
+html.overlay-mode .result-row strong{
+  font-size:clamp(8px,.72vw,9px);
+}
+
 html.overlay-mode .below-controls{
   display:flex!important;
   flex-direction:column;
@@ -499,9 +535,12 @@ html.overlay-mode .below-controls .foot{
     max-width:94%;
     max-height:34vh;
   }
+  html.overlay-mode .result-row{
+    font-size:10px;
+    padding:5px;
+  }
 }
 
-/* CORRECTION PC : TOUT DOIT TENIR DANS LE CADRE */
 @media (min-width:700px){
   html.overlay-mode .app{
     height:94vh;
@@ -609,7 +648,13 @@ html.overlay-mode .below-controls .foot{
     letter-spacing:-0.3px;
     transform:scaleX(0.95);
     transform-origin:center;
-}
+  }
+  html.overlay-mode .result-row{
+    min-height:18px;
+    padding:2px 3px;
+    font-size:9px;
+  }
+  html.overlay-mode .result-row strong{font-size:8px}
 }
 </style>
 </head>
@@ -954,6 +999,80 @@ const normalize=value=>String(value??'')
   .replace(/[\u0300-\u036f]/g,'')
   .replace(/[^a-z0-9]/g,'');
 
+/* CALCUL DE DISTANCE POUR TOLÉRER LES PETITES FAUTES */
+function editDistance(a,b){
+  const matrix=Array.from(
+    {length:a.length+1},
+    ()=>Array(b.length+1).fill(0)
+  );
+
+  for(let i=0;i<=a.length;i++)matrix[i][0]=i;
+  for(let j=0;j<=b.length;j++)matrix[0][j]=j;
+
+  for(let i=1;i<=a.length;i++){
+    for(let j=1;j<=b.length;j++){
+      const cost=a[i-1]===b[j-1]?0:1;
+
+      matrix[i][j]=Math.min(
+        matrix[i-1][j]+1,
+        matrix[i][j-1]+1,
+        matrix[i-1][j-1]+cost
+      );
+    }
+  }
+
+  return matrix[a.length][b.length];
+}
+
+/* RECONNAÎTRE UNE LETTRE OU UN NOM DE PAYS */
+function detectChoice(raw){
+  const cleaned=normalize(
+    raw.replace(/^(vote|reponse|answer|!vote)\s*/i,'')
+  );
+
+  if(/^[abcd]$/.test(cleaned)){
+    return cleaned.toUpperCase();
+  }
+
+  const options=[...$('answers').querySelectorAll('.answer')].map(button=>({
+    choice:button.dataset.choice,
+    name:normalize(
+      button.textContent.replace(/^[A-D]\s*[·.-]\s*/,'')
+    )
+  }));
+
+  if(!cleaned)return null;
+
+  /* Correspondance exacte sans accents ni espaces */
+  const exact=options.find(option=>option.name===cleaned);
+  if(exact)return exact.choice;
+
+  /* Correspondance avec une petite faute de frappe */
+  const matches=options
+    .map(option=>({
+      ...option,
+      distance:editDistance(cleaned,option.name)
+    }))
+    .sort((a,b)=>a.distance-b.distance);
+
+  if(!matches.length)return null;
+
+  const best=matches[0];
+  const second=matches[1];
+
+  const maxLength=Math.max(cleaned.length,best.name.length);
+
+  let allowedErrors=0;
+  if(maxLength>=8)allowedErrors=2;
+  else if(maxLength>=4)allowedErrors=1;
+
+  /* Refuser les réponses trop éloignées ou ambiguës */
+  if(best.distance>allowedErrors)return null;
+  if(second&&second.distance===best.distance)return null;
+
+  return best.choice;
+}
+
 function persist(){
   try{
     localStorage.setItem(SCORE_KEY,JSON.stringify(scores));
@@ -1150,7 +1269,7 @@ function finishRound(){
   $('resultsView').style.display='block';
 
   $('resultsList').innerHTML=results.length
-    ?results.map((r,i)=>`
+    ?results.slice(0,5).map((r,i)=>`
       <div class="result-row">
         <span>${i+1}. ${escapeHTML(r.name)}</span>
         <strong>+${r.pts} PTS</strong>
@@ -1181,22 +1300,7 @@ function receiveVote(message){
 
   if(!name||!raw||votes[name])return;
 
-  const cleaned=normalize(
-    raw.replace(/^(vote|reponse|answer|!vote)\s*/i,'')
-  );
-
-  let choice=null;
-
-  if(/^[abcd]$/.test(cleaned)){
-    choice=cleaned.toUpperCase();
-  }else{
-    const button=[...$('answers').querySelectorAll('.answer')]
-      .find(b=>normalize(
-        b.textContent.replace(/^[A-D]\s*[·.-]\s*/,'')
-      )===cleaned);
-
-    if(button)choice=button.dataset.choice;
-  }
+  const choice=detectChoice(raw);
 
   if(!choice)return;
 
