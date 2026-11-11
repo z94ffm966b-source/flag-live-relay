@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="fr">
 <head>
@@ -695,6 +696,7 @@ html.overlay-mode .donor-rate{
 <div class="voters" id="voters">👀 Les derniers votes apparaîtront ici…</div>
 <div class="cta">🌍 REJOINS LE LIVE ET TENTE TA CHANCE !</div>
 </main>
+
 <div class="below-controls">
 <section class="panel" id="connectionPanel">
   <div class="heading">🔴 CONNEXION TIKTOK LIVE</div>
@@ -721,12 +723,14 @@ html.overlay-mode .donor-rate{
     <button id="reveal" type="button">Terminer / révéler</button>
     <button id="demoRose" type="button">🌹 Tester une rose</button>
     <button id="demoGift" type="button">🎁 Tester 100 pièces</button>
+    <button id="demoFive" type="button">🎁 Générer 5 donateurs</button>
   </div>
   <div class="status" id="status">Initialisation…</div>
 </section>
 
 <div class="foot">FLAG LIVE · Les scores et cadeaux sont sauvegardés sur cet appareil.</div>
 </div>
+
 <script>
 window.socketIoReady=new Promise(resolve=>{
   const urls=[
@@ -1126,6 +1130,7 @@ function nextQuestion(){
 
   round++;
 }
+
 function startRound(){
   stopTimer();
   if(window.roundTimeout)clearTimeout(window.roundTimeout);
@@ -1413,6 +1418,15 @@ $('demoRose').addEventListener('click',()=>{
 
 $('demoGift').addEventListener('click',()=>{
   addGift('Donateur démo',100);
+});
+
+/* GÉNÉRER 5 DONATEURS DE TEST */
+$('demoFive').addEventListener('click',()=>{
+  for(let i=1;i<=5;i++){
+    addGift('Donateur test '+i,1000*i);
+  }
+  $('status').textContent=
+    '5 donateurs de test ajoutés · classement actualisé.';
 });
 
 /* DÉMARRAGE */
