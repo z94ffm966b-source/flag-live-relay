@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="fr">
 <head>
@@ -113,7 +112,7 @@ body{
   transition:width .2s linear;
 }
 
-/* DRAPEAU : la taille est appliquée à l'image elle-même */
+/* DRAPEAU */
 .flag{
   width:100%;
   min-height:0;
@@ -304,7 +303,7 @@ input,select{
   margin-top:8px;
 }
 
-/* PETITS ÉCRANS */
+/* AFFICHAGE MOBILE */
 @media(max-width:650px){
   body{padding:8px;align-items:flex-start}
   .app{padding:12px;gap:9px;border-radius:17px}
@@ -330,166 +329,152 @@ input,select{
   .panels{grid-template-columns:1fr}
 }
 
-/* MODE TIKTOK LIVE : page verticale 9:16 */
-html.overlay-mode,html.overlay-mode body{
+/* MODE TIKTOK LIVE : BLOC VERTICAL AU CENTRE */
+html.overlay-mode,
+html.overlay-mode body{
   width:100%;
   height:100%;
   min-height:0;
   overflow:hidden;
 }
 html.overlay-mode body{
-  display:block;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   padding:0;
-  background:transparent;
+  background:
+    radial-gradient(ellipse at 12% 50%,#8b35c955 0,transparent 38%),
+    radial-gradient(ellipse at 88% 50%,#2868d955 0,transparent 38%),
+    linear-gradient(120deg,#080012,#1a0630 48%,#080019);
 }
+html.overlay-mode body::before,
+html.overlay-mode body::after{
+  content:"";
+  position:fixed;
+  top:0;
+  bottom:0;
+  width:calc((100vw - min(100vw, 52.875vh)) / 2);
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse at 50% 35%,#c35cff30,transparent 58%),
+    linear-gradient(180deg,#67219a55,#16052b22,#174b9955);
+}
+html.overlay-mode body::before{left:0}
+html.overlay-mode body::after{right:0}
+
 html.overlay-mode .app{
-  width:100%;
-  height:100%;
-  max-width:none;
-  min-height:0;
-  margin:0;
-  padding:12px 18px;
+  width:min(52.875vh,100vw);
+  height:94vh;
+  max-width:52.875vh;
+  min-width:0;
+  aspect-ratio:9/16;
+  margin:auto;
+  padding:10px 12px;
   border:0;
   border-radius:0;
-  background:transparent;
-  box-shadow:none;
+  background:linear-gradient(180deg,#17052def,#0b0018f5);
+  box-shadow:0 0 45px #a33cff33;
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:auto auto 6px minmax(0,1fr) auto auto minmax(105px,19%) auto auto;
+  align-content:stretch;
+  gap:clamp(5px,.8vh,10px);
   overflow:hidden;
-  display:flex;
-  gap:clamp(5px,1vh,13px);
-  justify-content:space-evenly;
 }
-html.overlay-mode .top{flex:0 0 auto}
-html.overlay-mode .stat{
-  font-size:clamp(14px,1.4vw,21px);
-  padding:8px;
-  background:#100020dd;
-}
-html.overlay-mode .stat b{font-size:clamp(18px,2vw,27px)}
-html.overlay-mode .logo{font-size:clamp(30px,4vw,46px)}
+
+html.overlay-mode .top{grid-row:1;min-width:0}
 html.overlay-mode .timer{
-  width:clamp(60px,7vh,90px);
-  height:clamp(60px,7vh,90px);
-  font-size:clamp(26px,3vh,38px);
+  grid-row:2;
+  width:clamp(54px,6vh,72px);
+  height:clamp(54px,6vh,72px);
+  font-size:clamp(24px,2.8vh,34px);
 }
+html.overlay-mode .track{grid-row:3;width:100%;height:6px}
 html.overlay-mode .flag{
-  flex:1 1 auto;
+  grid-row:4;
   min-height:0;
+  width:100%;
+  height:100%;
   margin:0;
   overflow:hidden;
 }
 html.overlay-mode #flag img{
-  width:auto;
-  height:auto;
-  max-width:94%;
-  max-height:100%;
+  display:block;
+  width:auto!important;
+  height:auto!important;
+  max-width:94%!important;
+  max-height:100%!important;
   object-fit:contain;
 }
-html.overlay-mode .flag-fallback{
-  font-size:clamp(190px,30vw,400px);
-}
+html.overlay-mode .flag-fallback{font-size:clamp(150px,24vh,300px)}
 html.overlay-mode .question{
-  flex:0 0 auto;
-  font-size:clamp(23px,2.5vw,38px);
-  padding:10px;
-  margin:0;
+  grid-row:5;
+  font-size:clamp(17px,1.8vw,24px);
+  padding:9px 12px;
 }
-html.overlay-mode .answers{
-  flex:0 0 auto;
-  gap:10px;
-}
+html.overlay-mode .answers{grid-row:6;gap:8px}
 html.overlay-mode .answer{
-  min-height:clamp(52px,6vh,82px);
-  font-size:clamp(17px,2vw,26px);
+  min-height:clamp(46px,5.2vh,64px);
+  font-size:clamp(13px,1.35vw,18px);
+  padding:8px;
 }
 html.overlay-mode .panels{
-  flex:1 1 18%;
+  grid-row:7;
   min-height:0;
+  height:100%;
   overflow:hidden;
-  gap:10px;
+  gap:8px;
 }
-html.overlay-mode .panel{padding:8px;overflow:hidden}
-html.overlay-mode .heading{font-size:clamp(12px,1.5vw,18px)}
-html.overlay-mode .person,html.overlay-mode .donor-person{
-  font-size:clamp(11px,1.3vw,16px);
-  padding:4px 1px;
+html.overlay-mode .panel{min-width:0;min-height:0;padding:6px;overflow:hidden}
+html.overlay-mode .heading{font-size:clamp(10px,1.1vw,14px);margin-bottom:5px}
+html.overlay-mode .person,
+html.overlay-mode .donor-person{
+  font-size:clamp(9px,1vw,12px);
+  gap:5px;
+  padding:3px 1px;
 }
-html.overlay-mode .avatar,html.overlay-mode .donor-person img{
-  width:25px;height:25px;flex-basis:25px;
+html.overlay-mode .avatar,
+html.overlay-mode .donor-person img{
+  width:21px;height:21px;flex-basis:21px;
 }
-html.overlay-mode .score,html.overlay-mode .donor-coins{
-  font-size:clamp(10px,1.2vw,15px);
-}
-html.overlay-mode .voters,html.overlay-mode .cta{
-  flex:0 0 auto;
-  margin:0;
-}
+html.overlay-mode .score,
+html.overlay-mode .donor-coins{font-size:clamp(9px,.95vw,12px)}
+html.overlay-mode .voters{grid-row:8;padding:7px;font-size:11px}
+html.overlay-mode .cta{grid-row:9;padding:8px;font-size:clamp(11px,1.1vw,14px)}
+
 html.overlay-mode #connectionPanel,
 html.overlay-mode #adminPanel,
 html.overlay-mode .foot{display:none!important}
-@media(max-height:1100px){
-  html.overlay-mode .app{padding:8px 12px;gap:5px}
-  html.overlay-mode #flag img{max-height:100%}
-  html.overlay-mode .panel{padding:5px}
-  html.overlay-mode .person,html.overlay-mode .donor-person{padding:2px 0}
-  html.overlay-mode .voters{padding:6px;font-size:11px}
-  html.overlay-mode .cta{padding:7px;font-size:13px}
-}
 
-/* QUIZ TIKTOK CENTRÉ DANS LA PAGE */
-@media (min-width:700px){
-  html.overlay-mode,
+@media(max-width:699px){
   html.overlay-mode body{
-    width:100%;
-    height:100%;
+    display:block;
+    overflow:auto;
     min-height:100%;
-    overflow:hidden;
+    background:var(--bg);
   }
-
-  html.overlay-mode body{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:0;
-    background:
-      radial-gradient(ellipse at 15% 50%,#7227ad55,transparent 40%),
-      radial-gradient(ellipse at 85% 50%,#2459bd55,transparent 40%),
-      linear-gradient(135deg,#090014,#1b0734,#08001b);
-  }
-
-  html.overlay-mode body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    background:
-      linear-gradient(90deg,
-        #8c32c522 0%,
-        transparent 24%,
-        transparent 76%,
-        #326bda22 100%);
-  }
-
   html.overlay-mode .app{
-    width:auto;
-    height:min(94vh, calc(94vw * 16 / 9));
-    aspect-ratio:9 / 16;
-    max-width:calc(94vh * 9 / 16);
-    margin:auto;
-    padding:10px;
+    width:100%;
+    height:auto;
+    min-height:100vh;
+    aspect-ratio:auto;
+    padding:12px;
     border:0;
     border-radius:0;
-    background:transparent;
+    background:linear-gradient(180deg,#190733,#090014);
     box-shadow:none;
-    position:relative;
-    z-index:1;
+    overflow:visible;
+    display:flex;
+    flex-direction:column;
+    gap:9px;
   }
-
   html.overlay-mode #flag img{
     max-width:94%;
-    max-height:100%;
+    max-height:34vh;
   }
 }
-
 </style>
 </head>
 
@@ -567,7 +552,6 @@ html.overlay-mode .foot{display:none!important}
 </main>
 
 <script>
-/* Chargement de Socket.IO avec plusieurs sources de secours */
 window.socketIoReady=new Promise(resolve=>{
   const urls=[
     'https://cdn.socket.io/4.7.5/socket.io.min.js',
@@ -601,7 +585,6 @@ const SCORE_KEY='flaglive_scores_v3';
 const DONOR_KEY='flaglive_donors_v2';
 const DURATION=20;
 
-/* BANQUE DE PAYS */
 const countryData=`
 NP|Népal|EXPERT
 BT|Bhoutan|EXPERT
@@ -930,8 +913,6 @@ function nextQuestion(){
   img.id='currentFlagImage';
   img.loading='eager';
   img.decoding='async';
-
-  /* Taille réelle de l'image, pas celle d'un grand conteneur vide */
   img.style.cssText=
     'display:block;width:auto;height:auto;max-width:min(90%,760px);max-height:390px;object-fit:contain';
 
@@ -969,7 +950,6 @@ function nextQuestion(){
 
   round++;
 }
-
 function startRound(){
   stopTimer();
   if(window.roundTimeout)clearTimeout(window.roundTimeout);
