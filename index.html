@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="fr">
 <head>
@@ -465,11 +464,6 @@ html.overlay-mode .below-controls .foot{
   display:block!important;
   width:100%;
 }
-html.overlay-mode .donor-rate{
-  font-size:8px;
-  line-height:1.25;
-  margin-top:4px;
-}
 
 @media(max-width:699px){
   html.overlay-mode body{
@@ -525,54 +519,39 @@ html.overlay-mode .donor-rate{
       auto;
   }
 
-  /* Haut de l'écran */
-  html.overlay-mode .top{
-    gap:6px;
-  }
-
+  html.overlay-mode .top{gap:6px}
   html.overlay-mode .stat{
     padding:5px 4px;
     font-size:10px;
     line-height:1.2;
     border-radius:9px;
   }
-
   html.overlay-mode .stat b{
     font-size:14px;
     line-height:1.15;
     overflow-wrap:anywhere;
   }
-
   html.overlay-mode .logo{
     font-size:24px;
     line-height:.9;
   }
-
   html.overlay-mode .logo small{
     font-size:7px;
     letter-spacing:1px;
     margin-top:5px;
   }
-
-  /* Chrono */
   html.overlay-mode .timer{
     width:48px;
     height:48px;
     font-size:23px;
     border-width:3px;
   }
-
-  html.overlay-mode .timer small{
-    font-size:7px;
-  }
-
-  /* Drapeau : garder une vraie place pour l'image */
+  html.overlay-mode .timer small{font-size:7px}
   html.overlay-mode .flag{
     min-height:0;
     height:100%;
     margin:0;
   }
-
   html.overlay-mode #flag img{
     max-width:94%!important;
     max-height:100%!important;
@@ -580,42 +559,31 @@ html.overlay-mode .donor-rate{
     height:auto!important;
     object-fit:contain;
   }
-
-  /* Question et réponses */
   html.overlay-mode .question{
     padding:6px 8px;
     font-size:15px;
     line-height:1.2;
   }
-
-  html.overlay-mode .answers{
-    gap:5px;
-  }
-
+  html.overlay-mode .answers{gap:5px}
   html.overlay-mode .answer{
     min-height:37px;
     padding:5px;
     font-size:12px;
     line-height:1.15;
   }
-
-  /* Classement et cadeaux */
   html.overlay-mode .panels{
     min-height:0;
     height:100%;
     gap:6px;
   }
-
   html.overlay-mode .panel{
     padding:5px;
     min-height:0;
   }
-
   html.overlay-mode .heading{
     font-size:10px;
     margin-bottom:4px;
   }
-
   html.overlay-mode .person,
   html.overlay-mode .donor-person{
     gap:4px;
@@ -623,35 +591,24 @@ html.overlay-mode .donor-rate{
     font-size:9px;
     min-height:23px;
   }
-
-  html.overlay-mode .person:nth-child(n+6){
-    display:none;
-  }
-
+  html.overlay-mode .person:nth-child(n+6){display:none}
   html.overlay-mode .avatar,
   html.overlay-mode .donor-person img{
     width:17px;
     height:17px;
     flex-basis:17px;
   }
-
   html.overlay-mode .score,
-  html.overlay-mode .donor-coins{
-    font-size:9px;
-  }
-
-  /* Bas de l'écran */
+  html.overlay-mode .donor-coins{font-size:9px}
   html.overlay-mode .voters{
     padding:5px;
     font-size:9px;
   }
-
   html.overlay-mode .cta{
     padding:6px;
     font-size:10px;
   }
 }
-
 </style>
 </head>
 
@@ -689,12 +646,19 @@ html.overlay-mode .donor-rate{
   <section class="panel" id="donorPanel">
     <div class="heading">🎁 TOP 5 DONATEURS DU LIVE</div>
     <div id="donorBoard"><div class="muted">En attente des cadeaux…</div></div>
-    <div class="muted donor-rate">🎁 1 = 10 pts · 10 = 100 pts · 100 = 1 000 pts · 500 = 5 000 pts · 1 000 = 10 000 pts</div>
   </section>
 </div>
 
 <div class="voters" id="voters">👀 Les derniers votes apparaîtront ici…</div>
-<div class="cta">🌍 REJOINS LE LIVE ET TENTE TA CHANCE !</div>
+
+<div class="cta">
+  🎁 BARÈME DES CADEAUX<br>
+  <span style="font-size:12px;line-height:1.8;font-weight:800">
+    1 pièce = 10 pts · 10 pièces = 100 pts<br>
+    100 pièces = 1 000 pts · 500 pièces = 5 000 pts<br>
+    1 000 pièces = 10 000 pts
+  </span>
+</div>
 </main>
 
 <div class="below-controls">
@@ -1130,7 +1094,6 @@ function nextQuestion(){
 
   round++;
 }
-
 function startRound(){
   stopTimer();
   if(window.roundTimeout)clearTimeout(window.roundTimeout);
