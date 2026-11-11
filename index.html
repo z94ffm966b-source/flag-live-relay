@@ -475,6 +475,152 @@ html.overlay-mode .foot{display:none!important}
     max-height:34vh;
   }
 }
+
+/* CORRECTION PC : TOUT DOIT TENIR DANS LE CADRE */
+@media (min-width:700px){
+  html.overlay-mode .app{
+    height:94vh;
+    padding:7px 10px;
+    gap:5px;
+    grid-template-rows:
+      auto
+      52px
+      5px
+      minmax(0,1fr)
+      auto
+      auto
+      minmax(155px,22%)
+      auto
+      auto;
+  }
+
+  /* Haut de l'écran */
+  html.overlay-mode .top{
+    gap:6px;
+  }
+
+  html.overlay-mode .stat{
+    padding:5px 4px;
+    font-size:10px;
+    line-height:1.2;
+    border-radius:9px;
+  }
+
+  html.overlay-mode .stat b{
+    font-size:14px;
+    line-height:1.15;
+    overflow-wrap:anywhere;
+  }
+
+  html.overlay-mode .logo{
+    font-size:24px;
+    line-height:.9;
+  }
+
+  html.overlay-mode .logo small{
+    font-size:7px;
+    letter-spacing:1px;
+    margin-top:5px;
+  }
+
+  /* Chrono */
+  html.overlay-mode .timer{
+    width:48px;
+    height:48px;
+    font-size:23px;
+    border-width:3px;
+  }
+
+  html.overlay-mode .timer small{
+    font-size:7px;
+  }
+
+  /* Drapeau : garder une vraie place pour l'image */
+  html.overlay-mode .flag{
+    min-height:0;
+    height:100%;
+    margin:0;
+  }
+
+  html.overlay-mode #flag img{
+    max-width:94%!important;
+    max-height:100%!important;
+    width:auto!important;
+    height:auto!important;
+    object-fit:contain;
+  }
+
+  /* Question et réponses */
+  html.overlay-mode .question{
+    padding:6px 8px;
+    font-size:15px;
+    line-height:1.2;
+  }
+
+  html.overlay-mode .answers{
+    gap:5px;
+  }
+
+  html.overlay-mode .answer{
+    min-height:37px;
+    padding:5px;
+    font-size:12px;
+    line-height:1.15;
+  }
+
+  /* Classement et cadeaux */
+  html.overlay-mode .panels{
+    min-height:0;
+    height:100%;
+    gap:6px;
+  }
+
+  html.overlay-mode .panel{
+    padding:5px;
+    min-height:0;
+  }
+
+  html.overlay-mode .heading{
+    font-size:10px;
+    margin-bottom:4px;
+  }
+
+  html.overlay-mode .person,
+  html.overlay-mode .donor-person{
+    gap:4px;
+    padding:2px 0;
+    font-size:9px;
+    min-height:23px;
+  }
+
+  html.overlay-mode .person:nth-child(n+6){
+    display:none;
+  }
+
+  html.overlay-mode .avatar,
+  html.overlay-mode .donor-person img{
+    width:17px;
+    height:17px;
+    flex-basis:17px;
+  }
+
+  html.overlay-mode .score,
+  html.overlay-mode .donor-coins{
+    font-size:9px;
+  }
+
+  /* Bas de l'écran */
+  html.overlay-mode .voters{
+    padding:5px;
+    font-size:9px;
+  }
+
+  html.overlay-mode .cta{
+    padding:6px;
+    font-size:10px;
+  }
+}
+
 </style>
 </head>
 
