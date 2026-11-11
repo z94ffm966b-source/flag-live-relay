@@ -356,7 +356,7 @@ html.overlay-mode body{
   flex-direction:column;
   align-items:center;
   justify-content:flex-start;
-  padding:24px 0 24px;
+  padding:50px 0 24px;
   background:
     radial-gradient(ellipse at 12% 50%,#8b35c955 0,transparent 38%),
     radial-gradient(ellipse at 88% 50%,#2868d955 0,transparent 38%),
@@ -379,7 +379,7 @@ html.overlay-mode body::after{right:0}
 
 html.overlay-mode .app{
   width:min(52.875vh,100vw);
-  height:calc(94vh - 10px);
+  height:calc(94vh - 36px);
   max-width:52.875vh;
   min-width:0;
   aspect-ratio:9/16;
@@ -508,7 +508,7 @@ html.overlay-mode .below-controls .foot{
     overflow-x:hidden;
     overflow-y:auto;
     min-height:100%;
-    padding-top:18px;
+    padding-top:45px;
     background:var(--bg);
   }
   html.overlay-mode .below-controls{
@@ -520,7 +520,7 @@ html.overlay-mode .below-controls .foot{
   html.overlay-mode .app{
     width:100%;
     height:auto;
-    min-height:calc(100vh - 18px);
+    min-height:calc(100vh - 45px);
     aspect-ratio:auto;
     padding:12px;
     border:0;
@@ -544,7 +544,7 @@ html.overlay-mode .below-controls .foot{
 
 @media (min-width:700px){
   html.overlay-mode .app{
-    height:calc(94vh - 10px);
+    height:calc(94vh - 36px);
     padding:7px 10px;
     gap:5px;
     grid-template-rows:
@@ -699,7 +699,7 @@ html.overlay-mode .below-controls .foot{
 <div class="voters" id="voters">👀 Les derniers votes apparaîtront ici…</div>
 
 <div class="cta" style="white-space:nowrap;overflow:hidden;text-overflow:clip;padding:5px 2px;font-size:9px">
-  🎁 1 pièce = 50 pts · 10 = 600 pts · 100 = 6 500 pts · 500 = 35 000 pts
+  🎁 1 pièce = 50 pts · 10 = 600 pts · 100 = 6 500 pts · 500 = 35 000 pts · 🌹 1 pièce = passer la question
 </div>
 </main>
 
@@ -736,7 +736,6 @@ html.overlay-mode .below-controls .foot{
 
 <div class="foot">FLAG LIVE · Les scores et cadeaux sont sauvegardés sur cet appareil.</div>
 </div>
-
 <script>
 window.socketIoReady=new Promise(resolve=>{
   const urls=[
@@ -1151,7 +1150,8 @@ function addGift(name,coins,avatar=''){
   $('status').textContent=
     `🎁 ${name} : +${points.toLocaleString('fr-FR')} points (${coins} pièces).`;
 }
-  function renderVoters(){
+
+function renderVoters(){
   const names=Object.keys(votes).slice(-8);
   $('voters').textContent=names.length
     ?'🗳️ Ont voté : '+names.join(' · ')
