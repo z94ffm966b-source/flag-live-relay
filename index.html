@@ -446,7 +446,9 @@ html.overlay-mode .cta{grid-row:9;padding:8px;font-size:clamp(11px,1.1vw,14px)}
 
 html.overlay-mode #connectionPanel,
 html.overlay-mode #adminPanel,
-html.overlay-mode .foot{display:none!important}
+html.overlay-mode .foot{
+  display:block!important;
+}
 
 @media(max-width:699px){
   html.overlay-mode body{
@@ -658,13 +660,14 @@ html.overlay-mode .foot{display:none!important}
   <section class="panel" id="donorPanel">
     <div class="heading">🎁 TOP 5 DONATEURS DU LIVE</div>
     <div id="donorBoard"><div class="muted">En attente des cadeaux…</div></div>
-    <div class="muted">1 pièce TikTok = 10 points</div>
+    <div class="muted">1 pièce = 10 pts · 10 pièces = 100 pts · 100 pièces = 1 000 pts · 500 pièces = 5 000 pts · 1 000 pièces = 10 000 pts</div>
   </section>
 </div>
 
 <div class="voters" id="voters">👀 Les derniers votes apparaîtront ici…</div>
 <div class="cta">🌍 REJOINS LE LIVE ET TENTE TA CHANCE !</div>
-
+</main>
+<div class="below-controls">
 <section class="panel" id="connectionPanel">
   <div class="heading">🔴 CONNEXION TIKTOK LIVE</div>
   <div class="muted">Entre ton pseudo TikTok sans @ pour connecter le LIVE.</div>
@@ -695,7 +698,7 @@ html.overlay-mode .foot{display:none!important}
 </section>
 
 <div class="foot">FLAG LIVE · Les scores et cadeaux sont sauvegardés sur cet appareil.</div>
-</main>
+</div>
 
 <script>
 window.socketIoReady=new Promise(resolve=>{
