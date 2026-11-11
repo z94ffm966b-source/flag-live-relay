@@ -605,14 +605,13 @@ html.overlay-mode .below-controls .foot{
     font-size:9px;
   }
   html.overlay-mode .cta{
-  padding:5px 2px;
-  font-size:8px;
-  white-space:nowrap;
-}
+    padding:5px 2px;
+    font-size:8px;
+    white-space:nowrap;
+  }
 }
 </style>
 </head>
-
 <body>
 <main class="app">
 
@@ -652,7 +651,8 @@ html.overlay-mode .below-controls .foot{
 
 <div class="voters" id="voters">👀 Les derniers votes apparaîtront ici…</div>
 
-<div class="cta" style="white-space:nowrap;overflow:hidden;text-overflow:clip;padding:6px 3px;font-size:clamp(6px,1.1vw,11px)">
+<!-- BARRE DES POINTS : POLICE RÉDUITE -->
+<div class="cta" style="white-space:nowrap;overflow:hidden;text-overflow:clip;padding:5px 2px;font-size:7px">
   🎁 1 pièce = 10 pts · 10 = 100 pts · 100 = 1 000 pts · 500 = 5 000 pts · 1 000 = 10 000 pts
 </div>
 </main>
@@ -1090,7 +1090,8 @@ function nextQuestion(){
 
   round++;
 }
- function startRound(){
+
+function startRound(){
   stopTimer();
   if(window.roundTimeout)clearTimeout(window.roundTimeout);
 
@@ -1397,4 +1398,3 @@ startRound();
 </script>
 </body>
 </html>
- 
