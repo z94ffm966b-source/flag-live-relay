@@ -995,7 +995,7 @@ function renderDonors(){
           ?`<img src="${escapeHTML(data.avatar)}" alt="">`
           :`<span class="avatar">${escapeHTML(name.charAt(0).toUpperCase())}</span>`}
         <span class="name">${escapeHTML(name)}</span>
-        <span class="donor-coins">🎁 ${Number(data.coins).toLocaleString('fr-FR')}</span>
+        <span class="donor-coins">🎁 ${Number(data.coins).toLocaleString('fr-FR')} pièces · ${(Number(data.coins)*10).toLocaleString('fr-FR')} pts</span>
       </div>`).join('')
     :'<div class="muted">En attente des cadeaux…</div>';
 }
