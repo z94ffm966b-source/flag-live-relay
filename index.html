@@ -356,7 +356,7 @@ html.overlay-mode body{
   flex-direction:column;
   align-items:center;
   justify-content:flex-start;
-  padding:14px 0 24px;
+  padding:24px 0 24px;
   background:
     radial-gradient(ellipse at 12% 50%,#8b35c955 0,transparent 38%),
     radial-gradient(ellipse at 88% 50%,#2868d955 0,transparent 38%),
@@ -379,7 +379,7 @@ html.overlay-mode body::after{right:0}
 
 html.overlay-mode .app{
   width:min(52.875vh,100vw);
-  height:94vh;
+  height:calc(94vh - 10px);
   max-width:52.875vh;
   min-width:0;
   aspect-ratio:9/16;
@@ -508,6 +508,7 @@ html.overlay-mode .below-controls .foot{
     overflow-x:hidden;
     overflow-y:auto;
     min-height:100%;
+    padding-top:18px;
     background:var(--bg);
   }
   html.overlay-mode .below-controls{
@@ -519,7 +520,7 @@ html.overlay-mode .below-controls .foot{
   html.overlay-mode .app{
     width:100%;
     height:auto;
-    min-height:100vh;
+    min-height:calc(100vh - 18px);
     aspect-ratio:auto;
     padding:12px;
     border:0;
@@ -543,7 +544,7 @@ html.overlay-mode .below-controls .foot{
 
 @media (min-width:700px){
   html.overlay-mode .app{
-    height:94vh;
+    height:calc(94vh - 10px);
     padding:7px 10px;
     gap:5px;
     grid-template-rows:
@@ -697,9 +698,8 @@ html.overlay-mode .below-controls .foot{
 
 <div class="voters" id="voters">👀 Les derniers votes apparaîtront ici…</div>
 
-<!-- BARRE DES POINTS : TEXTE AGRANDI -->
 <div class="cta" style="white-space:nowrap;overflow:hidden;text-overflow:clip;padding:5px 2px;font-size:9px">
-  🎁 1 pièce = 10 pts · 10 = 100 pts · 100 = 1 000 pts · 500 = 5 000 pts
+  🎁 1 pièce = 50 pts · 10 = 600 pts · 100 = 6 500 pts · 500 = 35 000 pts
 </div>
 </main>
 
@@ -1043,11 +1043,9 @@ function detectChoice(raw){
 
   if(!cleaned)return null;
 
-  /* Correspondance exacte sans accents ni espaces */
   const exact=options.find(option=>option.name===cleaned);
   if(exact)return exact.choice;
 
-  /* Correspondance avec une petite faute de frappe */
   const matches=options
     .map(option=>({
       ...option,
@@ -1059,14 +1057,12 @@ function detectChoice(raw){
 
   const best=matches[0];
   const second=matches[1];
-
   const maxLength=Math.max(cleaned.length,best.name.length);
 
   let allowedErrors=0;
   if(maxLength>=8)allowedErrors=2;
   else if(maxLength>=4)allowedErrors=1;
 
-  /* Refuser les réponses trop éloignées ou ambiguës */
   if(best.distance>allowedErrors)return null;
   if(second&&second.distance===best.distance)return null;
 
@@ -1109,9 +1105,31 @@ function renderDonors(){
           ?`<img src="${escapeHTML(data.avatar)}" alt="">`
           :`<span class="avatar">${escapeHTML(name.charAt(0).toUpperCase())}</span>`}
         <span class="name">${escapeHTML(name)}</span>
-        <span class="donor-coins">🎁 ${Number(data.coins).toLocaleString('fr-FR')} · ${(Number(data.coins)*10).toLocaleString('fr-FR')} pts</span>
+        <span class="donor-coins">🎁 ${Number(data.coins).toLocaleString('fr-FR')} · ${giftPoints(Number(data.coins)).toLocaleString('fr-FR')} pts</span>
       </div>`).join('')
     :'<div class="muted">En attente des cadeaux…</div>';
+}
+
+/* CONVERSION DES PIÈCES EN POINTS :
+   1 = 50 · 10 = 600 · 100 = 6 500 · 500 = 35 000 */
+function giftPoints(coins){
+  let remaining=Math.max(0,Math.floor(Number(coins)||0));
+  let points=0;
+
+  const packages=[
+    {coins:500,points:35000},
+    {coins:100,points:6500},
+    {coins:10,points:600},
+    {coins:1,points:50}
+  ];
+
+  for(const pack of packages){
+    const quantity=Math.floor(remaining/pack.coins);
+    points+=quantity*pack.points;
+    remaining-=quantity*pack.coins;
+  }
+
+  return points;
 }
 
 function addGift(name,coins,avatar=''){
@@ -1122,17 +1140,18 @@ function addGift(name,coins,avatar=''){
   if(avatar)row.avatar=avatar;
 
   donors[name]=row;
-  scores[name]=(Number(scores[name])||0)+coins*10;
+
+  const points=giftPoints(coins);
+  scores[name]=(Number(scores[name])||0)+points;
 
   persist();
   renderBoard();
   renderDonors();
 
   $('status').textContent=
-    `🎁 ${name} : +${(coins*10).toLocaleString('fr-FR')} points (${coins} pièces).`;
+    `🎁 ${name} : +${points.toLocaleString('fr-FR')} points (${coins} pièces).`;
 }
-
-function renderVoters(){
+  function renderVoters(){
   const names=Object.keys(votes).slice(-8);
   $('voters').textContent=names.length
     ?'🗳️ Ont voté : '+names.join(' · ')
@@ -1364,6 +1383,8 @@ function connectTikTok(){
       if(message?.repeatEnd===false)return;
 
       const user=message?.user||{};
+      const gift=message?.gift||{};
+
       const name=String(
         user.uniqueId||
         user.nickname||
@@ -1374,8 +1395,8 @@ function connectTikTok(){
 
       const value=Number(
         message?.diamondCount||
-        message?.gift?.diamondCount||
-        message?.gift?.diamond_count||
+        gift?.diamondCount||
+        gift?.diamond_count||
         0
       );
 
@@ -1386,7 +1407,35 @@ function connectTikTok(){
         user.avatarThumb||
         '';
 
+      /* AJOUT DES POINTS DU CADEAU */
       addGift(name,value*repeat,avatar);
+
+      /* DÉTECTION DE LA ROSE TIKTOK */
+      const giftName=String(
+        message?.giftName||
+        gift?.name||
+        gift?.giftName||
+        message?.giftDetails?.giftName||
+        ''
+      );
+
+      const giftId=Number(
+        message?.giftId||
+        message?.gift_id||
+        gift?.id||
+        0
+      );
+
+      const isRose=
+        normalize(giftName)==='rose'||
+        giftId===5655;
+
+      if(isRose){
+        $('status').textContent=
+          '🌹 Rose reçue de '+name+' · question suivante !';
+
+        startRound();
+      }
     });
 
     socket.on('roomUser',message=>{
@@ -1477,10 +1526,15 @@ $('voteForm').addEventListener('submit',e=>{
 $('start').addEventListener('click',startRound);
 $('reveal').addEventListener('click',finishRound);
 
+/* TEST D'UNE ROSE : +50 POINTS ET QUESTION SUIVANTE */
 $('demoRose').addEventListener('click',()=>{
   addGift('Joueur démo',1);
+  $('status').textContent=
+    '🌹 Rose de test · +50 points · question suivante !';
+  startRound();
 });
 
+/* TEST DE 100 PIÈCES */
 $('demoGift').addEventListener('click',()=>{
   addGift('Donateur démo',100);
 });
