@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#16002e">
+<title>FLAG LIVE</title>
+<style>
+:root{--violet:#a94dff;--pink:#ef8cff;--cyan:#66eaff;--panel:rgba(20,7,48,.9);--line:rgba(184,94,255,.72);--muted:#d4c3ef;--bg:#080014}
+*{box-sizing:border-box}
+html{min-height:100%;background:var(--bg)}
+body{margin:0;min-height:100vh;padding:28px 18px;color:#fff;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:radial-gradient(ellipse at 50% 15%,rgba(94,24,155,.55),transparent 48%),radial-gradient(ellipse at 50% 90%,rgba(36,9,91,.7),transparent 55%),linear-gradient(145deg,#080014,#120326 52%,#060012);display:flex;align-items:center;justify-content:center;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;background-image:linear-gradient(rgba(170,91,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(170,91,255,.12) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,black,transparent 85%)}
+.app{position:relative;isolation:isolate;width:min(100%,900px);margin:auto;padding:22px;border:1px solid rgba(171,82,255,.48);border-radius:26px;background:linear-gradient(180deg,rgba(20,5,47,.9),rgba(7,0,20,.94));box-shadow:0 0 42px rgba(130,40,255,.25),inset 0 0 35px rgba(119,36,255,.08);overflow:hidden}
+.app:before{content:"";position:absolute;inset:80px -25px 160px;z-index:-1;pointer-events:none;opacity:.10;background-repeat:no-repeat;background-position:center;background-size:contain;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 440'%3E%3Cg fill='%23b56bff' stroke='%23d9a5ff' stroke-width='2' opacity='.8'%3E%3Cpath d='M70 105l40-38 58-15 35 20 35-8 28 26-12 27-38 7-17 32-34 7-19 42-31-5-14-32-31-14-20-29zM250 215l37-15 41 15 20 40-17 38-14 57-28 33-22-20-5-55-24-37zM370 95l40-30 54 4 28-22 66 12 35 26 58-4 39 23 58 7 36 33-18 27-54-7-28 23-49-5-21 29-38-8-21 27-42-5-26-37-47 4-25-28-42-3-26-36-33-8zM470 250l47-21 49 18 26 42-19 59-39 37-34-19-10-49-28-25zM690 300l35-14 41 16 13 31-27 23-42-7-25-23z'/%3E%3C/g%3E%3C/svg%3E")}
+.app>*{position:relative;z-index:1}
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:16px;margin-bottom:10px}
+.stat{min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:15px;background:rgba(18,4,42,.9);text-align:center;font-size:13px;line-height:1.4;box-shadow:0 0 13px rgba(165,62,255,.24)}
+.stat b{display:inline-block;max-width:100%;overflow-wrap:anywhere;font-size:17px;color:#fff}
+.logo{text-align:center;font-weight:1000;font-size:38px;line-height:.86;letter-spacing:1px;font-style:italic;color:#fff;text-shadow:0 0 8px var(--pink),0 0 22px #8d35ff;white-space:nowrap}
+.logo small{display:block;margin-top:8px;font-size:10px;letter-spacing:3px;color:#e7c8ff}
+.timer{margin:12px auto 10px;width:92px;height:92px;border:4px solid #bd63ff;border-radius:50%;display:grid;align-content:center;justify-items:center;background:radial-gradient(circle,rgba(90,25,150,.8),rgba(17,3,39,.95));font-size:37px;font-weight:950;line-height:1;box-shadow:0 0 0 5px rgba(173,70,255,.12),0 0 26px rgba(174,68,255,.65)}
+.timer small{font-size:9px;letter-spacing:1.5px;margin-top:5px;color:#e7cfff}
+.track{height:9px;background:#1c0835;border:1px solid #7e35b7;border-radius:30px;overflow:hidden}
+.fill{height:100%;width:100%;background:linear-gradient(90deg,#f5a1ff,#9e45ff,#67e9ff);box-shadow:0 0 12px #c45cff;transition:width .25s linear}
+/* DRAPEAU : l'image garde ses dimensions naturelles et prend une vraie taille visible. */
+.flag{width:100%;height:auto;min-height:0;margin:10px auto 12px;padding:0;display:flex;align-items:center;justify-content:center;text-align:center;overflow:visible;}
+#flag>img.flag-image{display:block;flex:0 1 auto;width:auto;height:auto;max-width:min(92vw,820px);max-height:min(38vh,500px);object-fit:contain;object-position:center;border:0;border-radius:7px;box-shadow:0 0 24px rgba(189,95,255,.28);}
+#flag>.flag-fallback{display:block;font-size:clamp(150px,22vw,250px);line-height:1.05;filter:drop-shadow(0 5px 14px #0008)}
+.question{width:100%;max-width:760px;margin:8px auto 14px;padding:14px 18px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(100deg,rgba(44,12,78,.95),rgba(19,5,43,.96));text-align:center;font-size:clamp(18px,2.3vw,25px);font-weight:850;box-shadow:0 0 17px rgba(140,49,220,.25)}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:760px;width:100%;margin:0 auto;justify-items:stretch}
+.answer{min-height:66px;border:1px solid #a653ed;border-radius:13px;background:linear-gradient(135deg,rgba(54,17,91,.98),rgba(25,7,52,.99));color:#fff;padding:12px 9px;font-size:17px;font-weight:800;box-shadow:inset 0 0 13px rgba(159,69,255,.12),0 3px 10px rgba(0,0,0,.22)}
+.answer.good{background:linear-gradient(135deg,#14583f,#123927);border-color:#65f0aa}.answer.bad{opacity:.45}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;align-items:start}
+.panel{min-width:0;margin:0;padding:14px;background:var(--panel);border:1px solid rgba(149,65,218,.65);border-radius:16px;box-shadow:0 0 15px rgba(87,29,143,.2)}
+.heading{text-align:center;font-size:14px;font-weight:950;letter-spacing:.7px;margin-bottom:9px;color:#f1d9ff;text-shadow:0 0 10px rgba(181,96,255,.55)}
+.person,.donor-person{display:flex;align-items:center;gap:9px;padding:7px 3px;border-bottom:1px solid rgba(143,83,184,.22);font-size:13px}.person:last-child,.donor-person:last-child{border:0}
+.rank{width:20px;flex:0 0 20px;font-weight:950;color:#e7c6ff}.avatar{width:29px;height:29px;flex:0 0 29px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ffb5eb,#8034ff);color:#26003f;font-weight:950}
+.name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.score{font-weight:850;color:#d9b5ff;white-space:nowrap}
+.results{display:none;min-height:100px;align-content:start;gap:8px}.result-title{text-align:center;font-size:19px;font-weight:950;color:#f0c7ff;text-shadow:0 0 12px #b23dff;margin:8px 0 12px}.result-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border:1px solid #7d2ac2;border-radius:12px;background:linear-gradient(90deg,#35105c,#17052f);font-weight:800}.result-row strong{color:#7dffb2;font-size:17px;text-shadow:0 0 10px #39d887}.result-empty{text-align:center;padding:20px 8px;color:#e4c9ff;font-weight:800}
+.donor-grid{display:grid;grid-template-columns:1fr;gap:1px}.donor-person img{width:29px;height:29px;flex:0 0 29px;border-radius:50%;object-fit:cover;background:#321052}.donor-coins{font-weight:900;color:#ffd778;white-space:nowrap;font-size:12px}
+.muted{font-size:11px;color:var(--muted);text-align:center}.voters{margin:12px 0 8px;padding:10px 12px;border:1px solid rgba(136,69,194,.5);border-radius:12px;background:rgba(17,4,37,.84);font-size:12px;color:#eadcff;min-height:38px;text-align:center}
+.cta{margin-top:9px;padding:13px 10px;border:1px solid #d06bff;border-radius:13px;background:linear-gradient(90deg,rgba(97,24,154,.9),rgba(48,12,100,.95));text-align:center;font-size:15px;font-weight:950;letter-spacing:.25px;color:#fff;box-shadow:0 0 17px rgba(176,64,255,.3);text-shadow:0 0 8px #d36bff}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.tools button,.submit{border:1px solid #b64cff;background:#29094b;color:white;border-radius:11px;padding:11px;font-weight:750;cursor:pointer}.demoform{display:grid;grid-template-columns:1fr 100px;gap:7px;margin-top:9px}.demoform input,.demoform select{min-width:0;border:1px solid #8b39c2;border-radius:10px;background:#0c001b;color:white;padding:10px}.demoform select,.demoform button{grid-column:1/-1}.status{font-size:12px;text-align:center;color:#e3caff;margin:10px 0}.connectbox{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:9px}.connectbox input{min-width:0;border:1px solid #8b39c2;border-radius:10px;background:#0c001b;color:white;padding:11px;color:white}.connectbox button{border:1px solid #b64cff;background:#29094b;color:white;border-radius:11px;padding:10px;font-weight:800}.livehint{font-size:10px;color:#cdb6e8;text-align:center;margin-top:6px}.foot{font-size:10px;color:#b99bd7;text-align:center;margin:12px 0 2px}
+@media(max-width:650px){body{padding:10px 8px;align-items:flex-start}.app{padding:13px;border-radius:19px}.top{gap:7px}.stat{padding:8px 5px;font-size:10px}.stat b{font-size:13px}.logo{font-size:25px}.logo small{font-size:7px;letter-spacing:1.7px}.timer{width:76px;height:76px;font-size:30px;margin:10px auto 8px}.flag{margin:8px auto 10px}#flag>img.flag-image{max-width:min(92vw,620px);max-height:min(34vh,360px)}.question{font-size:17px;padding:11px 10px;margin:6px auto 10px}.answers{gap:8px}.answer{min-height:54px;font-size:14px;padding:9px 5px}.panels{gap:8px;margin-top:10px}.panel{padding:9px}.heading{font-size:11px}.person,.donor-person{font-size:10px;gap:5px;padding:6px 1px}.rank{width:15px;flex-basis:15px}.avatar,.donor-person img{width:23px;height:23px;flex-basis:23px}.score,.donor-coins{font-size:10px}.voters{font-size:10px;padding:8px}.cta{font-size:12px;padding:10px}.muted{font-size:9px}}
+@media(max-width:390px){.panels{grid-template-columns:1fr}.panel{padding:10px}.person,.donor-person{font-size:12px}.score,.donor-coins{font-size:11px}}
+/* Mode vertical 9:16 à utiliser dans TikTok LIVE Studio avec ?overlay=1 */
+html.overlay-mode,html.overlay-mode body{width:100%;height:100%;min-height:0;margin:0;padding:0;overflow:hidden;background:transparent!important}
+html.overlay-mode body{display:block}
+html.overlay-mode body:before{display:none}
+html.overlay-mode .app{width:100%;height:100%;min-height:0;max-width:none;margin:0;padding:22px 28px;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto 8px auto auto auto minmax(190px,auto) auto auto;gap:10px;align-content:stretch}
+html.overlay-mode .app:before{display:none}
+html.overlay-mode .top,html.overlay-mode .timer,html.overlay-mode .track,html.overlay-mode .flag,html.overlay-mode .question,html.overlay-mode .answers,html.overlay-mode .voters,html.overlay-mode .cta{grid-column:1/-1}
+html.overlay-mode .top{margin:0;gap:22px}
+html.overlay-mode .stat{font-size:20px;padding:12px 14px;background:rgba(12,0,28,.86)}
+html.overlay-mode .stat b{font-size:24px}
+html.overlay-mode .logo{font-size:43px}.logo small{font-size:12px}
+html.overlay-mode .timer{width:88px;height:88px;font-size:38px;margin:0 auto}
+html.overlay-mode .track{height:8px}
+html.overlay-mode .flag{height:auto;min-height:0;margin:8px auto;align-self:center}
+html.overlay-mode #flag>img.flag-image{max-width:min(94vw,900px);max-height:min(36vh,620px)}
+html.overlay-mode #flag>.flag-fallback{font-size:clamp(190px,30vw,380px)}
+html.overlay-mode .question{max-width:100%;font-size:clamp(26px,3vw,42px);padding:15px 20px;margin:0 auto}
+html.overlay-mode .answers{max-width:100%;gap:14px}
+html.overlay-mode .answer{min-height:76px;font-size:25px;border-radius:17px}
+html.overlay-mode .panels{display:contents}
+html.overlay-mode #boardPanel{grid-column:1;grid-row:7;min-width:0;max-height:100%;overflow:hidden}
+html.overlay-mode #donorPanel{grid-column:2;grid-row:7;min-width:0;max-height:100%;overflow:hidden}
+html.overlay-mode .panel{margin:0;padding:12px;background:rgba(12,0,28,.84)}
+html.overlay-mode .heading{font-size:18px}
+html.overlay-mode .person,html.overlay-mode .donor-person{font-size:15px;padding:7px 2px}
+html.overlay-mode .avatar,html.overlay-mode .donor-person img{width:32px;height:32px;flex-basis:32px}
+html.overlay-mode .score,html.overlay-mode .donor-coins{font-size:15px}
+html.overlay-mode .donor-coins{white-space:normal;text-align:right}
+html.overlay-mode .voters{font-size:15px;padding:10px;margin:0;background:rgba(12,0,28,.84)}
+html.overlay-mode .cta{font-size:19px;padding:13px;margin:0}
+html.overlay-mode #connectionPanel,html.overlay-mode #adminPanel,html.overlay-mode .foot{display:none!important}
+@media(max-height:1100px){html.overlay-mode .app{padding:12px 18px;gap:7px;grid-template-rows:auto auto 6px auto auto auto minmax(130px,auto) auto auto}html.overlay-mode #flag>img.flag-image{max-height:min(34vh,560px)}html.overlay-mode .timer{width:70px;height:70px;font-size:30px}html.overlay-mode .answer{min-height:58px;font-size:20px}html.overlay-mode .panel{padding:8px}html.overlay-mode .heading{font-size:14px}html.overlay-mode .person,html.overlay-mode .donor-person{font-size:12px;padding:4px 1px}html.overlay-mode .avatar,html.overlay-mode .donor-person img{width:25px;height:25px;flex-basis:25px}html.overlay-mode .score,html.overlay-mode .donor-coins{font-size:12px}}
+
+</style>
+</head>
+<body><main class="app">
+<header class="top"><div class="stat">👥 <b id="viewerCount">0</b><br>joueurs</div><div class="logo">🌐 FLAG<br>LIVE<small>QUIZ EN DIRECT</small></div><div class="stat">Dernier abonné<br><b id="lastSub">En attente…</b></div></header>
+<div class="timer"><span id="seconds">20</span><small>SECONDES</small></div><div class="track"><div class="fill" id="fill"></div></div>
+<div class="flag" id="flag" aria-label="Drapeau du pays">🇳🇵</div><div class="question" id="question">DIFFICILE · Quel pays est représenté par ce drapeau ?</div>
+<div class="answers" id="answers"><button class="answer" data-choice="A">A · Népal</button><button class="answer" data-choice="B">B · Bhoutan</button><button class="answer" data-choice="C">C · Kiribati</button><button class="answer" data-choice="D">D · Sri Lanka</button></div>
+<div class="panels"><section class="panel" id="boardPanel"><div id="boardView"><div class="heading">🏆 CLASSEMENT GÉNÉRAL</div><div id="leaderboard"></div></div><div class="results" id="resultsView"><div class="result-title">🎉 BONNES RÉPONSES !</div><div id="resultsList"></div></div></section>
+<section class="panel" id="donorPanel"><div class="heading">🎁 TOP 5 DONATEURS DU LIVE</div><div id="donorBoard" class="donor-grid"><div class="muted">En attente des cadeaux…</div></div><div class="muted">1 pièce TikTok = 10 points · classement cadeaux</div></section></div>
+<div class="voters" id="voters">👀 Les derniers votes apparaîtront ici…</div><div class="cta">🌍 REJOINS LE LIVE ET TENTE TA CHANCE !</div>
+<section class="panel" id="connectionPanel"><div class="heading">🔴 CONNEXION TIKTOK LIVE</div><div class="muted">Entre ton pseudo TikTok (sans @), puis connecte le lecteur directement à ce jeu.</div><div class="connectbox"><input id="tiktokUser" maxlength="40" placeholder="Pseudo TikTok (ex. monpseudo)"><button id="tiktokConnect">Connecter</button></div>
+<div class="tools"><button id="newLiveReset" type="button">🔄 Nouveau LIVE · remettre le classement à zéro</button></div><div class="livehint" id="liveState">Non connecté · serveur Render prêt à recevoir les commentaires.</div></section>
+<section class="panel" id="adminPanel"><div class="heading">🧪 Tester un vote (démo)</div><div class="muted">Ajoute des joueurs fictifs pour tester le chrono et les points.</div><form class="demoform" id="voteForm"><input id="pseudo" maxlength="20" placeholder="Pseudo du joueur" required><select id="choice"><option value="A">A · Népal</option><option value="B">B · Bhoutan</option><option value="C">C · Kiribati</option><option value="D">D · Sri Lanka</option></select><button class="submit">Enregistrer le vote</button></form><div class="tools"><button id="start">Relancer 20 s</button><button id="reveal">Terminer / révéler</button><button id="demoRose">🌹 Tester une rose</button><button id="demoGift">🎁 Tester un cadeau (100 pièces)</button></div><div class="status" id="status">Démo disponible · connecte TikTok ci-dessus pour recevoir les vrais votes.</div></section>
+<div class="foot">FLAG LIVE · Scores conservés sur cet appareil. Connexion TikTok via Render.</div>
+</main>
+<script>
+// Charge Socket.IO depuis plusieurs CDN : si l'un échoue, le suivant prend le relais.
+window.socketIoReady = new Promise(resolve => {
+ const sources = [
+  'https://cdn.socket.io/4.4.1/socket.io.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js',
+  'https://cdn.jsdelivr.net/npm/socket.io-client@4.4.1/dist/socket.io.min.js'
+ ];
+ function loadSource(index) {
+  if (typeof window.io === 'function') { resolve(true); return; }
+  if (index >= sources.length) { resolve(false); return; }
+  const script = document.createElement('script');
+  script.src = sources[index];
+  script.onload = () => resolve(typeof window.io === 'function');
+  script.onerror = () => loadSource(index + 1);
+  document.head.appendChild(script);
+ }
+ loadSource(0);
+});
+</script>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+if(new URLSearchParams(location.search).get('overlay')==='1')document.documentElement.classList.add('overlay-mode');
+const KEY='flaglive_demo_scores_v2';
+const DONOR_KEY='flaglive_donors_v1';
+let scores={};try{scores=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){scores={}}
+let donors={};try{donors=JSON.parse(localStorage.getItem(DONOR_KEY)||'{}')}catch(e){donors={}}
+// Banque élargie : 150 pays environ, répartis par difficulté.
+// Les drapeaux sont générés à partir des codes ISO pour rester légers.
+const countryData = `
+NP|Népal|EXPERT
+BT|Bhoutan|EXPERT
+KI|Kiribati|EXPERT
+SC|Seychelles|DIFFICILE
+SZ|Eswatini|EXPERT
+MD|Moldavie|DIFFICILE
+DM|Dominique|EXPERT
+LS|Lesotho|DIFFICILE
+BN|Brunei|EXPERT
+MZ|Mozambique|DIFFICILE
+KG|Kirghizistan|EXPERT
+VU|Vanuatu|DIFFICILE
+TJ|Tadjikistan|EXPERT
+GW|Guinée-Bissau|EXPERT
+KM|Comores|DIFFICILE
+ST|São Tomé-et-Príncipe|EXPERT
+AL|Albanie|MOYEN
+AD|Andorre|DIFFICILE
+AM|Arménie|MOYEN
+AZ|Azerbaïdjan|MOYEN
+BH|Bahreïn|DIFFICILE
+BD|Bangladesh|MOYEN
+BB|Barbade|DIFFICILE
+BY|Biélorussie|MOYEN
+BZ|Belize|DIFFICILE
+BJ|Bénin|MOYEN
+BO|Bolivie|MOYEN
+BA|Bosnie-Herzégovine|MOYEN
+BW|Botswana|MOYEN
+BG|Bulgarie|MOYEN
+BF|Burkina Faso|MOYEN
+BI|Burundi|DIFFICILE
+KH|Cambodge|MOYEN
+CM|Cameroun|MOYEN
+CV|Cap-Vert|DIFFICILE
+CF|République centrafricaine|EXPERT
+TD|Tchad|DIFFICILE
+CL|Chili|FACILE
+CO|Colombie|FACILE
+CR|Costa Rica|MOYEN
+HR|Croatie|MOYEN
+CU|Cuba|FACILE
+CY|Chypre|MOYEN
+CZ|Tchéquie|MOYEN
+CD|République démocratique du Congo|DIFFICILE
+DJ|Djibouti|EXPERT
+DO|République dominicaine|MOYEN
+EC|Équateur|MOYEN
+SV|Salvador|MOYEN
+GQ|Guinée équatoriale|EXPERT
+ER|Érythrée|DIFFICILE
+EE|Estonie|MOYEN
+ET|Éthiopie|MOYEN
+FJ|Fidji|DIFFICILE
+FI|Finlande|FACILE
+GA|Gabon|MOYEN
+GM|Gambie|MOYEN
+GE|Géorgie|MOYEN
+GH|Ghana|FACILE
+GD|Grenade|EXPERT
+GT|Guatemala|MOYEN
+GN|Guinée|MOYEN
+GY|Guyana|DIFFICILE
+HT|Haïti|MOYEN
+HN|Honduras|MOYEN
+HU|Hongrie|FACILE
+IS|Islande|FACILE
+JM|Jamaïque|MOYEN
+JO|Jordanie|MOYEN
+KZ|Kazakhstan|MOYEN
+KE|Kenya|FACILE
+KW|Koweït|MOYEN
+LA|Laos|MOYEN
+LV|Lettonie|MOYEN
+LB|Liban|FACILE
+LR|Liberia|DIFFICILE
+LY|Libye|MOYEN
+LI|Liechtenstein|EXPERT
+LT|Lituanie|MOYEN
+LU|Luxembourg|FACILE
+MG|Madagascar|MOYEN
+MW|Malawi|DIFFICILE
+MV|Maldives|MOYEN
+ML|Mali|MOYEN
+MT|Malte|MOYEN
+MH|Îles Marshall|EXPERT
+MR|Mauritanie|DIFFICILE
+MU|Maurice|MOYEN
+FM|Micronésie|EXPERT
+MC|Monaco|MOYEN
+MN|Mongolie|MOYEN
+ME|Monténégro|MOYEN
+MA|Maroc|FACILE
+NA|Namibie|MOYEN
+NR|Nauru|EXPERT
+NI|Nicaragua|MOYEN
+NE|Niger|MOYEN
+MK|Macédoine du Nord|DIFFICILE
+OM|Oman|MOYEN
+PK|Pakistan|FACILE
+PW|Palaos|EXPERT
+PA|Panama|MOYEN
+PG|Papouasie-Nouvelle-Guinée|DIFFICILE
+PY|Paraguay|MOYEN
+PE|Pérou|FACILE
+PH|Philippines|FACILE
+PL|Pologne|FACILE
+QA|Qatar|MOYEN
+CG|République du Congo|DIFFICILE
+RO|Roumanie|FACILE
+RW|Rwanda|MOYEN
+KN|Saint-Christophe-et-Niévès|EXPERT
+LC|Sainte-Lucie|EXPERT
+VC|Saint-Vincent-et-les-Grenadines|EXPERT
+WS|Samoa|DIFFICILE
+SM|Saint-Marin|DIFFICILE
+SN|Sénégal|FACILE
+RS|Serbie|MOYEN
+SL|Sierra Leone|MOYEN
+SG|Singapour|FACILE
+SK|Slovaquie|MOYEN
+SI|Slovénie|MOYEN
+SB|Îles Salomon|EXPERT
+SO|Somalie|MOYEN
+ZA|Afrique du Sud|FACILE
+SS|Soudan du Sud|DIFFICILE
+LK|Sri Lanka|MOYEN
+SR|Suriname|DIFFICILE
+SE|Suède|FACILE
+CH|Suisse|FACILE
+SY|Syrie|MOYEN
+TW|Taïwan|MOYEN
+TZ|Tanzanie|MOYEN
+TL|Timor oriental|EXPERT
+TG|Togo|MOYEN
+TO|Tonga|DIFFICILE
+TT|Trinité-et-Tobago|DIFFICILE
+TN|Tunisie|FACILE
+TM|Turkménistan|EXPERT
+TV|Tuvalu|EXPERT
+UG|Ouganda|MOYEN
+UA|Ukraine|FACILE
+AE|Émirats arabes unis|FACILE
+UY|Uruguay|MOYEN
+UZ|Ouzbékistan|MOYEN
+VE|Venezuela|MOYEN
+ZM|Zambie|MOYEN
+ZW|Zimbabwe|MOYEN
+AF|Afghanistan|MOYEN
+AR|Argentine|FACILE
+AU|Australie|FACILE
+AT|Autriche|FACILE
+BE|Belgique|FACILE
+BR|Brésil|FACILE
+CA|Canada|FACILE
+CN|Chine|FACILE
+DK|Danemark|FACILE
+EG|Égypte|FACILE
+FR|France|FACILE
+DE|Allemagne|FACILE
+GR|Grèce|FACILE
+IN|Inde|FACILE
+ID|Indonésie|FACILE
+IR|Iran|MOYEN
+IQ|Irak|MOYEN
+IE|Irlande|FACILE
+IL|Israël|MOYEN
+IT|Italie|FACILE
+JP|Japon|FACILE
+MX|Mexique|FACILE
+NL|Pays-Bas|FACILE
+NZ|Nouvelle-Zélande|FACILE
+NG|Nigeria|FACILE
+NO|Norvège|FACILE
+RU|Russie|FACILE
+SA|Arabie saoudite|MOYEN
+KR|Corée du Sud|FACILE
+ES|Espagne|FACILE
+TH|Thaïlande|FACILE
+TR|Turquie|FACILE
+GB|Royaume-Uni|FACILE
+US|États-Unis|FACILE
+VN|Vietnam|FACILE
+YE|Yémen|MOYEN
+`.trim();
+const flagFromCode = code => String.fromCodePoint(...[...code].map(ch=>127397+ch.charCodeAt(0)));
+const questions = countryData.split('\n').map(line=>line.trim()).filter(Boolean).map(line=>{
+ const [code,country,level]=line.split('|');
+ return {code,flag:flagFromCode(code),country,level,hint:'Quel pays est représenté par ce drapeau ?'};
+});
+const allCountries=questions.map(q=>q.country);
+let deck=[],current=null,correct='A',votes={},left=20,timer=null,closed=false,roundNumber=0;
+let liveSocket=null, liveConnected=false;
+const duration=20;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(scores))}catch(e){}}
+function resetLiveScores(){scores={};donors={};save();saveDonors();drawBoard();drawDonors();$('status').textContent='Nouveau LIVE : classement et donateurs remis à zéro.';}
+$('newLiveReset').addEventListener('click',()=>{if(confirm('Commencer un nouveau LIVE et remettre tous les scores à zéro ?'))resetLiveScores()});
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function drawBoard(){let rows=Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,10);$('leaderboard').innerHTML=rows.length?rows.map(([n,s],i)=>`<div class="person"><span class="rank">${i+1}</span><span class="avatar">${escapeHtml(n[0].toUpperCase())}</span><span class="name">${escapeHtml(n)}</span><span class="score">${s.toLocaleString('fr-FR')} pts</span></div>`).join(''):'<div class="muted">Aucun joueur pour le moment</div>'}
+function saveDonors(){try{localStorage.setItem(DONOR_KEY,JSON.stringify(donors))}catch(e){}}
+function drawDonors(){const rows=Object.entries(donors).sort((a,b)=>b[1].coins-a[1].coins).slice(0,5);$('donorBoard').innerHTML=rows.length?rows.map(([n,d],i)=>`<div class="donor-person"><span class="rank">${i+1}</span>${d.avatar?`<img src="${escapeHtml(d.avatar)}" alt="" onerror="this.style.display='none'">`:`<span class="avatar">${escapeHtml(n[0].toUpperCase())}</span>`}<span class="name">${escapeHtml(n)}</span><span class="donor-coins">🎁 ${d.coins.toLocaleString('fr-FR')} pièces</span></div>`).join(''):'<div class="muted">En attente des cadeaux…</div>'}
+function addGift(name,coins,avatar=''){if(!name||!Number.isFinite(coins)||coins<=0)return;const old=donors[name]||{coins:0,avatar:''};old.coins+=coins;if(avatar)old.avatar=avatar;donors[name]=old;scores[name]=(scores[name]||0)+coins*10;save();saveDonors();drawBoard();drawDonors();$('status').textContent=`🎁 ${name} : +${(coins*10).toLocaleString('fr-FR')} points (${coins} pièces TikTok).`;}
+function drawVoters(){let recent=Object.keys(votes).slice(-8);$('voters').textContent=recent.length?'🗳️ Ont voté : '+recent.join(' · '):'👀 Les derniers votes apparaîtront ici…'}
+function tick(){$('seconds').textContent=left;$('fill').style.width=(left/duration*100)+'%'}
+function stop(){if(timer){clearInterval(timer);timer=null}}
+function shuffle(a){let b=a.slice();for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function nextQuestion(){
+ if(!deck.length)deck=shuffle(questions);
+ current=deck.pop();
+ const distractors=shuffle(allCountries.filter(c=>c!==current.country)).slice(0,3);
+ const choices=shuffle([current.country,...distractors]);
+ correct='ABCD'[choices.indexOf(current.country)];
+ const img=document.createElement('img');
+ img.className='flag-image';
+ img.alt='Drapeau du '+current.country;
+ img.loading='eager';
+ img.decoding='async';
+ img.referrerPolicy='no-referrer';
+ img.onerror=()=>{
+   if(img.dataset.fallback==='png'){
+     img.dataset.fallback='svg';
+     img.src='https://flagcdn.com/'+current.code.toLowerCase()+'.svg';
+   }else{
+     $('flag').replaceChildren();
+     const fallback=document.createElement('span');
+     fallback.className='flag-fallback';
+     fallback.textContent=current.flag;
+     $('flag').appendChild(fallback);
+   }
+ };
+ img.dataset.fallback='png';
+ img.src='https://flagcdn.com/w1280/'+current.code.toLowerCase()+'.png';
+ $('flag').replaceChildren(img);
+ $('question').textContent=current.level+' · '+current.hint;
+ $('answers').innerHTML=choices.map((c,i)=>`<button class="answer" data-choice="${'ABCD'[i]}">${'ABCD'[i]} · ${escapeHtml(c)}</button>`).join('');
+ $('choice').innerHTML=choices.map((c,i)=>`<option value="${'ABCD'[i]}">${'ABCD'[i]} · ${escapeHtml(c)}</option>`).join('');
+ roundNumber++;
+}
+function start(){stop();if(window.resultsTimeout)clearTimeout(window.resultsTimeout);$('resultsView').style.display='none';$('boardView').style.display='block';nextQuestion();votes={};closed=false;left=duration;drawVoters();$('status').textContent=`Manche ${roundNumber} · ${current.level} · ${questions.length} pays dans la banque.`;$('pseudo').disabled=false;$('choice').disabled=false;tick();timer=setInterval(()=>{left=Math.max(0,left-1);tick();if(left===0){stop();finish()}},1000)}
+function finish(){if(closed)return;closed=true;stop();let correctVotes=Object.entries(votes).filter(([,v])=>v.choice===correct).sort((a,b)=>a[1].time-b[1].time);let awards=[100,80,70,60,50,40,30,20,10];let roundResults=[];correctVotes.forEach(([name],i)=>{let pts=awards[i]||5;scores[name]=(scores[name]||0)+pts;roundResults.push({name,pts})});save();drawBoard();document.querySelectorAll('.answer').forEach(b=>{b.classList.toggle('good',b.dataset.choice===correct);b.classList.toggle('bad',b.dataset.choice!==correct)});showRoundResults(roundResults);$('status').textContent=`Bonne réponse : ${correct} · ${correctVotes.length} bonne(s) réponse(s) · manche suivante dans 5 s.`;$('pseudo').disabled=true;$('choice').disabled=true;}
+function showRoundResults(rows){$('boardView').style.display='none';$('resultsView').style.display='grid';$('resultsList').innerHTML=rows.length?rows.map((r,i)=>`<div class="result-row"><span>${i+1}. ${escapeHtml(r.name)}</span><strong>+${r.pts} PTS</strong></div>`).join(''):'<div class="result-empty">😅 Personne n’a trouvé cette fois !</div>';if(window.resultsTimeout)clearTimeout(window.resultsTimeout);window.resultsTimeout=setTimeout(start,5000)}
+function normalizeAnswer(value){return String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’']/g,"'").replace(/[^a-z0-9]/g,'').trim()}
+function processLiveComment(msg){
+ if(closed||!current||!msg)return;
+ const name=String(msg.uniqueId||msg.nickname||msg.user?.uniqueId||'').trim();
+ const raw=String(msg.comment||'').trim();
+ if(!name||!raw||votes[name])return;
+ const answer=normalizeAnswer(raw.replace(/^(vote|reponse|réponse|answer|!vote)\s*/i,''));
+ let choice=null;
+ if(/^[abcd]$/.test(answer)) choice=answer.toUpperCase();
+ else {
+  const choices=[...$('answers').querySelectorAll('.answer')];
+  const match=choices.find(b=>normalizeAnswer(b.textContent.replace(/^[A-D]\s*[·.-]\s*/,''))===answer);
+  if(match) choice=match.dataset.choice;
+ }
+ if(!choice)return;
+ votes[name]={choice,time:Date.now()};drawVoters();
+ $('status').textContent='Vote TikTok reçu : '+name+' · '+choice;
+}
+async function connectTikTok(){
+ const username=$('tiktokUser').value.trim().replace(/^@/,'');
+ if(!username){$('liveState').textContent='Entre ton pseudo TikTok sans @.';return}
+ $('liveState').textContent='Chargement du module réseau…';
+ const moduleReady = await window.socketIoReady;
+ if(!moduleReady || typeof window.io!=='function'){$('liveState').textContent='Module réseau indisponible. Vérifie Internet puis recharge la page.';return}
+ if(liveSocket){liveSocket.disconnect();liveSocket=null;}
+ $('liveState').textContent='Connexion au serveur Render…';
+ liveSocket=io('https://tiktok-chat-reader-obz6.onrender.com',{transports:['websocket','polling'],reconnection:true,timeout:20000});
+ liveSocket.on('connect',()=>{liveSocket.emit('setUniqueId',username);$('liveState').textContent='Serveur Render joint · attente de la connexion au LIVE…';});
+ liveSocket.on('tiktokConnected',()=>{liveConnected=true;$('liveState').textContent='🟢 TikTok connecté · les commentaires A/B/C/D sont pris en compte.';$('tiktokConnect').textContent='Reconnecter';});
+ liveSocket.on('chat',msg=>processLiveComment(msg));
+ liveSocket.on('gift',msg=>{if(msg&&msg.repeatEnd===false)return;const user=msg?.user||msg?.gift?.user||{};const name=String(user.uniqueId||user.nickname||msg?.uniqueId||msg?.nickname||'').trim();const coinValue=Number(msg?.diamondCount??msg?.gift?.diamondCount??msg?.gift?.diamond_count??0);const repeat=Number(msg?.repeatCount??1);const coins=coinValue*Math.max(1,repeat);const avatar=user.profilePictureUrl||user.avatarThumb||'';addGift(name,coins,avatar);});
+ liveSocket.on('roomUser',msg=>{const count=Number(msg?.viewerCount ?? msg?.data?.viewerCount);if(Number.isFinite(count)&&count>=0)$('viewerCount').textContent=count.toLocaleString('fr-FR');});
+ liveSocket.on('follow',data=>{const user=data?.uniqueId||data?.user?.uniqueId||data?.nickname||data?.user?.nickname||data?.displayName||data?.user?.displayName;if(user)$('lastSub').textContent='@'+String(user).replace(/^@/,'');});
+ liveSocket.on('tiktokDisconnected',reason=>{liveConnected=false;$('liveState').textContent='Connexion refusée : '+String(reason||'erreur inconnue')+'.';});
+ liveSocket.on('streamEnd',()=>{liveConnected=false;$('liveState').textContent='Le LIVE est terminé. Reconnecte après le prochain lancement.';});
+ liveSocket.on('disconnect',()=>{liveConnected=false;$('liveState').textContent='Connexion interrompue · tentative de reconnexion…';});
+}
+$('tiktokConnect').addEventListener('click',connectTikTok);
+$('tiktokUser').addEventListener('keydown',e=>{if(e.key==='Enter')connectTikTok()});
+$('voteForm').addEventListener('submit',e=>{e.preventDefault();if(closed){$('status').textContent='La question est terminée. Attends la prochaine manche.';return}let name=$('pseudo').value.trim(),choice=$('choice').value;if(!name)return;if(votes[name]){$('status').textContent=name+' a déjà voté pour cette question.';return}votes[name]={choice,time:Date.now()};drawVoters();$('status').textContent='Vote enregistré pour '+name+' (démo).';$('pseudo').value='';});
+$('start').addEventListener('click',start);$('reveal').addEventListener('click',finish);
+$('demoRose').addEventListener('click',()=>addGift('Joueur démo',1));$('demoGift').addEventListener('click',()=>addGift('Gros donateur démo',100));
+drawBoard();drawDonors();start();
+})();
+</script></body></html>
