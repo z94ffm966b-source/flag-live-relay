@@ -255,24 +255,11 @@ body{
 .result-row{
   display:flex;
   justify-content:space-between;
-  align-items:center;
-  gap:5px;
   padding:7px;
   border-bottom:1px solid #ffffff22;
   font-weight:800;
-  min-width:0;
 }
-.result-row span{
-  min-width:0;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-.result-row strong{
-  color:#7dffb2;
-  white-space:nowrap;
-  flex-shrink:0;
-}
+.result-row strong{color:#7dffb2}
 .tools{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -356,7 +343,7 @@ html.overlay-mode body{
   flex-direction:column;
   align-items:center;
   justify-content:flex-start;
-  padding:50px 0 24px;
+  padding:14px 0 24px;
   background:
     radial-gradient(ellipse at 12% 50%,#8b35c955 0,transparent 38%),
     radial-gradient(ellipse at 88% 50%,#2868d955 0,transparent 38%),
@@ -379,7 +366,7 @@ html.overlay-mode body::after{right:0}
 
 html.overlay-mode .app{
   width:min(52.875vh,100vw);
-  height:calc(94vh - 36px);
+  height:94vh;
   max-width:52.875vh;
   min-width:0;
   aspect-ratio:9/16;
@@ -458,37 +445,7 @@ html.overlay-mode .donor-person img{
 html.overlay-mode .score{font-size:clamp(8px,.8vw,10px)}
 html.overlay-mode .donor-coins{font-size:clamp(8px,.8vw,10px)}
 html.overlay-mode .voters{grid-row:8;padding:7px;font-size:11px}
-html.overlay-mode .cta{
-  grid-row:9;
-  padding:5px 1px;
-  font-size:7px;
-  letter-spacing:-0.4px;
-  white-space:nowrap;
-  overflow:hidden;
-}
-
-/* AFFICHAGE COMPACT DES 5 BONNES RÉPONSES */
-html.overlay-mode #resultsView{
-  min-width:0;
-  overflow:hidden;
-}
-html.overlay-mode #resultsList{
-  display:flex;
-  flex-direction:column;
-  gap:0;
-  min-width:0;
-  overflow:hidden;
-}
-html.overlay-mode .result-row{
-  min-height:19px;
-  padding:3px 4px;
-  gap:4px;
-  font-size:clamp(8px,.75vw,10px);
-  line-height:1.1;
-}
-html.overlay-mode .result-row strong{
-  font-size:clamp(8px,.72vw,9px);
-}
+html.overlay-mode .cta{grid-row:9;padding:8px;font-size:clamp(11px,1.1vw,14px)}
 
 html.overlay-mode .below-controls{
   display:flex!important;
@@ -515,7 +472,6 @@ html.overlay-mode .below-controls .foot{
     overflow-x:hidden;
     overflow-y:auto;
     min-height:100%;
-    padding-top:45px;
     background:var(--bg);
   }
   html.overlay-mode .below-controls{
@@ -527,7 +483,7 @@ html.overlay-mode .below-controls .foot{
   html.overlay-mode .app{
     width:100%;
     height:auto;
-    min-height:calc(100vh - 45px);
+    min-height:100vh;
     aspect-ratio:auto;
     padding:12px;
     border:0;
@@ -543,15 +499,12 @@ html.overlay-mode .below-controls .foot{
     max-width:94%;
     max-height:34vh;
   }
-  html.overlay-mode .result-row{
-    font-size:10px;
-    padding:5px;
-  }
 }
 
+/* CORRECTION PC : TOUT DOIT TENIR DANS LE CADRE */
 @media (min-width:700px){
   html.overlay-mode .app{
-    height:calc(94vh - 36px);
+    height:94vh;
     padding:7px 10px;
     gap:5px;
     grid-template-rows:
@@ -652,20 +605,14 @@ html.overlay-mode .below-controls .foot{
     font-size:9px;
   }
   html.overlay-mode .cta{
-    font-size:7px !important;
-    letter-spacing:-0.4px;
-    transform:scaleX(0.95);
-    transform-origin:center;
+    padding:5px 2px;
+    font-size:8px;
+    white-space:nowrap;
   }
-  html.overlay-mode .result-row{
-    min-height:18px;
-    padding:2px 3px;
-    font-size:9px;
-  }
-  html.overlay-mode .result-row strong{font-size:8px}
 }
 </style>
 </head>
+
 <body>
 <main class="app">
 
@@ -705,8 +652,9 @@ html.overlay-mode .below-controls .foot{
 
 <div class="voters" id="voters">👀 Les derniers votes apparaîtront ici…</div>
 
-<div class="cta" style="white-space:nowrap;overflow:hidden;padding:5px 1px;font-size:7px;letter-spacing:-0.4px">
-  🌹 1 ROSE = PASSER LA QUESTION · 🎁 1 PIÈCE = 50 PTS · 10 = 600 · 100 = 6 500 · 500 = 35 000
+<!-- BARRE DES POINTS : TEXTE AGRANDI -->
+<div class="cta" style="white-space:nowrap;overflow:hidden;text-overflow:clip;padding:5px 2px;font-size:9px">
+  🎁 1 pièce = 10 pts · 10 = 100 pts · 100 = 1 000 pts · 500 = 5 000 pts
 </div>
 </main>
 
@@ -715,7 +663,7 @@ html.overlay-mode .below-controls .foot{
   <div class="heading">🔴 CONNEXION TIKTOK LIVE</div>
   <div class="muted">Entre ton pseudo TikTok sans @ pour connecter le LIVE.</div>
   <div class="connectbox">
-    <input id="tiktokUser" maxlength="40" placeholder="Pseudo TikTok">
+    <input id="tiktokUser" maxlength="40" value="quizzzz123_" placeholder="Pseudo TikTok">
     <button id="tiktokConnect" type="button">Connecter</button>
   </div>
   <div class="tools">
@@ -763,6 +711,7 @@ window.socketIoReady=new Promise(resolve=>{
   load(0);
 });
 </script>
+
 <script>
 (()=>{
 'use strict';
@@ -995,6 +944,14 @@ let roundClosed=false;
 let round=0;
 let socket=null;
 
+/* CONNEXION TIKTOK AUTOMATIQUE */
+const TIKTOK_USERNAME='quizzzz123_';
+const TIKTOK_RETRY_DELAY=15000;
+
+let tiktokAccepted=false;
+let connectionInProgress=false;
+let retryConnectionTimer=null;
+
 const escapeHTML=value=>String(value??'').replace(/[&<>"']/g,c=>({
   '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
 }[c]));
@@ -1004,76 +961,6 @@ const normalize=value=>String(value??'')
   .normalize('NFD')
   .replace(/[\u0300-\u036f]/g,'')
   .replace(/[^a-z0-9]/g,'');
-
-/* CALCUL DE DISTANCE POUR TOLÉRER LES PETITES FAUTES */
-function editDistance(a,b){
-  const matrix=Array.from(
-    {length:a.length+1},
-    ()=>Array(b.length+1).fill(0)
-  );
-
-  for(let i=0;i<=a.length;i++)matrix[i][0]=i;
-  for(let j=0;j<=b.length;j++)matrix[0][j]=j;
-
-  for(let i=1;i<=a.length;i++){
-    for(let j=1;j<=b.length;j++){
-      const cost=a[i-1]===b[j-1]?0:1;
-
-      matrix[i][j]=Math.min(
-        matrix[i-1][j]+1,
-        matrix[i][j-1]+1,
-        matrix[i-1][j-1]+cost
-      );
-    }
-  }
-
-  return matrix[a.length][b.length];
-}
-
-/* RECONNAÎTRE UNE LETTRE OU UN NOM DE PAYS */
-function detectChoice(raw){
-  const cleaned=normalize(
-    raw.replace(/^(vote|reponse|answer|!vote)\s*/i,'')
-  );
-
-  if(/^[abcd]$/.test(cleaned)){
-    return cleaned.toUpperCase();
-  }
-
-  const options=[...$('answers').querySelectorAll('.answer')].map(button=>({
-    choice:button.dataset.choice,
-    name:normalize(
-      button.textContent.replace(/^[A-D]\s*[·.-]\s*/,'')
-    )
-  }));
-
-  if(!cleaned)return null;
-
-  const exact=options.find(option=>option.name===cleaned);
-  if(exact)return exact.choice;
-
-  const matches=options
-    .map(option=>({
-      ...option,
-      distance:editDistance(cleaned,option.name)
-    }))
-    .sort((a,b)=>a.distance-b.distance);
-
-  if(!matches.length)return null;
-
-  const best=matches[0];
-  const second=matches[1];
-  const maxLength=Math.max(cleaned.length,best.name.length);
-
-  let allowedErrors=0;
-  if(maxLength>=8)allowedErrors=2;
-  else if(maxLength>=4)allowedErrors=1;
-
-  if(best.distance>allowedErrors)return null;
-  if(second&&second.distance===best.distance)return null;
-
-  return best.choice;
-}
 
 function persist(){
   try{
@@ -1111,31 +998,9 @@ function renderDonors(){
           ?`<img src="${escapeHTML(data.avatar)}" alt="">`
           :`<span class="avatar">${escapeHTML(name.charAt(0).toUpperCase())}</span>`}
         <span class="name">${escapeHTML(name)}</span>
-        <span class="donor-coins">🎁 ${Number(data.coins).toLocaleString('fr-FR')} · ${giftPoints(Number(data.coins)).toLocaleString('fr-FR')} pts</span>
+        <span class="donor-coins">🎁 ${Number(data.coins).toLocaleString('fr-FR')} · ${(Number(data.coins)*10).toLocaleString('fr-FR')} pts</span>
       </div>`).join('')
     :'<div class="muted">En attente des cadeaux…</div>';
-}
-
-/* CONVERSION DES PIÈCES EN POINTS :
-   1 = 50 · 10 = 600 · 100 = 6 500 · 500 = 35 000 */
-function giftPoints(coins){
-  let remaining=Math.max(0,Math.floor(Number(coins)||0));
-  let points=0;
-
-  const packages=[
-    {coins:500,points:35000},
-    {coins:100,points:6500},
-    {coins:10,points:600},
-    {coins:1,points:50}
-  ];
-
-  for(const pack of packages){
-    const quantity=Math.floor(remaining/pack.coins);
-    points+=quantity*pack.points;
-    remaining-=quantity*pack.coins;
-  }
-
-  return points;
 }
 
 function addGift(name,coins,avatar=''){
@@ -1146,16 +1011,14 @@ function addGift(name,coins,avatar=''){
   if(avatar)row.avatar=avatar;
 
   donors[name]=row;
-
-  const points=giftPoints(coins);
-  scores[name]=(Number(scores[name])||0)+points;
+  scores[name]=(Number(scores[name])||0)+coins*10;
 
   persist();
   renderBoard();
   renderDonors();
 
   $('status').textContent=
-    `🎁 ${name} : +${points.toLocaleString('fr-FR')} points (${coins} pièces).`;
+    `🎁 ${name} : +${(coins*10).toLocaleString('fr-FR')} points (${coins} pièces).`;
 }
 
 function renderVoters(){
@@ -1295,7 +1158,7 @@ function finishRound(){
   $('resultsView').style.display='block';
 
   $('resultsList').innerHTML=results.length
-    ?results.slice(0,5).map((r,i)=>`
+    ?results.map((r,i)=>`
       <div class="result-row">
         <span>${i+1}. ${escapeHTML(r.name)}</span>
         <strong>+${r.pts} PTS</strong>
@@ -1326,7 +1189,22 @@ function receiveVote(message){
 
   if(!name||!raw||votes[name])return;
 
-  const choice=detectChoice(raw);
+  const cleaned=normalize(
+    raw.replace(/^(vote|reponse|answer|!vote)\s*/i,'')
+  );
+
+  let choice=null;
+
+  if(/^[abcd]$/.test(cleaned)){
+    choice=cleaned.toUpperCase();
+  }else{
+    const button=[...$('answers').querySelectorAll('.answer')]
+      .find(b=>normalize(
+        b.textContent.replace(/^[A-D]\s*[·.-]\s*/,'')
+      )===cleaned);
+
+    if(button)choice=button.dataset.choice;
+  }
 
   if(!choice)return;
 
@@ -1345,24 +1223,50 @@ function resetLive(){
     'Nouveau LIVE : scores et cadeaux remis à zéro.';
 }
 
+/* CONNEXION TIKTOK AVEC RÉESSAI AUTOMATIQUE */
+function scheduleTikTokRetry(){
+  if(tiktokAccepted||retryConnectionTimer)return;
+
+  retryConnectionTimer=setTimeout(()=>{
+    retryConnectionTimer=null;
+
+    if(!tiktokAccepted){
+      connectTikTok();
+    }
+  },TIKTOK_RETRY_DELAY);
+}
+
 function connectTikTok(){
-  const username=$('tiktokUser').value.trim().replace(/^@/,'');
+  if(tiktokAccepted||connectionInProgress)return;
 
-  if(!username){
-    $('liveState').textContent='Entre ton pseudo TikTok sans @.';
-    return;
-  }
+  const username=TIKTOK_USERNAME;
 
-  $('liveState').textContent='Chargement du module de connexion…';
+  $('tiktokUser').value=username;
+
+  connectionInProgress=true;
+
+  $('liveState').textContent=
+    'Tentative de connexion à TikTok avec @'+username+'…';
 
   window.socketIoReady.then(ready=>{
+
+    if(tiktokAccepted)return;
+
     if(!ready||typeof window.io!=='function'){
+      connectionInProgress=false;
+
       $('liveState').textContent=
-        'Impossible de charger Socket.IO. Vérifie Internet et recharge.';
+        'Module indisponible · nouvel essai dans 15 secondes…';
+
+      scheduleTikTokRetry();
       return;
     }
 
-    if(socket)socket.disconnect();
+    if(socket){
+      socket.removeAllListeners();
+      socket.disconnect();
+      socket=null;
+    }
 
     socket=window.io(
       'https://tiktok-chat-reader-obz6.onrender.com',
@@ -1375,11 +1279,23 @@ function connectTikTok(){
 
     socket.on('connect',()=>{
       socket.emit('setUniqueId',username);
+
       $('liveState').textContent=
-        'Serveur joint · connexion au LIVE TikTok…';
+        'Connexion au LIVE TikTok en cours…';
     });
 
     socket.on('tiktokConnected',()=>{
+
+      tiktokAccepted=true;
+      connectionInProgress=false;
+
+      if(retryConnectionTimer){
+        clearTimeout(retryConnectionTimer);
+        retryConnectionTimer=null;
+      }
+
+      $('tiktokUser').value=username;
+
       $('liveState').textContent=
         '🟢 TikTok connecté · votes et cadeaux actifs.';
     });
@@ -1390,7 +1306,6 @@ function connectTikTok(){
       if(message?.repeatEnd===false)return;
 
       const user=message?.user||{};
-      const gift=message?.gift||{};
 
       const name=String(
         user.uniqueId||
@@ -1402,8 +1317,8 @@ function connectTikTok(){
 
       const value=Number(
         message?.diamondCount||
-        gift?.diamondCount||
-        gift?.diamond_count||
+        message?.gift?.diamondCount||
+        message?.gift?.diamond_count||
         0
       );
 
@@ -1414,35 +1329,7 @@ function connectTikTok(){
         user.avatarThumb||
         '';
 
-      /* AJOUT DES POINTS DU CADEAU */
       addGift(name,value*repeat,avatar);
-
-      /* DÉTECTION DE LA ROSE TIKTOK */
-      const giftName=String(
-        message?.giftName||
-        gift?.name||
-        gift?.giftName||
-        message?.giftDetails?.giftName||
-        ''
-      );
-
-      const giftId=Number(
-        message?.giftId||
-        message?.gift_id||
-        gift?.id||
-        0
-      );
-
-      const isRose=
-        normalize(giftName)==='rose'||
-        giftId===5655;
-
-      if(isRose){
-        $('status').textContent=
-          '🌹 Rose reçue de '+name+' · question suivante !';
-
-        startRound();
-      }
     });
 
     socket.on('roomUser',message=>{
@@ -1475,29 +1362,66 @@ function connectTikTok(){
     });
 
     socket.on('tiktokDisconnected',reason=>{
+      if(tiktokAccepted)return;
+
+      connectionInProgress=false;
+
       $('liveState').textContent=
-        'Connexion TikTok refusée : '+String(reason||'raison inconnue');
+        'Connexion refusée : '+String(reason||'raison inconnue')+
+        ' · nouvel essai dans 15 secondes…';
+
+      scheduleTikTokRetry();
     });
 
     socket.on('streamEnd',()=>{
+      if(tiktokAccepted)return;
+
+      connectionInProgress=false;
+
       $('liveState').textContent=
-        'LIVE terminé. Reconnecte au prochain LIVE.';
+        'LIVE terminé · nouvel essai dans 15 secondes…';
+
+      scheduleTikTokRetry();
     });
 
     socket.on('disconnect',()=>{
+      if(tiktokAccepted)return;
+
+      connectionInProgress=false;
+
       $('liveState').textContent=
-        'Connexion interrompue · reconnexion automatique…';
+        'Connexion interrompue · nouvel essai dans 15 secondes…';
+
+      scheduleTikTokRetry();
     });
 
     socket.on('connect_error',()=>{
+      if(tiktokAccepted)return;
+
+      connectionInProgress=false;
+
       $('liveState').textContent=
-        'Serveur inaccessible pour le moment · nouvelle tentative…';
+        'Serveur inaccessible · nouvel essai dans 15 secondes…';
+
+      scheduleTikTokRetry();
     });
+
+  }).catch(()=>{
+    if(tiktokAccepted)return;
+
+    connectionInProgress=false;
+
+    $('liveState').textContent=
+      'Erreur de connexion · nouvel essai dans 15 secondes…';
+
+    scheduleTikTokRetry();
   });
 }
 
 /* CONNEXION ET COMMANDES */
 $('tiktokConnect').addEventListener('click',connectTikTok);
+
+$('tiktokUser').value=TIKTOK_USERNAME;
 
 $('tiktokUser').addEventListener('keydown',e=>{
   if(e.key==='Enter')connectTikTok();
@@ -1559,6 +1483,13 @@ $('demoFive').addEventListener('click',()=>{
 renderBoard();
 renderDonors();
 startRound();
+
+/* PREMIÈRE TENTATIVE AUTOMATIQUE APRÈS 1 SECONDE */
+setTimeout(()=>{
+  if(!tiktokAccepted){
+    connectTikTok();
+  }
+},1000);
 
 })();
 </script>
