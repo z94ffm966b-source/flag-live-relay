@@ -1548,19 +1548,30 @@ function connectTikTok(){
       }
     });
 
-    currentSocket.on('tiktokDisconnected',reason=>{
-      if(socket!==currentSocket)return;
+   currentSocket.on('tiktokDisconnected',reason=>{
+  if(socket!==currentSocket)return;
 
-      if(connectionTimeout){
-        clearTimeout(connectionTimeout);
-        connectionTimeout=null;
-      }
+  if(connectionTimeout){
+    clearTimeout(connectionTimeout);
+    connectionTimeout=null;
+  }
 
-      $('liveState').textContent=
-        'Connexion TikTok refusée : '+String(reason||'raison inconnue');
+  // Si le LIVE était connecté, on remet tout à zéro
+  if(tiktokAccepted){
+    resetLive();
 
-      scheduleTikTokRetry();
-    });
+    $('liveState').textContent=
+      '🔴 LIVE déconnecté · classement et cadeaux remis à zéro.';
+
+    return;
+  }
+
+  // Si la connexion n'avait pas encore été acceptée
+  $('liveState').textContent=
+    'Connexion TikTok refusée : '+String(reason||'raison inconnue');
+
+  scheduleTikTokRetry();
+});
 
     currentSocket.on('streamEnd',()=>{
       if(socket!==currentSocket)return;
