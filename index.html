@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#090014">
-<title>FLAG LIVE — Quiz en direct</title>
+<title>QUIZ LIVE — Quiz TikTok en direct</title>
 
 <style>
 :root{
@@ -448,11 +448,27 @@ input,select{
   background:#100020
 }
 .history-box h4{margin:0 0 6px;text-align:center}
-.reset-countdown{
+  .reset-countdown{
   font-size:10px;
   color:#e8c8ff;
   text-align:center
 }
+
+/* IDENTITÉ QUIZ LIVE : ambiance plateau TV et jauge de progression */
+.logo{animation:logoGlow 3s ease-in-out infinite alternate}
+@keyframes logoGlow{from{filter:drop-shadow(0 0 3px #a94dff)}to{filter:drop-shadow(0 0 13px #f18cff)}}
+.answer:not(.good):not(.bad):hover{transform:translateY(-2px);box-shadow:0 0 18px #c15bff66}
+.answer.good{animation:answerPop .45s ease both}
+@keyframes answerPop{0%{transform:scale(.96)}55%{transform:scale(1.035)}100%{transform:scale(1)}}
+.coin-hud{display:grid;gap:3px;margin:0 0 5px;text-align:left}
+.coin-hud-top{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:clamp(7px,.8vh,10px);font-weight:950;color:#ffe6a6}
+.coin-track{height:7px;border-radius:99px;overflow:hidden;background:#10051d;border:1px solid #ffffff30}
+.coin-fill{height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#ffcf63,#ff8d4d,#f45dff);box-shadow:0 0 12px #ffbd5c99;transition:width .35s ease}
+.host-line{font-size:clamp(7px,.85vh,10px);line-height:1.2;color:#e9d5ff;text-align:center;margin:3px 0 4px;min-height:1.2em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cta .rules-line{font-size:clamp(6px,.72vh,8px);line-height:1.15;white-space:normal}
+body.gift-flash .app{animation:giftFlash .55s ease}
+@keyframes giftFlash{0%,100%{box-shadow:0 0 45px #a33cff33}35%{box-shadow:0 0 55px #ffd778dd,0 0 100px #ff8b45aa}}
+body.goal-reached .coin-fill{filter:brightness(1.7);box-shadow:0 0 20px #ffe28b}
 
 /* AFFICHAGE CLASSIQUE SUR NAVIGATEUR */
 @media(max-width:650px){
@@ -746,7 +762,7 @@ html.overlay-mode .donor-person:nth-child(n+6){display:none}
 
 <header class="top">
   <div class="stat">👥 <b id="viewerCount">0</b><br>joueurs</div>
-  <div class="logo">🌐 FLAG<br>LIVE<small>QUIZ EN DIRECT</small></div>
+  <div class="logo">⚡ QUIZ<br>LIVE<small>@quizzzz123_ · EN DIRECT</small></div>
   <div class="stat">Dernier abonné<br><b id="lastSub">En attente…</b></div>
 </header>
 
@@ -803,7 +819,12 @@ html.overlay-mode .donor-person:nth-child(n+6){display:none}
 </section>
 
 <div class="cta">
-  🌹 1 ROSE = PASSER · ❤️ 100 LIKES = 10 PTS · 🎁 1 PIÈCE = 50 PTS · 10 = 600 · 100 = 6 500 · 500 = 35 000
+  <div class="coin-hud">
+    <div class="coin-hud-top"><span>🎯 OBJECTIF DU LIVE</span><strong id="coinProgressText">0 / 400 pièces</strong></div>
+    <div class="coin-track"><div class="coin-fill" id="coinProgressFill"></div></div>
+  </div>
+  <div class="host-line" id="hostLine" aria-live="polite">🎙️ L’animateur vous attend… prêts à jouer ?</div>
+  <div class="rules-line">🌹 1 ROSE = PASSER · ❤️ 100 LIKES = 10 PTS · 🎁 1 PIÈCE = 50 PTS · 10 = 600 · 100 = 6 500 · 500 = 35 000</div>
 </div>
 
 </main>
@@ -887,7 +908,7 @@ html.overlay-mode .donor-person:nth-child(n+6){display:none}
 </section>
 
 <div class="foot">
-  FLAG LIVE · Scores et cadeaux sauvegardés sur cet appareil · Reset automatique toutes les 4 heures.
+  QUIZ LIVE · Scores et cadeaux sauvegardés sur cet appareil · Reset automatique toutes les 4 heures.
 </div>
 
 </div>
@@ -951,6 +972,11 @@ let musicNodes=[];
 let audioEnabled=false;
 let musicTimer=null;
 let musicStep=0;
+let coinProgress=0;
+let goalCelebrationLock=false;
+let lastHostSpeechAt=0;
+let firstCorrectVoice=false;
+let firstWrongVoice=false;
 
 let scores=readStore(SCORE_KEY);
 let donors=readStore(DONOR_KEY);
@@ -1510,6 +1536,8 @@ function startRound(){
 
   votes={};
   roundClosed=false;
+  firstCorrectVoice=false;
+  firstWrongVoice=false;
   seconds=DURATION;
 
   renderVoters();
@@ -1517,6 +1545,9 @@ function startRound(){
 
   $('status').textContent=
     'Manche '+round+' · '+questions.length+' pays disponibles.';
+  hostLine(`Manche ${round} ! Vous avez 20 secondes : identifiez le drapeau !`);
+  speakHost(`Nouvelle manche ! Quel pays se cache derrière ce drapeau ? Vous avez vingt secondes !`);
+  playCue('tick');
 
   $('pseudo').disabled=false;
   $('choice').disabled=false;
@@ -1529,6 +1560,79 @@ function startRound(){
   },1000);
 }
 
+function updateCoinProgress(){
+  const pct=Math.min(100,(coinProgress/400)*100);
+  const fill=$('coinProgressFill');
+  const label=$('coinProgressText');
+  if(fill)fill.style.width=pct+'%';
+  if(label)label.textContent=Math.min(coinProgress,400).toLocaleString('fr-FR')+' / 400 pièces';
+}
+
+function hostLine(message){
+  const line=$('hostLine');
+  if(line)line.textContent='🎙️ '+message;
+}
+
+function playCue(kind='tick'){
+  if(!audioContext||!audioEnabled)return;
+  const now=audioContext.currentTime;
+  const notes=kind==='win'?[523.25,659.25,783.99]:kind==='gift'?[659.25,880]:[440];
+  notes.forEach((freq,i)=>{
+    const osc=audioContext.createOscillator();
+    const gain=audioContext.createGain();
+    osc.type=kind==='tick'?'triangle':'sine';
+    osc.frequency.setValueAtTime(freq,now+i*.11);
+    gain.gain.setValueAtTime(.0001,now+i*.11);
+    gain.gain.exponentialRampToValueAtTime(kind==='tick'?.035:.07,now+i*.11+.025);
+    gain.gain.exponentialRampToValueAtTime(.0001,now+i*.11+.18);
+    osc.connect(gain);gain.connect(audioContext.destination);
+    osc.start(now+i*.11);osc.stop(now+i*.11+.2);
+  });
+}
+
+function speakHost(message,{force=false,priority=false}={}){
+  if(!audioEnabled||!window.speechSynthesis||!message)return;
+  const now=Date.now();
+  if(!force&&now-lastHostSpeechAt<2300)return;
+  lastHostSpeechAt=now;
+  const synth=window.speechSynthesis;
+  if(priority)synth.cancel();
+  const utter=new SpeechSynthesisUtterance(message);
+  utter.lang='fr-FR';
+  utter.rate=.96;
+  utter.pitch=.82;
+  utter.volume=Number($('voiceVolume').value)/100;
+  const voices=synth.getVoices();
+  const selected=$('voiceSelect').value;
+  utter.voice=voices.find(v=>v.name===selected)||chooseFrenchVoice(voices);
+  synth.speak(utter);
+}
+
+function celebrateCoinGoal(name){
+  if(goalCelebrationLock)return;
+  goalCelebrationLock=true;
+  coinProgress=0;
+  updateCoinProgress();
+  document.body.classList.add('goal-reached','gift-flash');
+  hostLine('🎉 OBJECTIF ATTEINT ! 400 pièces réunies ! Nouvelle étape !');
+  playCue('win');
+  speakHost(`Incroyable ! L’objectif des quatre cents pièces est atteint grâce à ${name||'vous tous'} ! Bravo à toute la communauté !`,{force:true,priority:true});
+  setTimeout(()=>document.body.classList.remove('goal-reached','gift-flash'),1500);
+  setTimeout(()=>{goalCelebrationLock=false;hostLine('On repart vers les 400 prochaines pièces !');},3200);
+}
+
+function registerCoinProgress(name,coins){
+  coinProgress+=Math.max(0,Number(coins)||0);
+  if(coinProgress>=400){
+    celebrateCoinGoal(name);
+  }else{
+    updateCoinProgress();
+    if(coins>=10){
+      hostLine(`${name} fait monter la jauge : ${Math.min(coinProgress,400)} / 400 pièces !`);
+    }
+  }
+}
+
 function chooseFrenchVoice(voices){
   const fr=voices.filter(v=>/^fr([-_]|$)/i.test(v.lang));
 
@@ -1539,26 +1643,13 @@ function chooseFrenchVoice(voices){
 }
 
 function speakAnswer(){
-  if(!audioEnabled||!window.speechSynthesis||!current)return;
-
-  const synth=window.speechSynthesis;
-  synth.cancel();
-
-  const utter=new SpeechSynthesisUtterance(
-    `${correct}. ${current.country}`
-  );
-
-  utter.lang='fr-FR';
-  utter.rate=.92;
-  utter.pitch=.88;
-  utter.volume=Number($('voiceVolume').value)/100;
-
-  const selected=$('voiceSelect').value;
-  const voices=synth.getVoices();
-
-  utter.voice=voices.find(v=>v.name===selected)||chooseFrenchVoice(voices);
-
-  synth.speak(utter);
+  if(!current)return;
+  const winners=Object.entries(votes).filter(([,v])=>v.choice===correct).length;
+  const phrase=winners
+    ?`Et c’est terminé ! La bonne réponse était ${current.country} ! ${winners} joueur${winners>1?'s ont':' a'} trouvé la bonne réponse. Bravo !`
+    :`Et la bonne réponse était ${current.country} ! Personne n’a trouvé cette fois. On se concentre pour la prochaine manche !`;
+  hostLine(`✅ Réponse : ${current.country} · ${winners} bonne${winners>1?'s réponses':' réponse'}`);
+  speakHost(phrase,{force:true,priority:true});
 }
 
 function populateVoices(){
@@ -1704,6 +1795,17 @@ function receiveVote(message){
   if(avatar)avatars[name]=avatar;
 
   renderVoters();
+
+  if(choice===correct&&!firstCorrectVoice){
+    firstCorrectVoice=true;
+    hostLine(`🔥 ${name} vient de trouver la bonne réponse !`);
+    speakHost(`Bien joué ${name} ! C’est la bonne réponse !`);
+    playCue('win');
+  }else if(choice!==correct&&!firstWrongVoice){
+    firstWrongVoice=true;
+    hostLine(`👀 ${name} a tenté sa chance…`);
+    speakHost(`Pas cette fois ${name}, mais continuez à jouer !`);
+  }
 
   $('status').textContent='Vote reçu : '+name+' · '+choice;
 }
@@ -1977,6 +2079,13 @@ function connectTikTok(){
       if(!name||coins<=0)return;
 
       addGift(name,coins,avatar);
+      registerCoinProgress(name,coins);
+      document.body.classList.add('gift-flash');
+      setTimeout(()=>document.body.classList.remove('gift-flash'),600);
+      playCue('gift');
+      if(coins>=10){
+        speakHost(`Merci ${name} pour ce cadeau ! Vous faites avancer le live !`);
+      }
 
       const giftName=String(
         message?.giftName||
@@ -1999,10 +2108,12 @@ function connectTikTok(){
         startRound();
       }
 
-      /* RESET SI UN CADEAU UNIQUE VAUT AU MOINS 400 PIÈCES */
-      if(diamond>=RESET_GIFT_COINS){
+      /* RESET SI UN CADEAU / ENVOI UNIQUE ATTEINT 400 PIÈCES */
+      if(coins>=RESET_GIFT_COINS){
+        hostLine(`💎 Cadeau exceptionnel de ${coins} pièces : classement réinitialisé !`);
+        speakHost(`Cadeau exceptionnel de ${name} ! Le classement est remis à zéro !`,{force:true,priority:true});
         resetParty(
-          `Cadeau unique de ${diamond} pièces envoyé par @${name}`
+          `Cadeau de ${coins} pièces envoyé par @${name}`
         );
       }
     });
@@ -2239,7 +2350,7 @@ function voiceTest(){
     return;
   }
 
-  const u=new SpeechSynthesisUtterance('A. France');
+  const u=new SpeechSynthesisUtterance('Bienvenue dans Quiz Live ! Êtes-vous prêts à jouer ?');
 
   u.lang='fr-FR';
   u.rate=.92;
@@ -2338,10 +2449,12 @@ $('demoRose').addEventListener('click',()=>{
 
 $('demoGift').addEventListener('click',()=>{
   addGift('Donateur démo',100);
+  registerCoinProgress('Donateur démo',100);
 });
 
 $('demoResetGift').addEventListener('click',()=>{
   addGift('Donateur reset test',400);
+  registerCoinProgress('Donateur reset test',400);
   resetParty('Test manuel du cadeau de 400 pièces');
 });
 
@@ -2357,6 +2470,7 @@ $('demoFive').addEventListener('click',()=>{
 renderBoard();
 renderDonors();
 renderHistory();
+updateCoinProgress();
 
 if(Date.now()-partyStart>=PARTY_DURATION){
   resetParty('Réinitialisation automatique après 4 heures');
