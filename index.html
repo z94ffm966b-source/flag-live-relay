@@ -1120,6 +1120,8 @@ function activateVoice(){
  });
 }
 
+/* QUESTION LUE, PUIS CHRONOMÈTRE IMMÉDIATEMENT */
+
 function announceCurrentQuestion(){
  if(gameFinished || revealed)return;
 
@@ -1132,8 +1134,7 @@ function announceCurrentQuestion(){
   "Réponse A : "+q[2][0],
   "Réponse B : "+q[2][1],
   "Réponse C : "+q[2][2],
-  "Réponse D : "+q[2][3],
-  "Vous avez dix secondes pour répondre."
+  "Réponse D : "+q[2][3]
  ];
 
  speakSequence(messages,()=>{
@@ -1229,8 +1230,10 @@ function validateRound(){
 
  const correctIndex=questions[questionIndex][3];
 
+ /* Les joueurs gelés sont exclus avant de déterminer le premier. */
  const correctAnswers=roundAnswers.filter(entry=>
-  entry.answerIndex===correctIndex
+  entry.answerIndex===correctIndex &&
+  !(frozenPlayer===entry.player.name && Date.now()<frozenUntil)
  );
 
  let firstCorrect=null;
@@ -1243,13 +1246,6 @@ function validateRound(){
 
  correctAnswers.forEach((entry,index)=>{
   const player=entry.player;
-
-  /* Un joueur gelé ne gagne aucun point pendant le gel. */
-  const isFrozen=
-   frozenPlayer===player.name &&
-   Date.now()<frozenUntil;
-
-  if(isFrozen)return;
 
   const basePoints=index===0?400:100;
   const roseMultiplier=player.roseNext?2:1;
@@ -1264,8 +1260,7 @@ function validateRound(){
   player.score+=points;
  });
 
- /* Le bonus rose est consommé à la fin de cette manche,
-    même si le joueur n'a pas trouvé la bonne réponse. */
+ /* Le bonus rose est consommé à la fin de cette manche. */
  players.forEach(player=>{
   player.roseNext=false;
  });
@@ -1275,19 +1270,30 @@ function validateRound(){
 
  renderRanking();
 
+ /* Seul le premier joueur ayant trouvé la bonne réponse est annoncé. */
  if(firstCorrect){
-  const firstWasFrozen=
-   frozenPlayer===firstCorrect.name &&
-   Date.now()<frozenUntil;
-
-  if(!firstWasFrozen){
-   speak("Bravo "+firstCorrect.name+" ! Tu es le premier à avoir trouvé la bonne réponse !");
-  }
+  speak(
+   "Bravo "+firstCorrect.name+
+   " ! Tu as trouvé la bonne réponse en premier !"
+  );
  }
 
  $("bottomStatus").textContent=
   correctAnswers.length+
   " BONNE(S) RÉPONSE(S) — POINTS ATTRIBUÉS";
+}
+
+/* ATTENDRE LA FIN DE LA VOIX AVANT DE CONTINUER */
+
+function waitForVoiceToFinish(callback){
+ if(!voiceEnabled || (!speaking && voiceQueue.length===0)){
+  callback();
+  return;
+ }
+
+ setTimeout(()=>{
+  waitForVoiceToFinish(callback);
+ },250);
 }
 
 function revealAnswer(){
@@ -1309,12 +1315,17 @@ function revealAnswer(){
  $("bottomStatus").textContent=
   "RÉPONSE RÉVÉLÉE — CLASSEMENT MIS À JOUR";
 
- /* La voix ne donne pas la bonne réponse. */
+ /* La voix ne donne pas la bonne réponse.
+    Le quiz attend la fin de l'annonce du premier joueur. */
 
  if(questionIndex===9){
-  setTimeout(announceTop7,1800);
+  waitForVoiceToFinish(()=>{
+   setTimeout(announceTop7,1500);
+  });
  }else{
-  setTimeout(nextQuestion,3500);
+  waitForVoiceToFinish(()=>{
+   setTimeout(nextQuestion,1500);
+  });
  }
 }
 
@@ -1750,8 +1761,6 @@ function resetQuiz(){
 
  simStatus("Quiz entièrement réinitialisé.");
 }
-
-/* APERÇU AUTONOME */
 
 function simulateLiveLikes(){
  /* Conservée pour compatibilité, mais aucun like fictif n'est ajouté. */
