@@ -1,403 +1,943 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#100020">
-<title>FLAG LIVE — Quiz en direct</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FLAG LIVE — Quiz Live V2</title>
 <style>
-:root{color-scheme:dark;--bg:#090014;--panel:#190733;--purple:#a94dff;--pink:#f18cff;--cyan:#70eaff}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:#fff;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
-body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;background:radial-gradient(ellipse at 50% 0%,#35105c,transparent 48%),linear-gradient(145deg,#080012,#16052b 60%,#080012)}
-.app{width:min(100%,980px);margin:auto;padding:18px;border:1px solid #8f40c7;border-radius:24px;background:linear-gradient(180deg,#190733f7,#080014fa);box-shadow:0 0 45px #8a2bd044;display:flex;flex-direction:column;gap:10px}
-.top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px}.stat{padding:8px;border:1px solid #8136b5;border-radius:12px;background:#16052e;text-align:center;font-size:12px;min-width:0}.stat b{font-size:18px;display:inline-block;max-width:100%;overflow-wrap:anywhere}
-.logo{text-align:center;font-size:34px;font-weight:1000;line-height:.85;font-style:italic;text-shadow:0 0 12px var(--pink),0 0 24px #903cff;white-space:nowrap}.logo small{display:block;font-size:9px;letter-spacing:3px;margin-top:7px;color:#e7c8ff}
-.timer{width:66px;height:66px;margin:auto;border:4px solid #bd63ff;border-radius:50%;display:grid;place-content:center;text-align:center;background:#210744;font-size:29px;font-weight:950;box-shadow:0 0 24px #a333ff77}.timer small{font-size:8px;letter-spacing:1px}
-.track{height:7px;border-radius:20px;background:#28103d;overflow:hidden}.fill{height:100%;width:100%;background:linear-gradient(90deg,#f5a1ff,#9e45ff,#67e9ff);transition:width .2s linear}
-.flag{min-height:0;display:flex;align-items:center;justify-content:center;margin:2px auto;overflow:hidden;width:100%;flex:1}#flag img{display:block;max-width:94%;max-height:100%;object-fit:contain;border-radius:5px;box-shadow:0 0 30px #bd5fff55}.flag-fallback{font-size:clamp(120px,25vw,260px)}
-.question{padding:12px;text-align:center;font-size:clamp(17px,2.4vw,25px);font-weight:900;border:1px solid #8f40c7;border-radius:13px;background:linear-gradient(100deg,#321052,#19052f)}
-.answers{display:grid;grid-template-columns:1fr 1fr;gap:8px}.answer{min-height:54px;padding:9px;border:1px solid #a653ed;border-radius:12px;background:linear-gradient(135deg,#38115f,#190632);color:#fff;font-size:clamp(13px,1.8vw,18px);font-weight:850;overflow-wrap:anywhere}.answer.good{background:#14583f;border-color:#65f0aa}.answer.bad{opacity:.45}
-.panels{display:grid;grid-template-columns:1fr 1fr;gap:9px;align-items:start}.panel{min-width:0;padding:10px;border:1px solid #8539b8;border-radius:14px;background:#190733ed}.heading{text-align:center;font-size:13px;font-weight:950;margin-bottom:7px;color:#f1d9ff}
-.person,.donor-person{display:flex;align-items:center;gap:6px;padding:4px 1px;border-bottom:1px solid #ffffff1c;font-size:12px;min-width:0}.rank{width:18px;flex:0 0 18px;color:#e7c6ff;font-weight:950}.avatar,.donor-person img{width:23px;height:23px;flex:0 0 23px;border-radius:50%;object-fit:cover;display:grid;place-items:center;background:linear-gradient(135deg,#ffb5eb,#8034ff);color:#26003f;font-weight:950}.name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.score,.donor-coins{font-weight:900;white-space:nowrap;color:#e3c2ff;font-size:10px}.donor-coins{color:#ffd778}.muted,.status,.livehint,.foot{font-size:11px;color:#d9c7ee;text-align:center}.voters,.cta{padding:8px;border:1px solid #8539b8;border-radius:11px;text-align:center;background:#16052e;font-size:12px}.cta{font-size:11px;font-weight:950;background:linear-gradient(90deg,#61189a,#300c64);border-color:#d06bff}
-.results{display:none}.result-row{display:flex;justify-content:space-between;gap:5px;padding:5px;border-bottom:1px solid #ffffff22;font-weight:800;font-size:11px}.result-row strong{color:#7dffb2}
-.controls{width:min(100%,980px);margin:12px auto 0;display:grid;gap:10px}.tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}
-button{cursor:pointer}.tools button,.connectbox button,.submit,.bank-actions button{border:1px solid #b64cff;background:#29094b;color:#fff;border-radius:9px;padding:9px;font-weight:800}
-input,select,textarea{min-width:0;border:1px solid #8b39c2;border-radius:8px;background:#0c001b;color:#fff;padding:9px;width:100%}
-.connectbox,.demoform{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:8px}.demoform{grid-template-columns:1fr 100px}.demoform button{grid-column:1/-1}
-.bank-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.bank-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}
-.bank-list{display:grid;gap:6px;margin-top:8px}.bank-item{display:flex;align-items:center;gap:8px;padding:7px;border:1px solid #ffffff20;border-radius:9px;background:#100020}.bank-item span{flex:1;min-width:0}.bank-item button{padding:6px 8px;border:1px solid #a653ed;border-radius:7px;background:#29094b;color:white}
-textarea{min-height:90px;resize:vertical}.note{font-size:10px;color:#cbb6df;line-height:1.4}
-@media(max-width:650px){body{padding:7px;align-items:flex-start}.app{padding:10px;gap:8px;border-radius:16px}.logo{font-size:24px}.logo small{font-size:7px;letter-spacing:1px}.stat{font-size:10px;padding:6px 3px}.stat b{font-size:13px}.timer{width:55px;height:55px;font-size:24px}.question{font-size:15px;padding:9px}.answer{min-height:48px;font-size:13px}.panel{padding:7px}.heading{font-size:10px}.person,.donor-person{font-size:9px;gap:4px}.avatar,.donor-person img{width:19px;height:19px;flex-basis:19px}.score,.donor-coins{font-size:8px}.cta{font-size:9px}}
-html.overlay-mode body{display:block;padding:0;background:#090014;overflow-x:hidden}
-html.overlay-mode .app{width:min(100vw,56.25vh);height:min(100vh,177.777vw);max-width:none;min-height:0;aspect-ratio:9/16;margin:0 auto;padding:7px 9px;border:0;border-radius:0;display:grid;grid-template-rows:auto auto 5px minmax(0,1fr) auto auto minmax(100px,20%) auto auto;gap:5px;overflow:hidden}
-html.overlay-mode .top{grid-row:1;gap:5px}.overlay-mode .logo{font-size:clamp(17px,3vh,25px)}.overlay-mode .logo small{font-size:6px;letter-spacing:1px}.overlay-mode .stat{font-size:8px;padding:4px}.overlay-mode .stat b{font-size:12px}
-html.overlay-mode .timer{grid-row:2;width:43px;height:43px;font-size:20px;border-width:3px}.overlay-mode .timer small{font-size:6px}
-html.overlay-mode .track{grid-row:3;height:5px}.overlay-mode .flag{grid-row:4;min-height:0;height:100%;margin:0}.overlay-mode #flag img{max-height:100%;max-width:94%}
-html.overlay-mode .question{grid-row:5;font-size:clamp(12px,2vh,17px);padding:6px}.overlay-mode .answers{grid-row:6;gap:5px}.overlay-mode .answer{min-height:34px;padding:5px;font-size:clamp(10px,1.5vh,13px)}
-html.overlay-mode .panels{grid-row:7;min-height:0;height:100%;gap:5px;overflow:hidden}.overlay-mode .panel{padding:4px;overflow:hidden}.overlay-mode .heading{font-size:8px;margin-bottom:3px}.overlay-mode .person,.overlay-mode .donor-person{font-size:8px;padding:2px 0;gap:3px}.overlay-mode .avatar,.overlay-mode .donor-person img{width:16px;height:16px;flex-basis:16px}.overlay-mode .score,.overlay-mode .donor-coins{font-size:7px}
-html.overlay-mode .voters{grid-row:8;padding:5px;font-size:8px}.overlay-mode .cta{grid-row:9;padding:4px;font-size:7px;white-space:nowrap;overflow:hidden}
-html.overlay-mode .controls{width:min(100vw,56.25vh);margin:12px auto;padding:0 8px}
-html.overlay-mode .person:nth-child(n+6){display:none}
-@media(max-width:699px){html.overlay-mode .app{width:100vw;height:177.777vw;max-height:100vh}.bank-grid{grid-template-columns:1fr}}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+:root{--bg:#080b18;--panel:#11182b;--blue:#36c5ff;--purple:#9065ff;--green:#35e6a0;--red:#ff5577;--text:#f5f7ff;--muted:#8793ad}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% -20%,#29346a 0%,transparent 55%),linear-gradient(145deg,#080b18,#101027 65%,#080b18);color:var(--text);font-family:Inter,Arial,sans-serif}
+button,select{font:inherit;cursor:pointer}
+.app{max-width:1500px;margin:auto;padding:22px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:13px}
+.logo{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;font-size:24px;background:linear-gradient(135deg,var(--blue),var(--purple));box-shadow:0 0 30px #557aff55}
+.brand h1{font-size:23px;margin:0;font-weight:900;letter-spacing:1px}
+.brand small{color:var(--muted);font-size:10px;letter-spacing:3px}
+.live{border:1px solid #ff557766;background:#ff557714;color:#ff7790;border-radius:30px;padding:9px 15px;font-size:12px;font-weight:800;letter-spacing:1px}
+.live:before{content:"";display:inline-block;width:7px;height:7px;background:#ff5577;border-radius:50%;margin-right:8px;box-shadow:0 0 12px #ff5577}
+.likebox{background:linear-gradient(110deg,#14243d,#1a1737);border:1px solid #ffffff18;border-radius:17px;padding:14px 17px;margin-bottom:17px}
+.likehead{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px;font-weight:800}
+.likehead strong{color:var(--blue);font-size:19px}
+.likebar{height:10px;background:#ffffff14;border-radius:20px;overflow:hidden;margin-top:10px}
+.likefill{height:100%;width:0;background:linear-gradient(90deg,#36c5ff,#9065ff);transition:width .3s}
+.likehint{font-size:10px;color:var(--muted);margin-top:8px}
+.topline{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-bottom:10px}
+.progress{height:5px;background:#ffffff12;border-radius:10px;overflow:hidden}
+.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--purple));transition:width .4s}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:18px;margin-top:18px}
+.main{min-width:0}
+.stage{position:relative;overflow:hidden;border:1px solid #ffffff16;border-radius:24px;padding:25px;background:linear-gradient(145deg,#17213b,#10152a 60%,#191331);box-shadow:0 20px 70px #0005}
+.stage:before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:#6a55ff13;filter:blur(30px);top:-220px;right:-100px;pointer-events:none}
+.stage-head{display:flex;justify-content:space-between;align-items:center;position:relative}
+.round{font-size:11px;letter-spacing:2px;color:var(--blue);font-weight:800}
+.category{font-size:11px;color:#c4b6ff;background:#9065ff20;border:1px solid #9065ff55;border-radius:20px;padding:8px 12px}
+.question-wrap{text-align:center;padding:25px 0 15px;position:relative}
+.eyebrow{font-size:11px;letter-spacing:4px;color:var(--muted);font-weight:700}
+.question{font-size:clamp(25px,4vw,43px);line-height:1.18;font-weight:900;max-width:850px;margin:16px auto 22px;animation:appear .45s ease}
+@keyframes appear{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.flag{font-size:75px;margin:8px 0 15px;filter:drop-shadow(0 8px 20px #0007)}
+.timer-row{display:flex;align-items:center;justify-content:center;gap:14px;margin:10px auto 22px}
+.timer{font-size:37px;font-weight:900;font-variant-numeric:tabular-nums;min-width:65px;color:var(--blue)}
+.timer.urgent{color:var(--red);animation:pulse .6s infinite alternate}
+@keyframes pulse{to{transform:scale(1.12);text-shadow:0 0 20px #ff5577}}
+.timer-track{width:min(350px,55%);height:9px;background:#ffffff15;border-radius:20px;overflow:hidden}
+.timer-fill{height:100%;width:100%;background:linear-gradient(90deg,var(--green),var(--blue));transition:width 1s linear}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:850px;margin:auto}
+.answer{display:flex;align-items:center;gap:14px;text-align:left;padding:16px;border:1px solid #ffffff1b;border-radius:15px;background:#ffffff08;color:white;font-weight:700;font-size:15px;min-height:65px;transition:.2s}
+.letter{width:34px;height:34px;flex:none;border-radius:10px;display:grid;place-items:center;background:#ffffff12;color:var(--blue);font-weight:900}
+.answer.correct{border-color:var(--green);background:#35e6a020;box-shadow:0 0 22px #35e6a022}
+.answer.wrong{opacity:.45}
+.status{text-align:center;min-height:27px;margin-top:17px;color:var(--muted);font-size:13px;font-weight:600}
+.bottom-info{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid #ffffff12;margin-top:18px;padding-top:15px;color:var(--muted);font-size:11px}
+.bottom-info strong{color:#fff}
+.sidebar{display:flex;flex-direction:column;gap:15px}
+.panel{background:linear-gradient(145deg,#151d32,#101527);border:1px solid #ffffff13;border-radius:19px;padding:17px;min-width:0}
+.panel-title{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:900;letter-spacing:1px;margin-bottom:15px}
+.panel-title span{color:var(--muted);font-size:10px;letter-spacing:0}
+.player{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #ffffff0b}
+.player:last-child{border:0}
+.avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#36c5ff,#9065ff);font-size:13px;font-weight:900}
+.player-name{font-size:12px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.player-score{font-size:12px;color:var(--green);font-weight:900;white-space:nowrap}
+.rank{font-size:11px;color:var(--muted);width:17px}
+.vote-line{display:flex;align-items:center;gap:9px;margin:11px 0;font-size:11px}
+.vote-line b{width:17px;color:var(--blue)}
+.vote-bg{height:7px;flex:1;background:#ffffff12;border-radius:10px;overflow:hidden}
+.vote-bg i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));width:0;transition:width .4s}
+.vote-line small{color:var(--muted);width:30px;text-align:right}
+.giftgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
+.giftcard{border:1px solid #ffffff20;background:linear-gradient(145deg,#172b43,#17152e);border-radius:15px;padding:13px 5px;text-align:center;min-width:0}
+.giftcard .emoji{font-size:28px}
+.giftcard b{display:block;font-size:11px;margin:7px 0 4px}
+.giftcard small{font-size:9px;color:var(--muted);line-height:1.4}
+.giftcard.rose{border-color:#ff8db555}.giftcard.ice{border-color:#65caff55}.giftcard.bomb{border-color:#ff557755}
+.voters{display:flex;gap:7px;flex-wrap:wrap;max-height:88px;overflow:hidden}
+.voter{background:#ffffff0d;border:1px solid #ffffff13;border-radius:20px;padding:6px 9px;font-size:10px;color:#dce6ff}
+.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}
+.btn{border:1px solid #ffffff20;background:#ffffff0b;color:white;border-radius:12px;padding:11px 15px;font-weight:800;font-size:12px}
+.btn.primary{background:linear-gradient(100deg,#318cff,#865cff);border:0}
+.btn.green{background:#35e6a018;border-color:#35e6a055;color:var(--green)}
+.btn.red{background:#ff557718;border-color:#ff557755;color:#ff9bad}
+.btn:hover{filter:brightness(1.2);transform:translateY(-1px)}
+.demo{margin-top:25px;border:1px solid #ffffff20;border-radius:22px;padding:20px;background:linear-gradient(145deg,#111a30,#111027)}
+.demo h2{font-size:17px;margin:0 0 5px}
+.demo-intro{color:var(--muted);font-size:11px;margin-bottom:17px}
+.demo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.demo-card{background:#ffffff08;border:1px solid #ffffff13;border-radius:14px;padding:13px;min-width:0}
+.demo-card h3{font-size:11px;color:var(--blue);margin:0 0 11px;letter-spacing:1px}
+.demo-card button,.demo-card select{width:100%;margin:4px 0}
+.demo-card select{background:#18233d;color:white;border:1px solid #ffffff25;border-radius:9px;padding:10px;font-size:11px}
+.demo-card .btn{padding:10px 8px;font-size:10px}
+.demo-note{font-size:10px;color:var(--muted);line-height:1.6;margin-top:15px}
+.eventlog{margin-top:14px;background:#080d1a;border:1px solid #ffffff12;border-radius:12px;padding:12px;max-height:160px;overflow:auto}
+.eventlog h3{font-size:10px;color:var(--muted);margin:0 0 8px}
+.logline{font-size:10px;padding:5px 0;border-bottom:1px solid #ffffff0b;color:#c8d2e8}
+.support-panel{margin-top:15px;background:#151d32;border:1px solid #ffffff13;border-radius:18px;padding:15px;overflow:hidden}
+.support-title{font-size:11px;font-weight:900;letter-spacing:1px;margin-bottom:10px}
+.support-track{white-space:nowrap;overflow:hidden}
+.support-inner{display:inline-flex;gap:25px;animation:scroll 22s linear infinite;font-size:11px;color:#c9baff}
+@keyframes scroll{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+.toast{position:fixed;bottom:25px;left:50%;transform:translate(-50%,20px);background:#202a43;border:1px solid #ffffff22;border-radius:14px;padding:13px 18px;font-size:13px;opacity:0;transition:.3s;pointer-events:none;z-index:20}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.footer{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:18px;color:#68738d;font-size:10px}
+.sound-title{color:#b8a6ff}
+.modal{position:fixed;inset:0;background:#050817e8;display:none;place-items:center;padding:20px;z-index:10}
+.modal.show{display:grid}
+.modalbox{width:min(650px,100%);background:linear-gradient(145deg,#192542,#15132d);border:1px solid #ffffff25;border-radius:22px;padding:22px;box-shadow:0 20px 80px #0009}
+.modalbox h2{margin:0 0 5px;font-size:20px}
+.modalbox p{color:var(--muted);font-size:11px}
+.podium{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:20px 0}
+.podium div{background:#ffffff0b;border:1px solid #ffffff15;border-radius:13px;padding:14px 5px;text-align:center}
+.podium strong{display:block;font-size:13px;margin-top:8px}
+.podium small{color:var(--green);font-size:10px}
+.modal-list{font-size:12px;line-height:2;color:#dce6ff}
+
+/* NOTIFICATIONS LIVE */
+.notification-area{position:fixed;top:18px;left:50%;transform:translateX(-50%);width:min(540px,calc(100% - 24px));z-index:30;display:flex;flex-direction:column;gap:9px;pointer-events:none}
+.live-notification{display:flex;align-items:center;gap:13px;padding:14px 17px;border:1px solid #ffffff30;border-radius:16px;background:linear-gradient(110deg,#172b49f5,#251746f5);box-shadow:0 12px 40px #0009;animation:notifIn .45s cubic-bezier(.2,.8,.2,1) both;backdrop-filter:blur(12px)}
+.live-notification.out{animation:notifOut .35s ease forwards}
+.notif-icon{width:43px;height:43px;flex:none;display:grid;place-items:center;border-radius:13px;background:#ffffff13;font-size:25px}
+.notif-content{min-width:0;flex:1}
+.notif-label{font-size:9px;font-weight:900;letter-spacing:2px;color:#a8b8d8;margin-bottom:4px}
+.notif-message{font-size:13px;font-weight:800;line-height:1.35;color:#fff;overflow-wrap:anywhere}
+.notif-message strong{color:#72d9ff}
+@keyframes notifIn{from{opacity:0;transform:translateY(-25px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes notifOut{to{opacity:0;transform:translateY(-18px) scale(.97)}}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.sidebar{display:grid;grid-template-columns:1fr 1fr}.demo-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.app{padding:12px}.stage{padding:16px}.answers{grid-template-columns:1fr}.sidebar{grid-template-columns:1fr}.demo-grid{grid-template-columns:1fr}.question{font-size:26px}.brand h1{font-size:18px}.notification-area{top:8px}.live-notification{padding:11px 13px}.notif-message{font-size:12px}}
 </style>
 </head>
 <body>
-<main class="app" id="liveOverlay">
-<header class="top">
-<div class="stat">👥 <b id="viewerCount">0</b><br>joueurs</div>
-<div class="logo">🌐 FLAG<br>LIVE<small>QUIZ EN DIRECT</small></div>
-<div class="stat">Dernier abonné<br><b id="lastSub">En attente…</b></div>
+
+<div class="notification-area" id="notificationArea"></div>
+
+<div class="app">
+<header>
+ <div class="brand"><div class="logo">🌍</div><div><h1>FLAG LIVE</h1><small>LE QUIZ EN DIRECT</small></div></div>
+ <div class="live">SIMULATION LIVE</div>
 </header>
-<div class="timer"><span id="seconds">15</span><small>SECONDES</small></div>
-<div class="track"><div class="fill" id="fill"></div></div>
-<div class="flag" id="flag"><span class="flag-fallback">🌍</span></div>
-<div class="question" id="question">Préparation de la question…</div>
-<div class="answers" id="answers"></div>
-<div class="panels">
-<section class="panel"><div id="boardView"><div class="heading">🏆 CLASSEMENT GÉNÉRAL</div><div id="leaderboard"></div></div><div class="results" id="resultsView"><div class="heading">🎉 BONNES RÉPONSES</div><div id="resultsList"></div></div></section>
-<section class="panel"><div class="heading">🎁 TOP 5 DONATEURS</div><div id="donorBoard" class="muted">En attente des cadeaux…</div></section>
+
+<section class="likebox">
+ <div class="likehead"><span>❤️ OBJECTIF DE LIKES — QUESTION EN COURS</span><span><strong id="likes">0</strong> / 500</span></div>
+ <div class="likebar"><div class="likefill" id="likeFill"></div></div>
+ <div class="likehint" id="likeHint">Atteins 500 likes pour doubler les points de la prochaine question.</div>
+</section>
+
+<div class="topline"><span id="roundLabel">MANCHE 01 · QUESTION 01</span><span id="questionCount">0 / 20 QUESTIONS</span></div>
+<div class="progress"><div id="overallProgress"></div></div>
+
+<div class="layout">
+<main class="main">
+<section class="stage">
+ <div class="stage-head"><div class="round">⚡ LE GRAND QUIZ</div><div class="category" id="category">GÉOGRAPHIE</div></div>
+ <div class="question-wrap">
+  <div class="eyebrow" id="phase">PRÉPAREZ-VOUS</div>
+  <div class="flag" id="flag">🌍</div>
+  <div class="question" id="question">Bienvenue dans FLAG LIVE !</div>
+  <div class="timer-row"><div class="timer" id="timer">20</div><div class="timer-track"><div class="timer-fill" id="timerFill"></div></div></div>
+  <div class="answers" id="answers">
+   <div class="answer"><span class="letter">A</span>Lance la partie</div>
+   <div class="answer"><span class="letter">B</span>Observe les votes</div>
+   <div class="answer"><span class="letter">C</span>Découvre le classement</div>
+   <div class="answer"><span class="letter">D</span>Amuse-toi !</div>
+  </div>
+  <div class="status" id="status">La simulation est prête.</div>
+ </div>
+ <div class="bottom-info">
+  <span>👥 <strong id="participantCount">0</strong> participants</span>
+  <span>🗳️ <strong id="voteCount">0</strong> votes</span>
+  <span>🏆 <strong id="leaderName">—</strong> en tête</span>
+ </div>
+</section>
+
+<div class="giftgrid">
+ <div class="giftcard rose"><div class="emoji">🌹</div><b>ROSE</b><small>Double les points du joueur</small></div>
+ <div class="giftcard ice"><div class="emoji">🧊</div><b>20 PIÈCES</b><small>Gèle temporairement le n°1</small></div>
+ <div class="giftcard bomb"><div class="emoji">💣</div><b>99 PIÈCES OU +</b><small>Vole la moitié des points du n°1</small></div>
 </div>
-<div class="voters" id="voters">👀 Les votes apparaîtront ici…</div>
-<div class="cta" id="liveBonus">🌹 ROSE : DOUBLE TES POINTS À LA PROCHAINE QUESTION · ⭐ ABONNÉ : POINTS ×2</div>
-</main>
 
 <div class="controls">
-<section class="panel" id="connectionPanel">
-<div class="heading">🔴 CONNEXION TIKTOK LIVE</div><div class="muted">Pseudo TikTok sans @</div>
-<div class="connectbox"><input id="tiktokUser" maxlength="40" value="quizzzz123_" placeholder="Pseudo TikTok"><button id="tiktokConnect" type="button">Connecter</button></div>
-<div class="tools"><button id="newLiveReset" type="button">🔄 Nouveau LIVE / reset</button><button id="audioToggle" type="button">🔊 Activer la musique</button></div>
-<div class="livehint" id="liveState">Connexion en préparation…</div>
+ <button class="btn primary" onclick="startGame()">▶ LANCER</button>
+ <button class="btn" onclick="togglePause()" id="pauseBtn">Ⅱ PAUSE</button>
+ <button class="btn" onclick="nextQuestion()">QUESTION SUIVANTE ↗</button>
+ <button class="btn" onclick="resetGame()">↻ RECOMMENCER</button>
+</div>
+
+<section class="support-panel">
+ <div class="support-title">💜 MERCI À NOS SOUTIENS</div>
+ <div class="support-track"><div class="support-inner" id="supportInner">En attente des premiers soutiens…</div></div>
+</section>
+</main>
+
+<aside class="sidebar">
+ <section class="panel"><div class="panel-title">🏆 CLASSEMENT GÉNÉRAL <span>TOP 7</span></div><div id="leaderboard"></div></section>
+ <section class="panel"><div class="panel-title">🗳️ VOTES EN DIRECT <span>PAR RÉPONSE</span></div><div id="voteBars"></div><div class="demo-note">Les pourcentages sont retirés de l'écran du jeu. Seuls les volumes de votes sont montrés ici.</div></section>
+ <section class="panel"><div class="panel-title">👥 DERNIERS VOTANTS <span id="voterTotal">0</span></div><div class="voters" id="voters"><span class="voter">En attente des votes…</span></div></section>
+ <section class="panel"><div class="panel-title">🎙️ ANIMATEUR <span id="audioState">OFF</span></div>
+  <button class="btn primary" style="width:100%" onclick="enableAudio()">🔊 ACTIVER LA VOIX ET LE SON</button>
+  <button class="btn" style="width:100%;margin-top:8px" onclick="toggleMusic()">♫ MUSIQUE ON / OFF</button>
+ </section>
+</aside>
+</div>
+
+<section class="demo">
+ <h2>🧪 CENTRE DE SIMULATION</h2>
+ <div class="demo-intro">Tous les boutons ci-dessous déclenchent de faux événements pour tester le fonctionnement du live.</div>
+ <div class="demo-grid">
+  <div class="demo-card">
+   <h3>🗳️ VOTES ET RÉPONSES</h3>
+   <select id="votePlayer"></select>
+   <select id="voteChoice"><option value="0">Réponse A</option><option value="1">Réponse B</option><option value="2">Réponse C</option><option value="3">Réponse D</option></select>
+   <button class="btn green" onclick="manualVote()">Envoyer un faux vote</button>
+   <button class="btn" onclick="simulateCorrect()">Faire trouver la bonne réponse</button>
+   <button class="btn" onclick="simulateVoteBatch()">Simuler 10 votes</button>
+   <button class="btn primary" onclick="revealAnswer()">Révéler la réponse</button>
+  </div>
+  <div class="demo-card">
+   <h3>🎁 CADEAUX ET ABONNEMENTS</h3>
+   <select id="giftPlayer"></select>
+   <button class="btn green" onclick="simulateFollow()">⭐ Simuler un abonnement</button>
+   <button class="btn" onclick="simulateRose()">🌹 Envoyer une rose</button>
+   <button class="btn" onclick="simulateIce()">🧊 Cadeau de 20 pièces</button>
+   <button class="btn red" onclick="simulateBomb()">💣 Cadeau de 99 pièces</button>
+  </div>
+  <div class="demo-card">
+   <h3>❤️ LIKES ET CLASSEMENT</h3>
+   <button class="btn" onclick="addLikes(50)">+50 likes</button>
+   <button class="btn" onclick="addLikes(100)">+100 likes</button>
+   <button class="btn green" onclick="addLikes(500)">Atteindre 500 likes</button>
+   <button class="btn" onclick="showPodium()">🏆 Tester le podium</button>
+   <button class="btn" onclick="announceTest()">🎙️ Tester la voix</button>
+  </div>
+ </div>
+ <div class="demo-note">Règles : bonne réponse = 100 points + bonus de rapidité. Abonné = points gagnés doublés. Rose = prochain gain de points doublé. Les multiplicateurs peuvent se cumuler. Le gel bloque temporairement les gains du premier. Le cadeau de 99 pièces retire la moitié du score actuel du premier et l'ajoute au donneur.</div>
+ <div class="eventlog"><h3>JOURNAL DES ÉVÉNEMENTS</h3><div id="logs"></div></div>
 </section>
 
-<section class="panel" id="adminPanel">
-<div class="heading">🧪 OUTILS DE TEST</div>
-<form class="demoform" id="voteForm"><input id="pseudo" maxlength="30" placeholder="Pseudo du joueur" required><select id="choice"></select><button class="submit">Enregistrer un vote de test</button></form>
-<div class="tools"><button id="start" type="button">Relancer la question</button><button id="reveal" type="button">Terminer / révéler</button><button id="demoRose" type="button">🌹 Tester une rose</button><button id="demoGift" type="button">🎁 Tester 100 pièces</button><button id="demoFive" type="button">🎁 5 donateurs test</button><button id="midRecap" type="button">📊 Récapitulatif</button></div>
-<div class="status" id="status">Initialisation…</div>
-</section>
+<div class="footer"><span>FLAG LIVE · V2 SIMULATION</span><span class="sound-title">♫ SIGNAL PULSE — ORIGINAL THEME</span></div>
+</div>
 
-<section class="panel" id="bankPanel">
-<div class="heading">📚 BANQUES DE QUESTIONS — PRÉPARATION DU LIVE</div>
-<div class="bank-grid">
-<div><label class="note" for="bankSelect">Banque active</label><select id="bankSelect"></select></div>
-<div><label class="note" for="questionDuration">Temps par question</label><select id="questionDuration"><option value="15">15 secondes</option><option value="20">20 secondes</option><option value="25">25 secondes</option></select></div>
-</div>
-<div class="bank-actions">
-<button id="newBank" type="button">＋ Créer une banque</button><button id="deleteBank" type="button">🗑 Supprimer la banque</button>
-<button id="exportBank" type="button">⬇ Exporter la banque</button><button id="importBank" type="button">⬆ Importer JSON</button>
-</div>
-<input id="importFile" type="file" accept=".json,application/json" hidden>
-<div class="note" style="margin-top:8px">Les banques sont sauvegardées dans le navigateur de cet appareil. Tu peux les exporter pour les transférer ou les conserver. Les commandes de cette section ne sont pas affichées dans l’overlay TikTok.</div>
-<div class="bank-list" id="bankList"></div>
-<div class="heading" style="margin-top:12px">✏️ ÉDITEUR DE QUESTIONS</div>
-<div class="note">Format : une question par bloc JSON. Champs attendus : question, answers (4 choix), correct (A/B/C/D), category (facultatif). Tu peux aussi modifier une question existante depuis la liste.</div>
-<textarea id="questionEditor" placeholder='{"question":"Quelle est la capitale du Canada ?","answers":["Toronto","Ottawa","Montréal","Vancouver"],"correct":"B","category":"Géographie"}'></textarea>
-<div class="tools"><button id="saveQuestion" type="button">Enregistrer la question</button><button id="clearEditor" type="button">Vider l’éditeur</button></div>
-</section>
-<div class="foot">FLAG LIVE · Scores, banques et réglages sauvegardés sur cet appareil.</div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="podiumModal">
+ <div class="modalbox">
+  <h2>🏆 CLASSEMENT DE LA MANCHE</h2>
+  <p id="podiumSubtitle">Les trois premiers sont annoncés par l'animateur.</p>
+  <div class="podium" id="podium"></div>
+  <div class="modal-list" id="topSeven"></div>
+  <button class="btn primary" style="width:100%;margin-top:15px" onclick="closePodium()">FERMER</button>
+ </div>
 </div>
 
 <script>
-window.socketIoReady=new Promise(resolve=>{const urls=['https://cdn.socket.io/4.7.5/socket.io.min.js','https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js'];const load=i=>{if(typeof window.io==='function')return resolve(true);if(i>=urls.length)return resolve(false);const s=document.createElement('script');s.src=urls[i];s.onload=()=>resolve(typeof window.io==='function');s.onerror=()=>load(i+1);document.head.appendChild(s)};load(0)});
-</script>
-<script>
-(()=>{
-'use strict';
+const questions=[
+["🇯🇵","GÉOGRAPHIE","Quelle est la capitale du Japon ?",["Kyoto","Tokyo","Osaka","Nagoya"],1],
+["🇨🇦","GÉOGRAPHIE","Quelle est la capitale du Canada ?",["Toronto","Vancouver","Ottawa","Montréal"],2],
+["🇦🇺","GÉOGRAPHIE","Quel est le plus grand désert d'Australie ?",["Grand désert de Victoria","Simpson","Gibson","Tanami"],0],
+["🇧🇷","GÉOGRAPHIE","Quelle langue est principalement parlée au Brésil ?",["Espagnol","Portugais","Français","Italien"],1],
+["🇳🇴","GÉOGRAPHIE","Dans quelle région du monde se trouve la Norvège ?",["Balkans","Scandinavie","Caucase","Pays baltes"],1],
+["🇪🇬","GÉOGRAPHIE","Quel fleuve traverse l'Égypte ?",["Le Niger","Le Congo","Le Nil","Le Zambèze"],2],
+["🇨🇭","GÉOGRAPHIE","Combien de langues nationales compte la Suisse ?",["2","3","4","5"],2],
+["🇲🇽","HISTOIRE","Quelle civilisation est associée à Chichén Itzá ?",["Les Mayas","Les Incas","Les Aztèques","Les Olmèques"],0],
+["🇮🇳","GÉOGRAPHIE","Quelle est la capitale de l'Inde ?",["Mumbai","New Delhi","Jaipur","Kolkata"],1],
+["🇮🇸","GÉOGRAPHIE","Quelle est la capitale de l'Islande ?",["Oslo","Helsinki","Reykjavik","Nuuk"],2],
+["🇵🇪","GÉOGRAPHIE","Dans quel pays se trouve le Machu Picchu ?",["Bolivie","Pérou","Chili","Équateur"],1],
+["🇹🇷","GÉOGRAPHIE","Quelle ville se situe à cheval sur deux continents ?",["Ankara","Istanbul","Izmir","Antalya"],1],
+["🇿🇦","GÉOGRAPHIE","Combien de capitales officielles l'Afrique du Sud possède-t-elle ?",["1","2","3","4"],2],
+["🇳🇿","GÉOGRAPHIE","Quelle est la capitale de la Nouvelle-Zélande ?",["Auckland","Christchurch","Wellington","Hamilton"],2],
+["🇰🇷","GÉOGRAPHIE","Quelle est la capitale de la Corée du Sud ?",["Busan","Séoul","Incheon","Daegu"],1],
+["🇲🇦","GÉOGRAPHIE","Quelle est la capitale du Maroc ?",["Casablanca","Marrakech","Rabat","Fès"],2],
+["🇬🇷","HISTOIRE","Quelle cité antique est associée à la naissance de la démocratie ?",["Sparte","Athènes","Corinthe","Thèbes"],1],
+["🇩🇪","GÉOGRAPHIE","Quel fleuve traverse Cologne ?",["Danube","Rhin","Elbe","Oder"],1],
+["🇵🇹","GÉOGRAPHIE","Quelle est la capitale du Portugal ?",["Porto","Lisbonne","Braga","Coimbra"],1],
+["🇸🇪","GÉOGRAPHIE","Quelle est la monnaie de la Suède ?",["Euro","Couronne suédoise","Franc","Livre"],1]
+];
+
+const names=["Atlas_59","LunaQuiz","MaxPower","Nina_Off","GeoMaster","TheoLive","Emma_200","PixelFox","MikaFR","SarahGame","NoahPlay","Zoe_Quiz","LeoFR","MayaLive","TomGame"];
+let people=names.map(name=>({name,avatar:name[0].toUpperCase(),score:0,sub:false,rose:false,frozenUntil:0}));
+let supporters=[],voterNames=[],votes=[0,0,0,0],index=-1,round=1,seconds=20;
+let active=false,paused=false,answered=false,timer=null,likes=0,bonusNext=false;
+let firstCorrectAnnounced=false;
+let audioEnabled=false,musicOn=false,audioCtx=null,musicTimer=null;
+let voiceQueue=[],speaking=false;
+let notificationTimers=[];
+
 const $=id=>document.getElementById(id);
-if(new URLSearchParams(location.search).get('overlay')==='1')document.documentElement.classList.add('overlay-mode');
-const TIKTOK_USERNAME='quizzzz123_',SERVER='https://tiktok-chat-reader-obz6.onrender.com';
-const SCORE_KEY='flaglive_scores_v5',DONOR_KEY='flaglive_donors_v3',BANK_KEY='flaglive_question_banks_v1',ACTIVE_KEY='flaglive_active_bank_v1',HISTORY_KEY='flaglive_history_v1';
-const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const norm=s=>String(s??'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
-function read(key,fallback){try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}}
-let scores=read(SCORE_KEY,{}),donors=read(DONOR_KEY,{}),socket=null,connected=false;
-let votes={},current=null,correct='A',seconds=15,timer=null,closed=false,round=0,deck=[],history=[],midShown=false;
-let duration=15,roseDouble={},globalDouble=false,subscribers={},frozenUntil=0,audioCtx=null,musicOn=false,musicNodes=[];
-const originalCountries=`NP|Népal|🇳🇵|EXPERT
-BT|Bhoutan|🇧🇹|EXPERT
-KI|Kiribati|🇰🇮|EXPERT
-SC|Seychelles|🇸🇨|DIFFICILE
-SZ|Eswatini|🇸🇿|EXPERT
-MD|Moldavie|🇲🇩|DIFFICILE
-DM|Dominique|🇩🇲|EXPERT
-LS|Lesotho|🇱🇸|DIFFICILE
-BN|Brunei|🇧🇳|EXPERT
-MZ|Mozambique|🇲🇿|DIFFICILE
-KG|Kirghizistan|🇰🇬|EXPERT
-VU|Vanuatu|🇻🇺|DIFFICILE
-TJ|Tadjikistan|🇹🇯|EXPERT
-GW|Guinée-Bissau|🇬🇼|EXPERT
-KM|Comores|🇰🇲|DIFFICILE
-ST|São Tomé-et-Príncipe|🇸🇹|EXPERT
-AL|Albanie|🇦🇱|MOYEN
-AD|Andorre|🇦🇩|DIFFICILE
-AM|Arménie|🇦🇲|MOYEN
-AZ|Azerbaïdjan|🇦🇿|MOYEN
-BH|Bahreïn|🇧🇭|DIFFICILE
-BD|Bangladesh|🇧🇩|MOYEN
-BB|Barbade|🇧🇧|DIFFICILE
-BY|Biélorussie|🇧🇾|MOYEN
-BZ|Belize|🇧🇿|DIFFICILE
-BJ|Bénin|🇧🇯|MOYEN
-BO|Bolivie|🇧🇴|MOYEN
-BA|Bosnie-Herzégovine|🇧🇦|MOYEN
-BW|Botswana|🇧🇼|MOYEN
-BG|Bulgarie|🇧🇬|MOYEN
-BF|Burkina Faso|🇧🇫|MOYEN
-BI|Burundi|🇧🇮|DIFFICILE
-KH|Cambodge|🇰🇭|MOYEN
-CM|Cameroun|🇨🇲|MOYEN
-CV|Cap-Vert|🇨🇻|DIFFICILE
-CF|République centrafricaine|🇨🇫|EXPERT
-TD|Tchad|🇹🇩|DIFFICILE
-CL|Chili|🇨🇱|FACILE
-CO|Colombie|🇨🇴|FACILE
-CR|Costa Rica|🇨🇷|MOYEN
-HR|Croatie|🇭🇷|MOYEN
-CU|Cuba|🇨🇺|FACILE
-CY|Chypre|🇨🇾|MOYEN
-CZ|Tchéquie|🇨🇿|MOYEN
-CD|République démocratique du Congo|🇨🇩|DIFFICILE
-DJ|Djibouti|🇩🇯|EXPERT
-DO|République dominicaine|🇩🇴|MOYEN
-EC|Équateur|🇪🇨|MOYEN
-SV|Salvador|🇸🇻|MOYEN
-GQ|Guinée équatoriale|🇬🇶|EXPERT
-ER|Érythrée|🇪🇷|DIFFICILE
-EE|Estonie|🇪🇪|MOYEN
-ET|Éthiopie|🇪🇹|MOYEN
-FJ|Fidji|🇫🇯|DIFFICILE
-FI|Finlande|🇫🇮|FACILE
-GA|Gabon|🇬🇦|MOYEN
-GM|Gambie|🇬🇲|MOYEN
-GE|Géorgie|🇬🇪|MOYEN
-GH|Ghana|🇬🇭|FACILE
-GD|Grenade|🇬🇩|EXPERT
-GT|Guatemala|🇬🇹|MOYEN
-GN|Guinée|🇬🇳|MOYEN
-GY|Guyana|🇬🇾|DIFFICILE
-HT|Haïti|🇭🇹|MOYEN
-HN|Honduras|🇭🇳|MOYEN
-HU|Hongrie|🇭🇺|FACILE
-IS|Islande|🇮🇸|FACILE
-JM|Jamaïque|🇯🇲|MOYEN
-JO|Jordanie|🇯🇴|MOYEN
-KZ|Kazakhstan|🇰🇿|MOYEN
-KE|Kenya|🇰🇪|FACILE
-KW|Koweït|🇰🇼|MOYEN
-LA|Laos|🇱🇦|MOYEN
-LV|Lettonie|🇱🇻|MOYEN
-LB|Liban|🇱🇧|FACILE
-LR|Liberia|🇱🇷|DIFFICILE
-LY|Libye|🇱🇾|MOYEN
-LI|Liechtenstein|🇱🇮|EXPERT
-LT|Lituanie|🇱🇹|MOYEN
-LU|Luxembourg|🇱🇺|FACILE
-MG|Madagascar|🇲🇬|MOYEN
-MW|Malawi|🇲🇼|DIFFICILE
-MV|Maldives|🇲🇻|MOYEN
-ML|Mali|🇲🇱|FACILE
-MT|Malte|🇲🇹|MOYEN
-MH|Îles Marshall|🇲🇭|EXPERT
-MR|Mauritanie|🇲🇷|DIFFICILE
-MU|Maurice|🇲🇺|MOYEN
-FM|Micronésie|🇫🇲|EXPERT
-MC|Monaco|🇲🇨|MOYEN
-MN|Mongolie|🇲🇳|MOYEN
-ME|Monténégro|🇲🇪|MOYEN
-MA|Maroc|🇲🇦|FACILE
-NA|Namibie|🇳🇦|MOYEN
-NR|Nauru|🇳🇷|EXPERT
-NI|Nicaragua|🇳🇮|MOYEN
-NE|Niger|🇳🇪|MOYEN
-MK|Macédoine du Nord|🇲🇰|DIFFICILE
-OM|Oman|🇴🇲|MOYEN
-PK|Pakistan|🇵🇰|FACILE
-PW|Palaos|🇵🇼|EXPERT
-PA|Panama|🇵🇦|MOYEN
-PG|Papouasie-Nouvelle-Guinée|🇵🇬|DIFFICILE
-PY|Paraguay|🇵🇾|MOYEN
-PE|Pérou|🇵🇪|FACILE
-PH|Philippines|🇵🇭|FACILE
-PL|Pologne|🇵🇱|FACILE
-QA|Qatar|🇶🇦|MOYEN
-CG|République du Congo|🇨🇬|DIFFICILE
-RO|Roumanie|🇷🇴|FACILE
-RW|Rwanda|🇷🇼|MOYEN
-KN|Saint-Christophe-et-Niévès|🇰🇳|EXPERT
-LC|Sainte-Lucie|🇱🇨|EXPERT
-VC|Saint-Vincent-et-les-Grenadines|🇻🇨|EXPERT
-WS|Samoa|🇼🇸|DIFFICILE
-SM|Saint-Marin|🇸🇲|DIFFICILE
-SN|Sénégal|🇸🇳|FACILE
-RS|Serbie|🇷🇸|MOYEN
-SL|Sierra Leone|🇸🇱|MOYEN
-SG|Singapour|🇸🇬|FACILE
-SK|Slovaquie|🇸🇰|MOYEN
-SI|Slovénie|🇸🇮|MOYEN
-SB|Îles Salomon|🇸🇧|EXPERT
-SO|Somalie|🇸🇴|MOYEN
-ZA|Afrique du Sud|🇿🇦|FACILE
-SS|Soudan du Sud|🇸🇸|DIFFICILE
-LK|Sri Lanka|🇱🇰|MOYEN
-SR|Suriname|🇸🇷|DIFFICILE
-SE|Suède|🇸🇪|FACILE
-CH|Suisse|🇨🇭|FACILE
-SY|Syrie|🇸🇾|MOYEN
-TW|Taïwan|🇹🇼|MOYEN
-TZ|Tanzanie|🇹🇿|MOYEN
-TL|Timor oriental|🇹🇱|EXPERT
-TG|Togo|🇹🇬|MOYEN
-TO|Tonga|🇹🇴|DIFFICILE
-TT|Trinité-et-Tobago|🇹🇹|DIFFICILE
-TN|Tunisie|🇹🇳|FACILE
-TM|Turkménistan|🇹🇲|EXPERT
-TV|Tuvalu|🇹🇻|EXPERT
-UG|Ouganda|🇺🇬|MOYEN
-UA|Ukraine|🇺🇦|FACILE
-AE|Émirats arabes unis|🇦🇪|FACILE
-UY|Uruguay|🇺🇾|MOYEN
-UZ|Ouzbékistan|🇺🇿|MOYEN
-VE|Venezuela|🇻🇪|MOYEN
-ZM|Zambie|🇿🇲|MOYEN
-ZW|Zimbabwe|🇿🇼|MOYEN
-AF|Afghanistan|🇦🇫|MOYEN
-AR|Argentine|🇦🇷|FACILE
-AU|Australie|🇦🇺|FACILE
-AT|Autriche|🇦🇹|FACILE
-BE|Belgique|🇧🇪|FACILE
-BR|Brésil|🇧🇷|FACILE
-CA|Canada|🇨🇦|FACILE
-CN|Chine|🇨🇳|FACILE
-DK|Danemark|🇩🇰|FACILE
-EG|Égypte|🇪🇬|FACILE
-FR|France|🇫🇷|FACILE
-DE|Allemagne|🇩🇪|FACILE
-GR|Grèce|🇬🇷|FACILE
-IN|Inde|🇮🇳|FACILE
-ID|Indonésie|🇮🇩|FACILE
-IR|Iran|🇮🇷|MOYEN
-IQ|Irak|🇮🇶|MOYEN
-IE|Irlande|🇮🇪|FACILE
-IL|Israël|🇮🇱|MOYEN
-IT|Italie|🇮🇹|FACILE
-JP|Japon|🇯🇵|FACILE
-MX|Mexique|🇲🇽|FACILE
-NL|Pays-Bas|🇳🇱|FACILE
-NZ|Nouvelle-Zélande|🇳🇿|FACILE
-NG|Nigeria|🇳🇬|FACILE
-NO|Norvège|🇳🇴|FACILE
-RU|Russie|🇷🇺|FACILE
-SA|Arabie saoudite|🇸🇦|MOYEN
-KR|Corée du Sud|🇰🇷|FACILE
-ES|Espagne|🇪🇸|FACILE
-TH|Thaïlande|🇹🇭|FACILE
-TR|Turquie|🇹🇷|FACILE
-GB|Royaume-Uni|🇬🇧|FACILE
-US|États-Unis|🇺🇸|FACILE
-VN|Vietnam|🇻🇳|FACILE
-YE|Yémen|🇾🇪|MOYEN`;
-const countryQuestions=originalCountries.split('\n').map(line=>{let [code,country,flag,level]=line.split('|');return {id:'country-'+code,kind:'flag',code,country,flag,level,category:'Drapeaux',question:'Quel pays est représenté par ce drapeau ?'}});
-const generalQuestions=[
-['Quelle est la capitale du Canada ?',['Toronto','Ottawa','Montréal','Vancouver'],'B','Géographie','FACILE'],
-['Quel est le plus grand océan du monde ?',['Atlantique','Indien','Pacifique','Arctique'],'C','Géographie','FACILE'],
-['Combien de côtés possède un hexagone ?',['5','6','7','8'],'B','Sciences','FACILE'],
-['Quelle planète est surnommée la planète rouge ?',['Vénus','Mars','Jupiter','Mercure'],'B','Sciences','FACILE'],
-['En quelle année a commencé la Révolution française ?',['1776','1789','1799','1815'],'B','Histoire','FACILE'],
-['Quel pays a remporté la Coupe du monde de football 2018 ?',['Brésil','Allemagne','France','Argentine'],'C','Sport','FACILE'],
-['Quel instrument possède généralement 88 touches ?',['Guitare','Piano','Violon','Harpe'],'B','Musique','FACILE'],
-['Quel est le symbole chimique de l’or ?',['Ag','Fe','Au','Or'],'C','Sciences','MOYEN'],
-['Qui a peint La Joconde ?',['Van Gogh','Léonard de Vinci','Picasso','Monet'],'B','Art','FACILE'],
-['Quelle est la monnaie du Japon ?',['Yuan','Won','Yen','Ringgit'],'C','Géographie','FACILE'],
-['Quel organe pompe le sang dans le corps humain ?',['Poumon','Foie','Cœur','Rein'],'C','Sciences','FACILE'],
-['Combien de joueurs une équipe de football aligne-t-elle sur le terrain au début du match ?',['9','10','11','12'],'C','Sport','FACILE'],
-['Quel est le plus grand mammifère vivant ?',['Éléphant d’Afrique','Baleine bleue','Girafe','Orque'],'B','Sciences','FACILE'],
-['Dans quel pays se trouve la ville de Kyoto ?',['Chine','Corée du Sud','Japon','Thaïlande'],'C','Géographie','FACILE'],
-['Quel gaz les plantes absorbent-elles principalement pour la photosynthèse ?',['Oxygène','Azote','Dioxyde de carbone','Hydrogène'],'C','Sciences','MOYEN'],
-['Quel réalisateur a créé la saga Jurassic Park au cinéma ?',['James Cameron','Steven Spielberg','Christopher Nolan','Ridley Scott'],'B','Cinéma','MOYEN'],
-['Combien de cordes possède un violon classique ?',['4','5','6','7'],'A','Musique','FACILE'],
-['Quel pays a pour capitale Reykjavik ?',['Norvège','Islande','Finlande','Danemark'],'B','Géographie','MOYEN'],
-['Quel est le résultat de 12 × 12 ?',['124','132','144','156'],'C','Mathématiques','FACILE'],
-['Quel métal est liquide à température ambiante ?',['Mercure','Cuivre','Aluminium','Zinc'],'A','Sciences','MOYEN'],
-['Qui était le premier homme à marcher sur la Lune ?',['Youri Gagarine','Buzz Aldrin','Neil Armstrong','Michael Collins'],'C','Histoire','FACILE'],
-['Quelle est la capitale de l’Australie ?',['Sydney','Melbourne','Canberra','Perth'],'C','Géographie','MOYEN'],
-['Quel sport pratique-t-on à Roland-Garros ?',['Rugby','Tennis','Golf','Handball'],'B','Sport','FACILE'],
-['Quel réseau informatique est à l’origine du Web moderne ?',['ARPANET','Bluetooth','NFC','Intranet'],'A','Technologie','DIFFICILE'],
-['Quel est le nom de la galaxie qui contient le système solaire ?',['Andromède','Voie lactée','Sombrero','M87'],'B','Sciences','FACILE'],
-['Quel pays a construit les pyramides de Gizeh ?',['Grèce','Égypte','Mexique','Irak'],'B','Histoire','FACILE'],
-['Quel est le plus petit nombre premier ?',['0','1','2','3'],'C','Mathématiques','MOYEN'],
-['Quelle langue est principalement parlée au Brésil ?',['Espagnol','Portugais','Français','Italien'],'B','Géographie','FACILE'],
-['Quel est le nom du processus par lequel l’eau devient vapeur ?',['Condensation','Fusion','Évaporation','Solidification'],'C','Sciences','FACILE'],
-['Combien de joueurs composent une équipe de basket sur le terrain ?',['4','5','6','7'],'B','Sport','FACILE'],
-['Quel artiste est associé à l’album Thriller ?',['Prince','Michael Jackson','Stevie Wonder','Elton John'],'B','Musique','FACILE'],
-['Quelle ville est surnommée la Ville éternelle ?',['Athènes','Rome','Paris','Istanbul'],'B','Géographie','MOYEN'],
-['Quel est le langage principalement utilisé pour structurer une page web ?',['CSS','HTML','SQL','Python'],'B','Technologie','FACILE'],
-['En quelle année le mur de Berlin est-il tombé ?',['1987','1989','1991','1993'],'B','Histoire','MOYEN'],
-['Quel est le plus long fleuve d’Afrique ?',['Congo','Nil','Niger','Zambèze'],'B','Géographie','MOYEN'],
-['Quel animal est le symbole du WWF ?',['Tigre','Panda géant','Éléphant','Ours polaire'],'B','Nature','FACILE'],
-['Quel pays a remporté l’Euro de football 2024 ?',['France','Angleterre','Espagne','Allemagne'],'C','Sport','MOYEN'],
-['Quelle est l’unité de mesure de la résistance électrique ?',['Volt','Watt','Ohm','Ampère'],'C','Sciences','MOYEN'],
-['Qui a écrit Les Misérables ?',['Émile Zola','Victor Hugo','Molière','Balzac'],'B','Littérature','FACILE'],
-['Quel continent compte le plus de pays ?',['Asie','Afrique','Europe','Amérique du Sud'],'B','Géographie','MOYEN'],
-['Quel est le nom du satellite naturel de la Terre ?',['Phobos','Lune','Europe','Titan'],'B','Sciences','FACILE'],
-['Quel pays est à l’origine du taekwondo ?',['Japon','Chine','Corée','Thaïlande'],'C','Sport','MOYEN'],
-['Quelle entreprise développe le système Android ?',['Apple','Microsoft','Google','Samsung'],'C','Technologie','FACILE'],
-['Quel peintre a réalisé La Nuit étoilée ?',['Claude Monet','Vincent van Gogh','Salvador Dalí','Paul Cézanne'],'B','Art','MOYEN'],
-['Quelle est la capitale du Maroc ?',['Casablanca','Marrakech','Rabat','Fès'],'C','Géographie','FACILE'],
-['Quel est le pH d’une solution neutre à 25 °C ?',['0','5','7','14'],'C','Sciences','MOYEN'],
-['Dans quel sport utilise-t-on un volant ?',['Squash','Badminton','Tennis de table','Padel'],'B','Sport','FACILE'],
-['Quel est le nom du premier satellite artificiel ?',['Apollo 11','Spoutnik 1','Voyager 1','Explorer 1'],'B','Histoire','DIFFICILE'],
-['Quelle mer borde la ville de Nice ?',['Mer Noire','Mer Méditerranée','Mer Baltique','Mer Rouge'],'B','Géographie','FACILE'],
-['Quel compositeur a écrit les Quatre Saisons ?',['Mozart','Vivaldi','Bach','Beethoven'],'B','Musique','MOYEN']
-].map((q,i)=>({id:'general-'+i,kind:'mcq',question:q[0],answers:q[1],correct:q[2],category:q[3],level:q[4]}));
-let banks=read(BANK_KEY,null);
-if(!banks||!Array.isArray(banks)||!banks.length){banks=[{id:'drapeaux',name:'Drapeaux du monde',questions:countryQuestions},{id:'culture',name:'Culture générale',questions:generalQuestions},{id:'mix',name:'Mix drapeaux + culture',questions:[...countryQuestions,...generalQuestions]}];localStorage.setItem(BANK_KEY,JSON.stringify(banks))}
-let activeBankId=read(ACTIVE_KEY,'drapeaux'),activeBank=banks.find(b=>b.id===activeBankId)||banks[0];
-function persist(){try{localStorage.setItem(SCORE_KEY,JSON.stringify(scores));localStorage.setItem(DONOR_KEY,JSON.stringify(donors));localStorage.setItem(BANK_KEY,JSON.stringify(banks));localStorage.setItem(ACTIVE_KEY,JSON.stringify(activeBankId));localStorage.setItem(HISTORY_KEY,JSON.stringify(history.slice(-20)))}catch(e){$('status').textContent='Stockage local saturé : exporte tes banques.'}}
-function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function giftPoints(n){let r=Math.max(0,Math.floor(n)),p=0;for(const x of [{c:500,p:35000},{c:100,p:6500},{c:10,p:600},{c:1,p:50}]){let k=Math.floor(r/x.c);p+=k*x.p;r-=k*x.c}return p}
-function renderBoard(){let rows=Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,5);$('leaderboard').innerHTML=rows.length?rows.map(([n,p],i)=>`<div class="person"><span class="rank">${i+1}</span><span class="avatar">${escapeHTML(n[0]?.toUpperCase())}</span><span class="name">${escapeHTML(n)}</span><span class="score">${Number(p).toLocaleString('fr-FR')} pts</span></div>`).join(''):'<div class="muted">Aucun joueur pour le moment</div>'}
-function renderDonors(){let rows=Object.entries(donors).sort((a,b)=>b[1].coins-a[1].coins).slice(0,5);$('donorBoard').innerHTML=rows.length?rows.map(([n,d],i)=>`<div class="donor-person"><span class="rank">${i+1}</span>${d.avatar?`<img src="${escapeHTML(d.avatar)}">`:`<span class="avatar">${escapeHTML(n[0]?.toUpperCase())}</span>`}<span class="name">${escapeHTML(n)}</span><span class="donor-coins">🎁 ${d.coins.toLocaleString('fr-FR')}</span></div>`).join(''):'<div class="muted">En attente des cadeaux…</div>'}
-function say(text){if(!('speechSynthesis'in window))return;window.speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.lang='fr-FR';u.rate=1.02;let voices=speechSynthesis.getVoices();u.voice=voices.find(v=>/^fr/i.test(v.lang)&&/thomas|henri|male|paul/i.test(v.name))||voices.find(v=>/^fr/i.test(v.lang))||null;speechSynthesis.speak(u)}
-function addScore(name,points){if(!name)return;scores[name]=(Number(scores[name])||0)+Math.max(0,Math.round(points));persist();renderBoard()}
-function addGift(name,coins,avatar=''){if(!name||!coins||coins<1)return;let d=donors[name]||{coins:0,avatar:''};d.coins+=coins;if(avatar)d.avatar=avatar;donors[name]=d;let pts=giftPoints(coins);addScore(name,pts);$('status').textContent=`🎁 ${name} : +${pts.toLocaleString('fr-FR')} pts`;renderDonors()}
-function setTimer(){$('seconds').textContent=seconds;$('fill').style.width=(seconds/duration*100)+'%'}
-function renderVoters(){let names=Object.keys(votes).slice(-7);$('voters').textContent=names.length?'🗳️ Ont répondu : '+names.join(' · '):'👀 Les votes apparaîtront ici…'}
-function getQuestions(){return activeBank.questions.filter(q=>q&&q.question&&((q.kind==='flag'&&q.code)||(Array.isArray(q.answers)&&q.answers.length===4)))}
-function newQuestion(){let qs=getQuestions();if(!qs.length){$('status').textContent='Cette banque ne contient aucune question valide.';return}if(!deck.length)deck=shuffle(qs);current=deck.pop();let opts;if(current.kind==='flag'){let others=shuffle(countryQuestions.filter(q=>q.country!==current.country)).slice(0,3).map(q=>q.country);opts=shuffle([current.country,...others]);correct='ABCD'[opts.indexOf(current.country)];let img=new Image();img.alt='Drapeau de '+current.country;img.style.maxHeight='100%';img.onerror=()=>{$('flag').innerHTML=`<span class="flag-fallback">${current.flag||'🌍'}</span>`};img.src=`https://flagcdn.com/w1280/${current.code.toLowerCase()}.png`;$('flag').replaceChildren(img)}else{opts=shuffle(current.answers);correct=current.correct;$('flag').innerHTML='<span class="flag-fallback">🧠</span>'}
-$('question').textContent=(current.category?current.category+' · ':'')+current.question;$('answers').innerHTML=opts.map((a,i)=>`<button class="answer" type="button" data-choice="${'ABCD'[i]}">${'ABCD'[i]} · ${escapeHTML(a)}</button>`).join('');$('choice').innerHTML=opts.map((a,i)=>`<option value="${'ABCD'[i]}">${'ABCD'[i]} · ${escapeHTML(a)}</option>`).join('');round++}
-function startRound(){clearInterval(timer);clearTimeout(window.nextRoundTimer);$('resultsView').style.display='none';$('boardView').style.display='block';newQuestion();votes={};closed=false;globalDouble=false;duration=Number($('questionDuration').value)||15;seconds=duration;renderVoters();setTimer();$('status').textContent=`Question ${round} · ${activeBank.name} · ${getQuestions().length} questions disponibles`;say(`Question ${round}. ${current.question}. Réponse A : ${$('answers').children[0]?.textContent.slice(4)}. Réponse B : ${$('answers').children[1]?.textContent.slice(4)}. Réponse C : ${$('answers').children[2]?.textContent.slice(4)}. Réponse D : ${$('answers').children[3]?.textContent.slice(4)}.`);timer=setInterval(()=>{seconds=Math.max(0,seconds-1);setTimer();if(seconds===0)finishRound()},1000);if(round%10===0&&!midShown){midShown=true;setTimeout(showRecap,1800)}}
-function finishRound(){if(closed||!current)return;closed=true;clearInterval(timer);let winners=Object.entries(votes).filter(([,v])=>v.choice===correct).sort((a,b)=>a[1].time-b[1].time);let base=[300,250,220,190,160,130,100,70,50,30];let awarded=[];winners.forEach(([name],i)=>{let pts=base[i]??20;if(roseDouble[name]){pts*=2;delete roseDouble[name]}if(subscribers[name])pts*=2;if(globalDouble)pts*=2;if(Date.now()<frozenUntil&&i===0)pts=0;addScore(name,pts);awarded.push({name,pts})});document.querySelectorAll('.answer').forEach(b=>{b.classList.toggle('good',b.dataset.choice===correct);b.classList.toggle('bad',b.dataset.choice!==correct)});$('boardView').style.display='none';$('resultsView').style.display='block';$('resultsList').innerHTML=awarded.length?awarded.slice(0,5).map((r,i)=>`<div class="result-row"><span>${i+1}. ${escapeHTML(r.name)}</span><strong>+${r.pts} PTS</strong></div>`).join(''):'<div class="muted">Personne n’a trouvé cette fois !</div>';let answer=current.kind==='flag'?current.country:current.answers['ABCD'.indexOf(correct)];say(`Bonne réponse : ${correct}, ${answer}. ${awarded.slice(0,3).map(x=>x.name).join(', ')}.`);history.push({round,question:current.question,answer,correct,players:awarded});persist();$('status').textContent=`Bonne réponse : ${correct} · ${answer} · ${winners.length} bonne(s) réponse(s)`;window.nextRoundTimer=setTimeout(startRound,5000)}
-function showRecap(){let top=Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,5);let text='Récapitulatif de mi-partie. '+top.map((x,i)=>`${i+1}, ${x[0]}, ${x[1]} points`).join('. ');$('status').textContent='📊 Récapitulatif : '+top.map((x,i)=>`${i+1}. ${x[0]} (${x[1]} pts)`).join(' · ');say(text);midShown=false}
-function chooseVote(name,raw){if(closed||!current||!name||votes[name])return;let v=norm(raw);let choice=/^[abcd]$/.test(v)?v.toUpperCase():null;if(!choice){let buttons=[...$('answers').querySelectorAll('.answer')];let found=buttons.find(b=>norm(b.textContent.slice(4))===v);if(found)choice=found.dataset.choice}if(!choice)return;votes[name]={choice,time:Date.now()};renderVoters();$('status').textContent=`Vote reçu : ${name} · ${choice}`}
-function resetLive(){scores={};donors={};history=[];roseDouble={};subscribers={};persist();renderBoard();renderDonors();$('status').textContent='Nouveau LIVE : classement et cadeaux remis à zéro.'}
-function renderBanks(){activeBank=banks.find(b=>b.id===activeBankId)||banks[0];$('bankSelect').innerHTML=banks.map(b=>`<option value="${escapeHTML(b.id)}">${escapeHTML(b.name)} (${b.questions.length})</option>`).join('');$('bankSelect').value=activeBank.id;$('bankList').innerHTML=banks.map(b=>`<div class="bank-item"><span><b>${escapeHTML(b.name)}</b><br><small>${b.questions.length} questions</small></span><button data-use="${escapeHTML(b.id)}">Utiliser</button><button data-view="${escapeHTML(b.id)}">Voir</button></div>`).join('')}
-function selectBank(id){if(!banks.some(b=>b.id===id))return;activeBankId=id;deck=[];round=0;persist();renderBanks();$('status').textContent='Banque active : '+activeBank.name+'. Elle sera utilisée à la prochaine question.'}
-$('bankSelect').addEventListener('change',e=>selectBank(e.target.value));
-$('bankList').addEventListener('click',e=>{let use=e.target.dataset.use,view=e.target.dataset.view;if(use)selectBank(use);if(view){let b=banks.find(x=>x.id===view);$('questionEditor').value=JSON.stringify(b.questions,null,2)}});
-$('newBank').addEventListener('click',()=>{let name=prompt('Nom de ta nouvelle banque :');if(!name?.trim())return;let id='bank-'+Date.now();banks.push({id,name:name.trim(),questions:[]});selectBank(id)});
-$('deleteBank').addEventListener('click',()=>{if(banks.length<=1)return alert('Il faut conserver au moins une banque.');if(!confirm('Supprimer la banque active et toutes ses questions ?'))return;banks=banks.filter(b=>b.id!==activeBankId);activeBankId=banks[0].id;persist();renderBanks()});
-$('exportBank').addEventListener('click',()=>{let blob=new Blob([JSON.stringify(activeBank,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=activeBank.name.replace(/[^a-z0-9_-]/gi,'_')+'.json';a.click();URL.revokeObjectURL(url)});
-$('importBank').addEventListener('click',()=>$('importFile').click());
-$('importFile').addEventListener('change',async e=>{let f=e.target.files[0];if(!f)return;try{let data=JSON.parse(await f.text());if(Array.isArray(data))data={name:f.name.replace(/\.json$/i,''),questions:data};if(!data||!Array.isArray(data.questions))throw Error('Format invalide');let qs=data.questions.map((q,i)=>({...q,id:q.id||'import-'+Date.now()+'-'+i}));if(qs.some(q=>!q.question||!(q.kind==='flag'&&q.code)&&(!Array.isArray(q.answers)||q.answers.length!==4||!['A','B','C','D'].includes(q.correct))))throw Error('Une question est invalide');let id='import-'+Date.now();banks.push({id,name:String(data.name||f.name).slice(0,50),questions:qs});selectBank(id);$('status').textContent=`Banque importée : ${qs.length} questions.`}catch(err){alert('Import impossible : '+err.message)}e.target.value=''});
-$('saveQuestion').addEventListener('click',()=>{try{let data=JSON.parse($('questionEditor').value);let arr=Array.isArray(data)?data:[data];for(let q of arr){if(!q.question||!Array.isArray(q.answers)||q.answers.length!==4||!['A','B','C','D'].includes(q.correct))throw Error('Chaque question doit avoir question, 4 answers et correct A/B/C/D.');q.kind='mcq';q.id=q.id||'custom-'+Date.now()+'-'+Math.random().toString(36).slice(2)}activeBank.questions.push(...arr);persist();renderBanks();$('questionEditor').value='';$('status').textContent=`${arr.length} question(s) ajoutée(s) à ${activeBank.name}.`}catch(e){alert(e.message)}});
-$('clearEditor').addEventListener('click',()=>$('questionEditor').value='');
-$('tiktokConnect').addEventListener('click',connectTikTok);
-function connectTikTok(){if(socket){socket.disconnect();socket=null}let username=$('tiktokUser').value.trim().replace(/^@/,'')||TIKTOK_USERNAME;$('liveState').textContent='Connexion au serveur…';window.socketIoReady.then(ok=>{if(!ok){$('liveState').textContent='Socket.IO indisponible.';return}socket=io(SERVER,{transports:['websocket','polling'],reconnection:true,timeout:20000});socket.on('connect',()=>socket.emit('setUniqueId',username));socket.on('tiktokConnected',()=>{connected=true;$('liveState').textContent='🟢 Serveur connecté au LIVE TikTok.'});socket.on('chat',m=>{let name=m.uniqueId||m.nickname||m.user?.uniqueId;chooseVote(name,m.comment||'')});socket.on('like',m=>{let name=m.uniqueId||m.user?.uniqueId||m.nickname;if(!name)return;let total=Number(m.likeCount||m.totalLikeCount||m.like_count||0);if(total>=500&&!m._flagBonus){globalDouble=true;$('status').textContent='❤️ Objectif 500 likes atteint : points doublés sur cette question !';say(`Objectif de likes atteint ! Les points sont doublés pour tout le monde.`)}});socket.on('gift',m=>{if(m.repeatEnd===false)return;let u=m.user||{},g=m.gift||{},name=u.uniqueId||u.nickname||m.uniqueId||'Donateur',coins=Number(m.diamondCount||g.diamondCount||g.diamond_count||0)*Math.max(1,Number(m.repeatCount)||1),giftName=norm(m.giftName||g.name||g.giftName||''),giftId=Number(m.giftId||m.gift_id||g.id||0),avatar=u.profilePictureUrl||u.avatarThumb||'';if(coins>0)addGift(name,coins,avatar);if(giftName==='rose'||giftId===5655){roseDouble[name]=true;$('status').textContent=`🌹 Merci @${name} ! Ta prochaine question compte double.`;say(`Merci ${name} pour la rose ! Ta prochaine question compte double.`)}if(coins>=20&&coins<99){frozenUntil=Date.now()+15000;say(`Merci ${name} ! Le premier est gelé pendant quinze secondes.`)}if(coins>=99){let first=Object.entries(scores).sort((a,b)=>b[1]-a[1])[0];if(first&&first[0]!==name){let stolen=Math.floor(first[1]/2);scores[first[0]]-=stolen;scores[name]=(scores[name]||0)+stolen;persist();renderBoard();say(`Merci ${name} ! Tu récupères la moitié des points de ${first[0]}.`)}}if(coins>=400){history.push({reset:true,at:Date.now(),scores:{...scores}});resetLive();say('Réinitialisation du classement !')}});
-socket.on('follow',m=>{let u=m.user||{},name=m.uniqueId||u.uniqueId||m.nickname||u.nickname||'nouvel abonné';$('lastSub').textContent='@'+name.replace(/^@/,'');subscribers[name]=true;say(`Merci ${name} pour ton abonnement ! Tant que tu restes abonné, tes points sont multipliés par deux.`)});
-socket.on('roomUser',m=>{let n=Number(m.viewerCount??m.data?.viewerCount);if(Number.isFinite(n))$('viewerCount').textContent=n.toLocaleString('fr-FR')});
-socket.on('streamEnd',()=>{$('liveState').textContent='Fin du LIVE détectée.';resetLive()});socket.on('disconnect',()=>{$('liveState').textContent='🔴 Déconnecté du serveur. Les scores restent sauvegardés.'});socket.on('connect_error',()=>{$('liveState').textContent='Serveur inaccessible : vérifie le pseudo et le serveur.'})})}
-$('newLiveReset').addEventListener('click',()=>{if(confirm('Effacer le classement et les donateurs pour un nouveau LIVE ?'))resetLive()});
-$('voteForm').addEventListener('submit',e=>{e.preventDefault();chooseVote($('pseudo').value.trim(),$('choice').value);$('pseudo').value=''});
-$('start').addEventListener('click',startRound);$('reveal').addEventListener('click',finishRound);$('midRecap').addEventListener('click',showRecap);
-$('demoRose').addEventListener('click',()=>{let n='Joueur démo';addGift(n,1);roseDouble[n]=true;say(`Merci ${n} pour la rose ! Ta prochaine question compte double.`)});
-$('demoGift').addEventListener('click',()=>addGift('Donateur démo',100));
-$('demoFive').addEventListener('click',()=>{for(let i=1;i<=5;i++)addGift('Donateur test '+i,1000*i)});
-let musicOsc=[];
-function toggleMusic(){if(musicOn){musicOsc.forEach(n=>{try{n.stop()}catch(e){}});musicOsc=[];musicOn=false;$('audioToggle').textContent='🔊 Activer la musique';return}let C=window.AudioContext||window.webkitAudioContext;if(!C){alert('Audio Web non disponible');return}audioCtx=audioCtx||new C();audioCtx.resume();let master=audioCtx.createGain();master.gain.value=.035;master.connect(audioCtx.destination);let freqs=[130.81,164.81,196,261.63];freqs.forEach((f,i)=>{let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=f;g.gain.value=i===0?.35:.13;o.connect(g);g.connect(master);o.start();musicOsc.push(o,g)});musicOsc.push(master);musicOn=true;$('audioToggle').textContent='🔇 Couper la musique'}
-$('audioToggle').addEventListener('click',toggleMusic);
-renderBoard();renderDonors();renderBanks();startRound();
-})();
+const sorted=()=>[...people].sort((a,b)=>b.score-a.score);
+const current=()=>questions[index%questions.length];
+
+function toast(s){
+ $("toast").textContent=s;
+ $("toast").classList.add("show");
+ setTimeout(()=>$("toast").classList.remove("show"),2300);
+}
+function log(s){
+ const d=document.createElement("div");
+ d.className="logline";
+ d.textContent=new Date().toLocaleTimeString("fr-FR")+" · "+s;
+ $("logs").prepend(d);
+}
+function escapeHTML(s){
+ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+/* NOTIFICATIONS EN HAUT DE L'ÉCRAN */
+function notify(icon,label,message){
+ const area=$("notificationArea");
+ const card=document.createElement("div");
+ card.className="live-notification";
+ card.innerHTML=`
+  <div class="notif-icon">${icon}</div>
+  <div class="notif-content">
+   <div class="notif-label">${escapeHTML(label)}</div>
+   <div class="notif-message">${message}</div>
+  </div>`;
+ area.prepend(card);
+ while(area.children.length>3)area.lastElementChild.remove();
+ const timeout=setTimeout(()=>{
+  card.classList.add("out");
+  setTimeout(()=>card.remove(),400);
+ },5000);
+ notificationTimers.push(timeout);
+}
+
+function updateSelects(){
+ const opts=people.map((p,i)=>`<option value="${i}">${escapeHTML(p.name)}</option>`).join("");
+ $("votePlayer").innerHTML=opts;
+ $("giftPlayer").innerHTML=opts;
+}
+
+function renderBoard(){
+ const list=sorted();
+ $("leaderboard").innerHTML=list.slice(0,7).map((p,i)=>`
+  <div class="player">
+   <span class="rank">${i+1}.</span>
+   <span class="avatar">${escapeHTML(p.avatar)}</span>
+   <span class="player-name">${escapeHTML(p.name)}${p.sub?" ⭐":""}</span>
+   <span class="player-score">${p.score.toLocaleString("fr-FR")} pts</span>
+  </div>`).join("");
+ $("leaderName").textContent=list[0]?.name||"—";
+ $("participantCount").textContent=people.length;
+}
+
+function renderVotes(){
+ $("voteCount").textContent=votes.reduce((a,b)=>a+b,0);
+ $("voteBars").innerHTML=votes.map((v,i)=>`
+  <div class="vote-line">
+   <b>${"ABCD"[i]}</b>
+   <div class="vote-bg"><i style="width:${Math.min(100,v*8)}%"></i></div>
+   <small>${v} vote${v>1?"s":""}</small>
+  </div>`).join("");
+ $("voterTotal").textContent=voterNames.length;
+ $("voters").innerHTML=voterNames.length?
+  voterNames.slice(-16).reverse().map(n=>`<span class="voter">${escapeHTML(n)}</span>`).join(""):
+  '<span class="voter">En attente des votes…</span>';
+}
+
+function renderLikes(){
+ $("likes").textContent=likes;
+ $("likeFill").style.width=Math.min(100,likes/5)+"%";
+ $("likeHint").textContent=bonusNext?
+  "Objectif atteint ! La prochaine question rapporte le double.":
+  likes>=500?
+  "Objectif atteint : doublement prêt pour la prochaine question.":
+  "Atteins 500 likes pendant cette question pour doubler les points de la prochaine.";
+}
+
+function renderSupports(){
+ $("supportInner").textContent=supporters.length?
+  supporters.map(n=>"💜 "+n).join("     ·     "):
+  "En attente des premiers soutiens…";
+}
+
+function renderQuestion(){
+ const q=current();
+ $("roundLabel").textContent=`MANCHE ${String(round).padStart(2,"0")} · QUESTION ${String(index+1).padStart(2,"0")}`;
+ $("questionCount").textContent=`${index+1} / 20 QUESTIONS`;
+ $("overallProgress").style.width=((index+1)/20*100)+"%";
+ $("category").textContent=q[1];
+ $("flag").textContent=q[0];
+ $("question").textContent=q[2];
+ $("phase").textContent="À VOUS DE JOUER";
+ $("answers").innerHTML=q[3].map((a,i)=>`
+  <div class="answer" id="ans${i}">
+   <span class="letter">${"ABCD"[i]}</span>${escapeHTML(a)}
+  </div>`).join("");
+ $("status").textContent="Votez dans les commentaires : A, B, C ou D.";
+ votes=[0,0,0,0];
+ voterNames=[];
+ answered=false;
+ firstCorrectAnnounced=false;
+ renderVotes();
+}
+
+/* DÉMARRAGE ET CHRONOMÈTRE */
+function startGame(){
+ if(active&&!paused)return;
+ if(index===-1){
+  index=0;
+  likes=0;
+  bonusNext=false;
+ }
+ active=true;
+ paused=false;
+ clearInterval(timer);
+ renderQuestion();
+ seconds=20;
+ updateTimer();
+ $("pauseBtn").textContent="Ⅱ PAUSE";
+ $("phase").textContent="PRÉSENTATION DE LA QUESTION";
+ $("status").textContent="Écoutez bien la question et les propositions…";
+ speakQuestion(()=>{
+  if(!active||paused||answered)return;
+  beginTimer();
+ });
+}
+
+function beginTimer(){
+ clearInterval(timer);
+ $("phase").textContent="À VOUS DE JOUER";
+ $("status").textContent="C'est à vous ! Votez maintenant.";
+ timer=setInterval(()=>{
+  if(paused||answered)return;
+  seconds--;
+  updateTimer();
+  if(seconds<=5&&seconds>0)sfx("tick");
+  if(seconds<=0){
+   clearInterval(timer);
+   revealAnswer();
+  }
+ },1000);
+}
+
+function updateTimer(){
+ $("timer").textContent=seconds;
+ $("timer").classList.toggle("urgent",seconds<=5);
+ $("timerFill").style.width=(seconds/20*100)+"%";
+}
+
+function nextQuestion(){
+ clearInterval(timer);
+ if(index<0)index=0;
+ else if(index%20===19){
+  showPodium();
+  round++;
+  index=0;
+  people.forEach(p=>p.frozenUntil=0);
+ }else{
+  index++;
+ }
+ likes=0;
+ renderLikes();
+ active=false;
+ paused=false;
+ answered=false;
+ startGame();
+}
+
+function togglePause(){
+ if(index<0)return;
+ paused=!paused;
+ $("pauseBtn").textContent=paused?"▶ REPRENDRE":"Ⅱ PAUSE";
+ $("status").textContent=paused?"Partie en pause.":"La partie reprend !";
+ if(paused){
+  clearInterval(timer);
+  speak("Petite pause dans le jeu. On reprend dans un instant.");
+ }else{
+  speak("Et c'est reparti !");
+  beginTimer();
+ }
+}
+
+/* VOTES ET POINTS */
+function submitVote(person,choice){
+ if(index<0||answered){
+  toast("Lance une question avant de voter.");
+  return;
+ }
+ if(!person)return;
+
+ votes[choice]++;
+ voterNames.push(person.name);
+ renderVotes();
+ $("status").textContent=person.name+" vient de voter !";
+ log(person.name+" vote "+ "ABCD"[choice]);
+
+ if(choice===current()[4]){
+  const base=100+Math.max(0,seconds)*10;
+  let multiplier=1;
+
+  if(person.sub)multiplier*=2;
+  if(person.rose){
+   multiplier*=2;
+   person.rose=false;
+  }
+  if(bonusNext)multiplier*=2;
+
+  if(person.frozenUntil>=index+1){
+   log(person.name+" est gelé : aucun point gagné.");
+  }else{
+   const gain=base*multiplier;
+   person.score+=gain;
+   log(person.name+" gagne "+gain+" points.");
+
+   /* SEUL LE PREMIER BONNE RÉPONSE EST ANNONCÉ */
+   if(!firstCorrectAnnounced){
+    firstCorrectAnnounced=true;
+    notify("🏆","PREMIÈRE BONNE RÉPONSE",
+      `<strong>${escapeHTML(person.name)}</strong> est le premier à trouver la bonne réponse !`);
+    speak("Et nous avons un premier gagnant ! Bravo à "+person.name+" ! Quelle rapidité !");
+   }
+  }
+  renderBoard();
+ }
+}
+
+function manualVote(){
+ const p=people[+$("votePlayer").value];
+ const choice=+$("voteChoice").value;
+ submitVote(p,choice);
+}
+
+function simulateCorrect(){
+ if(index<0){
+  toast("Lance d'abord la partie.");
+  return;
+ }
+ const p=people[+$("votePlayer").value];
+ submitVote(p,current()[4]);
+}
+
+function simulateVoteBatch(){
+ if(index<0||answered){
+  toast("Lance une question avant les votes.");
+  return;
+ }
+ for(let i=0;i<10;i++){
+  const p=people[Math.floor(Math.random()*people.length)];
+  const c=Math.random()<.55?current()[4]:Math.floor(Math.random()*4);
+  submitVote(p,c);
+ }
+}
+
+/* RÉVÉLATION */
+function revealAnswer(){
+ if(index<0||answered)return;
+ answered=true;
+ active=false;
+ clearInterval(timer);
+ const q=current();
+
+ $("phase").textContent="RÉPONSE RÉVÉLÉE";
+ $("status").textContent="La bonne réponse était "+q[3][q[4]]+" !";
+ q[3].forEach((a,i)=>{
+  const el=$("ans"+i);
+  if(!el)return;
+  if(i===q[4])el.classList.add("correct");
+  else el.classList.add("wrong");
+ });
+
+ sfx("correct");
+ speak("Et la bonne réponse était "+q[3][q[4]]+". Bravo à tous ceux qui ont trouvé !");
+ if((index+1)%10===0)showPodium();
+
+ if(bonusNext){
+  bonusNext=false;
+  renderLikes();
+ }
+ renderBoard();
+}
+
+/* LIKES */
+function addLikes(n){
+ if(index<0){
+  toast("Lance une question pour compter les likes.");
+  return;
+ }
+ if(answered){
+  toast("La question est terminée.");
+  return;
+ }
+ const before=likes;
+ likes=Math.min(500,likes+n);
+
+ if(before<500&&likes>=500){
+  bonusNext=true;
+  toast("500 likes atteints ! Prochaine question doublée.");
+  notify("❤️","OBJECTIF ATTEINT","Incroyable ! Les <strong>500 likes</strong> sont atteints !");
+  speak("Incroyable ! Vous êtes formidables ! 500 likes atteints ! Les points de la prochaine question seront doublés !");
+  log("Objectif de 500 likes atteint.");
+ }
+ renderLikes();
+}
+
+/* CADEAUX ET ABONNEMENTS */
+function selectedPlayer(){
+ return people[+$("giftPlayer").value];
+}
+
+function addSupport(p){
+ supporters.push(p.name);
+ renderSupports();
+}
+
+function simulateFollow(){
+ const p=selectedPlayer();
+ if(!p)return;
+ p.sub=true;
+ addSupport(p);
+ renderBoard();
+
+ notify("⭐","NOUVEL ABONNEMENT",
+  `Merci <strong>${escapeHTML(p.name)}</strong> pour ton abonnement ! Bienvenue dans l'équipe !`);
+ speak("Un grand merci à "+p.name+" pour son abonnement ! Bienvenue dans l'équipe FLAG LIVE ! Tes prochains points sont maintenant doublés !");
+ log(p.name+" s'est abonné : multiplicateur de points x2.");
+ toast("Abonnement simulé : "+p.name);
+}
+
+function simulateRose(){
+ const p=selectedPlayer();
+ if(!p)return;
+ p.rose=true;
+ addSupport(p);
+
+ notify("🌹","CADEAU REÇU",
+  `Merci <strong>${escapeHTML(p.name)}</strong> pour ta rose ! C'est adorable !`);
+ speak("Merci beaucoup "+p.name+" pour ta rose ! C'est très gentil ! Tes prochains points seront doublés !");
+ log(p.name+" reçoit une rose : prochain gain x2.");
+ toast("Rose simulée pour "+p.name);
+}
+
+function simulateIce(){
+ const p=selectedPlayer();
+ const leader=sorted()[0];
+ if(!p||!leader)return;
+
+ leader.frozenUntil=index+2;
+ addSupport(p);
+
+ notify("🧊","CADEAU SPÉCIAL",
+  `<strong>${escapeHTML(p.name)}</strong> envoie un cadeau ! ${escapeHTML(leader.name)} est gelé !`);
+ speak("Attention ! "+p.name+" vient d'envoyer un cadeau ! Le numéro un, "+leader.name+", est temporairement gelé !");
+ log(p.name+" gèle le premier "+leader.name+".");
+ toast(leader.name+" est gelé temporairement.");
+}
+
+function simulateBomb(){
+ const p=selectedPlayer();
+ const leader=sorted()[0];
+ if(!p||!leader)return;
+ if(leader.name===p.name){
+  toast("Le premier ne peut pas se voler lui-même.");
+  return;
+ }
+
+ const stolen=Math.floor(leader.score/2);
+ leader.score-=stolen;
+ p.score+=stolen;
+ addSupport(p);
+ renderBoard();
+
+ notify("💣","GROS CADEAU",
+  `<strong>${escapeHTML(p.name)}</strong> récupère ${stolen.toLocaleString("fr-FR")} points à ${escapeHTML(leader.name)} !`);
+ speak("Quel retournement de situation ! "+p.name+" récupère "+stolen+" points à "+leader.name+" !");
+ log(p.name+" vole "+stolen+" points à "+leader.name+".");
+ toast("Vol de "+stolen+" points !");
+}
+
+/* PODIUM */
+function showPodium(){
+ const list=sorted();
+ $("podium").innerHTML=list.slice(0,3).map((p,i)=>`
+  <div>
+   <div style="font-size:25px">${["🥇","🥈","🥉"][i]}</div>
+   <strong>${escapeHTML(p.name)}</strong>
+   <small>${p.score.toLocaleString("fr-FR")} pts</small>
+  </div>`).join("");
+
+ $("topSeven").innerHTML="<b>CLASSEMENT DES 7 PREMIERS</b><br>"+
+  list.slice(0,7).map((p,i)=>`${i+1}. ${escapeHTML(p.name)} — ${p.score.toLocaleString("fr-FR")} pts`).join("<br>");
+
+ $("podiumSubtitle").textContent=(index+1)+"e question — classement de la manche";
+ $("podiumModal").classList.add("show");
+
+ notify("🏆","CLASSEMENT","Le classement des meilleurs joueurs est disponible !");
+ speak("Et voici le classement ! En troisième position, "+(list[2]?.name||"personne")+". En deuxième position, "+(list[1]?.name||"personne")+". Et en première position, notre grand gagnant, "+(list[0]?.name||"personne")+" !");
+}
+
+function closePodium(){
+ $("podiumModal").classList.remove("show");
+}
+
+/* RÉINITIALISATION */
+function resetGame(){
+ clearInterval(timer);
+ active=false;
+ paused=false;
+ answered=false;
+ index=-1;
+ round=1;
+ seconds=20;
+ likes=0;
+ bonusNext=false;
+ firstCorrectAnnounced=false;
+
+ people.forEach(p=>{
+  p.score=0;
+  p.sub=false;
+  p.rose=false;
+  p.frozenUntil=0;
+ });
+
+ votes=[0,0,0,0];
+ voterNames=[];
+ supporters=[];
+
+ $("phase").textContent="PRÉPAREZ-VOUS";
+ $("flag").textContent="🌍";
+ $("question").textContent="Bienvenue dans FLAG LIVE !";
+ $("answers").innerHTML=`
+  <div class="answer"><span class="letter">A</span>Lance la partie</div>
+  <div class="answer"><span class="letter">B</span>Observe les votes</div>
+  <div class="answer"><span class="letter">C</span>Découvre le classement</div>
+  <div class="answer"><span class="letter">D</span>Amuse-toi !</div>`;
+ $("timer").textContent="20";
+ $("timerFill").style.width="100%";
+ $("status").textContent="La simulation est prête.";
+ $("roundLabel").textContent="MANCHE 01 · QUESTION 01";
+ $("questionCount").textContent="0 / 20 QUESTIONS";
+ $("overallProgress").style.width="0%";
+ $("pauseBtn").textContent="Ⅱ PAUSE";
+
+ renderBoard();
+ renderVotes();
+ renderLikes();
+ renderSupports();
+ log("Simulation réinitialisée.");
+}
+
+/* VOIX DU PRÉSENTATEUR */
+function chooseFrenchVoice(){
+ if(!window.speechSynthesis)return null;
+ const voices=speechSynthesis.getVoices();
+ const french=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith("fr"));
+ if(!french.length)return null;
+
+ const preferred=[
+  /denise/i,
+  /henri/i,
+  /google.*français/i,
+  /france/i,
+  /français/i
+ ];
+
+ for(const pattern of preferred){
+  const found=french.find(v=>pattern.test(v.name));
+  if(found)return found;
+ }
+ return french.find(v=>v.lang.toLowerCase()==="fr-fr")||french[0];
+}
+
+function speak(msg,callback){
+ if(!audioEnabled||!window.speechSynthesis){
+  if(callback)callback();
+  return;
+ }
+ voiceQueue.push({text:msg,callback});
+ if(!speaking)playNext();
+}
+
+function playNext(){
+ if(!voiceQueue.length){
+  speaking=false;
+  return;
+ }
+
+ speaking=true;
+ const item=voiceQueue.shift();
+ const u=new SpeechSynthesisUtterance(item.text);
+ u.lang="fr-FR";
+
+ /* Réglages plus proches d'un animateur de jeu télévisé */
+ u.rate=0.94;
+ u.pitch=1.04;
+ u.volume=1;
+
+ const voice=chooseFrenchVoice();
+ if(voice)u.voice=voice;
+
+ u.onend=()=>{
+  speaking=false;
+  if(item.callback)item.callback();
+  playNext();
+ };
+ u.onerror=()=>{
+  speaking=false;
+  if(item.callback)item.callback();
+  playNext();
+ };
+
+ speechSynthesis.speak(u);
+}
+
+function speakQuestion(callback){
+ const q=current();
+
+ if(!audioEnabled){
+  if(callback)callback();
+  return;
+ }
+
+ const phrases=[
+  "Attention, tout le monde ! Voici la prochaine question.",
+  "Question numéro "+(index+1)+".",
+  q[2],
+  "Voici les quatre propositions."
+ ];
+
+ q[3].forEach((a,i)=>{
+  phrases.push("Réponse "+ "ABCD"[i]+". "+a+".");
+ });
+
+ phrases.push("Vous avez vingt secondes. C'est parti !");
+ speakSequence(phrases,callback);
+}
+
+function speakSequence(messages,callback){
+ if(!audioEnabled){
+  if(callback)callback();
+  return;
+ }
+
+ messages.forEach((message,i)=>{
+  speak(message,i===messages.length-1?callback:null);
+ });
+}
+
+function announceTest(){
+ speakSequence([
+  "Bonsoir à tous et bienvenue dans FLAG LIVE !",
+  "Préparez-vous, le grand quiz va commencer.",
+  "Soyez rapides, chaque seconde compte !"
+ ]);
+}
+
+/* AUDIO ET MUSIQUE */
+function enableAudio(){
+ audioEnabled=true;
+
+ try{
+  audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();
+  audioCtx.resume();
+ }catch(e){}
+
+ $("audioState").textContent="ACTIVÉ";
+ toast("Voix activée !");
+ speakSequence([
+  "Bonsoir à tous et bienvenue dans FLAG LIVE !",
+  "Installez-vous, le quiz va bientôt commencer !"
+ ]);
+
+ startMusic();
+}
+
+function startMusic(){
+ if(!audioCtx||musicOn)return;
+ musicOn=true;
+
+ const notes=[130.81,164.81,196,164.81,146.83,174.61,220,174.61];
+ let n=0;
+
+ musicTimer=setInterval(()=>{
+  if(!musicOn)return;
+
+  const o=audioCtx.createOscillator();
+  const g=audioCtx.createGain();
+
+  o.type="triangle";
+  o.frequency.value=notes[n++%notes.length];
+
+  /* Volume musical constant : aucun boost lors des annonces */
+  g.gain.value=.012;
+
+  o.connect(g);
+  g.connect(audioCtx.destination);
+  o.start();
+  g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.9);
+  o.stop(audioCtx.currentTime+.9);
+ },600);
+}
+
+function stopMusic(){
+ musicOn=false;
+ clearInterval(musicTimer);
+}
+
+function toggleMusic(){
+ if(!audioEnabled){
+  enableAudio();
+  return;
+ }
+ if(musicOn){
+  stopMusic();
+  toast("Musique coupée");
+ }else{
+  startMusic();
+  toast("Musique activée");
+ }
+}
+
+function sfx(kind){
+ if(!audioCtx||!audioEnabled)return;
+
+ const play=(f,d)=>{
+  const o=audioCtx.createOscillator();
+  const g=audioCtx.createGain();
+  o.frequency.value=f;
+  g.gain.value=.05;
+  o.connect(g);
+  g.connect(audioCtx.destination);
+  o.start();
+  g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+d);
+  o.stop(audioCtx.currentTime+d);
+ };
+
+ if(kind==="tick")play(660,.08);
+ if(kind==="correct"){
+  play(523,.13);
+  setTimeout(()=>play(659,.13),130);
+  setTimeout(()=>play(784,.3),260);
+ }
+}
+
+updateSelects();
+renderBoard();
+renderVotes();
+renderLikes();
+renderSupports();
 </script>
 </body>
 </html>
