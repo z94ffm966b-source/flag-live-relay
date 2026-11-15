@@ -461,6 +461,109 @@ body{
  padding:4px;
 }
 
+/* ÉCRANS SPÉCIAUX : RÉCAPITULATIF ET PODIUM */
+
+.special-screen{
+ display:none;
+ flex:1;
+ flex-direction:column;
+ justify-content:center;
+ gap:12px;
+ text-align:center;
+ padding:12px 3px;
+ min-height:0;
+}
+
+.live-screen.is-special > :not(.special-screen){
+ display:none;
+}
+
+.live-screen.is-special .special-screen{
+ display:flex;
+}
+
+.special-heading{
+ font-size:23px;
+ font-weight:900;
+ color:#ffda75;
+ line-height:1.25;
+}
+
+.special-subheading{
+ font-size:10px;
+ line-height:1.5;
+ color:#c6d2ee;
+}
+
+.special-ranking{
+ display:flex;
+ flex-direction:column;
+ gap:7px;
+ margin-top:8px;
+}
+
+.special-ranking-row{
+ display:flex;
+ align-items:center;
+ gap:10px;
+ padding:10px;
+ background:#ffffff12;
+ border:1px solid #ffffff20;
+ border-radius:10px;
+ font-size:11px;
+}
+
+.special-ranking-row .rank-number{
+ width:24px;
+ font-size:12px;
+}
+
+.special-ranking-row .rank-name{
+ flex:1;
+ text-align:left;
+}
+
+.special-ranking-row .rank-score{
+ color:#5ce6a4;
+ font-weight:900;
+}
+
+.special-button{
+ margin-top:12px;
+ padding:13px;
+ border:0;
+ border-radius:10px;
+ background:#36aaff;
+ color:#07101f;
+ font-family:inherit;
+ font-size:11px;
+ font-weight:900;
+ cursor:pointer;
+}
+
+.special-button:active{transform:scale(.98)}
+
+.special-winner{
+ padding:16px 10px;
+ border:1px solid #ffda7566;
+ border-radius:13px;
+ background:#ffda7510;
+}
+
+.special-winner-name{
+ color:#ffda75;
+ font-size:20px;
+ font-weight:900;
+ margin-top:7px;
+}
+
+.special-winner-score{
+ color:#5ce6a4;
+ font-size:12px;
+ font-weight:900;
+ margin-top:5px;
+}
+
 /* PANNEAU SIMULATEUR */
 
 .simulator{
@@ -531,9 +634,7 @@ body{
  outline:none;
 }
 
-.sim-input:focus{
- border-color:#36aaff;
-}
+.sim-input:focus{border-color:#36aaff}
 
 .sim-grid{
  display:grid;
@@ -619,7 +720,7 @@ body{
 
 <body>
 
-<main class="live-screen">
+<main class="live-screen" id="liveScreen">
 
  <div class="header">
   <div class="brand">QUIZ CULTURE G</div>
@@ -750,6 +851,9 @@ body{
   JOUE • RÉPONDS • GAGNE
  </div>
 
+ <!-- ÉCRAN SPÉCIAL RÉCAPITULATIF / PODIUM -->
+ <section class="special-screen" id="specialScreen"></section>
+
 </main>
 
 <!-- SIMULATEUR SOUS LE LIVE -->
@@ -830,7 +934,7 @@ body{
   <div class="sim-grid">
    <button class="sim-button yellow" onclick="addTestPlayers()">👥 Ajouter 5 joueurs de test</button>
    <button class="sim-button yellow" onclick="testTop7()">🏆 Tester le Top 7</button>
-   <button class="sim-button purple" onclick="showFinalPodium()">🥇 Tester le podium final</button>
+   <button class="sim-button purple" onclick="showFinalPodium(true)">🥇 Tester le podium final</button>
   </div>
  </div>
 
@@ -898,19 +1002,26 @@ let frozenPlayer=null;
 let frozenUntil=0;
 let players=[];
 
-/* BONUS ET RÉPONSES DE LA MANCHE */
-
 let roundAnswers=[];
 let globalDoubleNext=false;
 let roundValidated=false;
 
+let recapTimeout=null;
+let recapTestMode=false;
+let voiceRunId=0;
+let voiceSequenceCallback=null;
+
 const $=id=>document.getElementById(id);
+
+/* JOUEURS */
 
 function getPlayer(name){
  name=String(name||"").trim().slice(0,30);
  if(!name)return null;
 
- let player=players.find(p=>p.name.toLowerCase()===name.toLowerCase());
+ let player=players.find(p=>
+  p.name.toLowerCase()===name.toLowerCase()
+ );
 
  if(!player){
   player={
@@ -942,7 +1053,7 @@ function renderRanking(){
   </div>
  `).join(""):`<div class="ranking-row">En attente des joueurs...</div>`;
 
- $("rankingLabel").textContent=questionIndex>=9?"TOP 7":"TOP 5";
+ $("rankingLabel").textContent="TOP 5";
 }
 
 function escapeHTML(value){
@@ -1044,11 +1155,21 @@ function speak(text){
  if(!voiceEnabled || !("speechSynthesis" in window))return;
 
  voiceQueue.push(text);
- processVoiceQueue();
+ processVoiceQueue(voiceRunId);
 }
 
-function processVoiceQueue(){
- if(speaking || !voiceQueue.length || !voiceEnabled)return;
+function processVoiceQueue(runId=voiceRunId){
+ if(runId!==voiceRunId)return;
+ if(speaking || !voiceEnabled)return;
+
+ if(!voiceQueue.length){
+  if(voiceSequenceCallback){
+   const callback=voiceSequenceCallback;
+   voiceSequenceCallback=null;
+   callback();
+  }
+  return;
+ }
 
  const text=voiceQueue.shift();
  const utterance=new SpeechSynthesisUtterance(text);
@@ -1064,46 +1185,42 @@ function processVoiceQueue(){
  speaking=true;
 
  utterance.onend=()=>{
+  if(runId!==voiceRunId)return;
   speaking=false;
-  processVoiceQueue();
+  processVoiceQueue(runId);
  };
 
  utterance.onerror=()=>{
+  if(runId!==voiceRunId)return;
   speaking=false;
-  processVoiceQueue();
+  processVoiceQueue(runId);
  };
 
  speechSynthesis.speak(utterance);
 }
 
 function speakSequence(messages,callback){
- if(!voiceEnabled){
-  if(callback)callback();
-  return;
- }
+ voiceRunId++;
 
- voiceQueue=[];
- speaking=false;
+ const runId=voiceRunId;
 
  if("speechSynthesis" in window){
   speechSynthesis.cancel();
  }
 
- messages.forEach(message=>voiceQueue.push(message));
+ voiceQueue=[];
+ speaking=false;
+ voiceSequenceCallback=null;
 
- if(callback){
-  const waitForQueue=()=>{
-   if(!speaking && voiceQueue.length===0){
-    callback();
-   }else{
-    setTimeout(waitForQueue,200);
-   }
-  };
-
-  setTimeout(waitForQueue,200);
+ if(!voiceEnabled || !("speechSynthesis" in window)){
+  if(callback)callback();
+  return;
  }
 
- processVoiceQueue();
+ voiceQueue=messages.slice();
+ voiceSequenceCallback=callback||null;
+
+ processVoiceQueue(runId);
 }
 
 function activateVoice(){
@@ -1120,7 +1237,7 @@ function activateVoice(){
  });
 }
 
-/* QUESTION LUE, PUIS CHRONOMÈTRE IMMÉDIATEMENT */
+/* QUESTION LUE, PUIS CHRONOMÈTRE */
 
 function announceCurrentQuestion(){
  if(gameFinished || revealed)return;
@@ -1137,6 +1254,7 @@ function announceCurrentQuestion(){
   "Réponse D : "+q[2][3]
  ];
 
+ /* Le chrono démarre directement après la dernière proposition. */
  speakSequence(messages,()=>{
   if(!revealed && !gameFinished)startTimer();
  });
@@ -1175,8 +1293,6 @@ function renderQuestion(){
  );
 
  updatePart(part);
-
- /* Le classement n'est pas recalculé ici pendant une manche. */
  renderRanking();
 }
 
@@ -1221,33 +1337,36 @@ function pauseTimer(){
  }
 }
 
-/* VALIDATION DES POINTS À LA FIN DU CHRONO */
+/* ATTRIBUTION DES POINTS */
 
 function validateRound(){
- if(roundValidated)return;
+ if(roundValidated)return null;
 
  roundValidated=true;
 
  const correctIndex=questions[questionIndex][3];
 
- /* Les joueurs gelés sont exclus avant de déterminer le premier. */
+ /*
+  Les réponses correctes sont triées dans leur ordre d'arrivée.
+  Les joueurs gelés sont retirés AVANT le calcul des places.
+ */
  const correctAnswers=roundAnswers.filter(entry=>
   entry.answerIndex===correctIndex &&
   !(frozenPlayer===entry.player.name && Date.now()<frozenUntil)
  );
 
- let firstCorrect=null;
-
- if(correctAnswers.length){
-  firstCorrect=correctAnswers[0].player;
- }
+ const firstCorrect=correctAnswers.length
+  ?correctAnswers[0].player
+  :null;
 
  const globalMultiplier=globalDoubleNext?2:1;
 
  correctAnswers.forEach((entry,index)=>{
   const player=entry.player;
 
-  const basePoints=index===0?400:100;
+  /* 200, 190, 180... avec un minimum de 50 points. */
+  const basePoints=Math.max(50,200-index*10);
+
   const roseMultiplier=player.roseNext?2:1;
   const subscriptionMultiplier=player.subscribed?2:1;
 
@@ -1260,41 +1379,24 @@ function validateRound(){
   player.score+=points;
  });
 
- /* Le bonus rose est consommé à la fin de cette manche. */
+ /* Le bonus rose est consommé à la fin de la manche. */
  players.forEach(player=>{
   player.roseNext=false;
  });
 
- /* Le bonus global des likes ne s'applique qu'à une manche. */
+ /* Le bonus global des likes est consommé après cette manche. */
  globalDoubleNext=false;
 
  renderRanking();
 
- /* Seul le premier joueur ayant trouvé la bonne réponse est annoncé. */
- if(firstCorrect){
-  speak(
-   "Bravo "+firstCorrect.name+
-   " ! Tu as trouvé la bonne réponse en premier !"
-  );
- }
-
  $("bottomStatus").textContent=
   correctAnswers.length+
   " BONNE(S) RÉPONSE(S) — POINTS ATTRIBUÉS";
+
+ return firstCorrect;
 }
 
-/* ATTENDRE LA FIN DE LA VOIX AVANT DE CONTINUER */
-
-function waitForVoiceToFinish(callback){
- if(!voiceEnabled || (!speaking && voiceQueue.length===0)){
-  callback();
-  return;
- }
-
- setTimeout(()=>{
-  waitForVoiceToFinish(callback);
- },250);
-}
+/* RÉVÉLATION ET ANNONCE DE LA BONNE RÉPONSE */
 
 function revealAnswer(){
  if(revealed || gameFinished)return;
@@ -1303,30 +1405,43 @@ function revealAnswer(){
  clearInterval(timer);
  timer=null;
 
- /* Attribution des points uniquement maintenant. */
- validateRound();
+ const firstCorrect=validateRound();
 
- const correct=questions[questionIndex][3];
+ const q=questions[questionIndex];
+ const correctIndex=q[3];
 
  document.querySelectorAll(".answer").forEach((el,i)=>{
-  el.classList.add(i===correct?"correct":"wrong");
+  el.classList.add(i===correctIndex?"correct":"wrong");
  });
 
  $("bottomStatus").textContent=
   "RÉPONSE RÉVÉLÉE — CLASSEMENT MIS À JOUR";
 
- /* La voix ne donne pas la bonne réponse.
-    Le quiz attend la fin de l'annonce du premier joueur. */
+ /*
+  La bonne réponse est TOUJOURS annoncée.
+  Ensuite, le premier joueur correct est félicité.
+  Le quiz attend la fin de la voix avant de continuer.
+ */
+ const voiceMessages=[
+  "La bonne réponse était : "+q[2][correctIndex]+"."
+ ];
 
- if(questionIndex===9){
-  waitForVoiceToFinish(()=>{
-   setTimeout(announceTop7,1500);
-  });
- }else{
-  waitForVoiceToFinish(()=>{
-   setTimeout(nextQuestion,1500);
-  });
+ if(firstCorrect){
+  voiceMessages.push(
+   "Bravo "+firstCorrect.name+
+   " ! Tu as trouvé la bonne réponse en premier !"
+  );
  }
+
+ speakSequence(voiceMessages,()=>{
+  if(questionIndex===9){
+   showMidGameRecap(false);
+  }else if(questionIndex===questions.length-1){
+   showFinalPodium(false);
+  }else{
+   setTimeout(nextQuestion,1200);
+  }
+ });
 }
 
 /* RÉPONSES DES JOUEURS */
@@ -1353,8 +1468,6 @@ function submitAnswer(username,letter){
 
  $("bottomStatus").textContent=
   "RÉPONSE ENREGISTRÉE — "+roundAnswers.length+" PARTICIPANT(S)";
-
- /* Aucun classement ni point n'est modifié ici. */
 }
 
 /* CADEAUX ET ABONNEMENTS */
@@ -1431,59 +1544,188 @@ function bombLeader(username){
  speak("Bombe ! "+sender.name+" vole la moitié des points de "+leader.name+" !");
 }
 
-/* CLASSEMENT ET PODIUM */
+/* ÉCRAN DE RÉCAPITULATIF APRÈS LA QUESTION 10 */
 
-function announceTop7(){
+function showMidGameRecap(testMode=false){
+ clearInterval(timer);
+ timer=null;
+ clearTimeout(recapTimeout);
+
+ recapTestMode=testMode;
+
  const top=sortedPlayers().slice(0,7);
+ const top3=top.slice(0,3);
 
- $("rankingLabel").textContent="TOP 7";
-
- $("rankingList").innerHTML=top.map((p,i)=>`
-  <div class="ranking-row">
-   <span class="rank-number">${i+1}.</span>
-   <span class="rank-avatar">${escapeHTML(p.name.charAt(0).toUpperCase())}</span>
+ const rows=top.length?top.map((p,i)=>`
+  <div class="special-ranking-row">
+   <span class="rank-number">${i===0?"🥇":i===1?"🥈":i===2?"🥉":(i+1)+"."}</span>
    <span class="rank-name">${escapeHTML(p.name)}</span>
    <span class="rank-score">${p.score.toLocaleString("fr-FR")} pts</span>
   </div>
- `).join("");
+ `).join(""):`
+  <div class="special-ranking-row">
+   <span class="rank-name">Aucun joueur classé pour le moment.</span>
+  </div>
+ `;
 
- $("bottomStatus").textContent="TOP 7 — FIN DE LA PREMIÈRE PHASE";
+ $("specialScreen").innerHTML=`
+  <div class="special-heading">🏆 PETIT RÉCAPITULATIF</div>
+  <div class="special-subheading">
+   FIN DE LA PREMIÈRE MOITIÉ DU QUIZ<br>
+   VOICI LE CLASSEMENT DES 7 PREMIERS
+  </div>
+  <div class="special-ranking">${rows}</div>
+  <button class="special-button" onclick="continueAfterRecap()">
+   ▶ REPRENDRE LA PARTIE
+  </button>
+ `;
 
- /* Le classement n'est pas lu à voix haute. */
- setTimeout(nextQuestion,3500);
+ $("liveScreen").classList.add("is-special");
+
+ $("bottomStatus").textContent=
+  testMode
+   ?"TEST DU RÉCAPITULATIF"
+   :"RÉCAPITULATIF — FIN DES 10 PREMIÈRES QUESTIONS";
+
+ const messages=[
+  "Petit récapitulatif de la partie. Voici le classement."
+ ];
+
+ top3.forEach((p,i)=>{
+  const place=
+   i===0?"Première place : ":
+   i===1?"Deuxième place : ":
+   "Troisième place : ";
+
+  messages.push(place+p.name+".");
+ });
+
+ if(!testMode){
+  messages.push("La deuxième partie du quiz va commencer.");
+ }
+
+ speakSequence(messages,()=>{
+  if(!recapTestMode){
+   recapTimeout=setTimeout(continueAfterRecap,5000);
+  }
+ });
 }
 
-function showFinalPodium(){
- gameFinished=true;
+function continueAfterRecap(){
+ clearTimeout(recapTimeout);
+
+ $("liveScreen").classList.remove("is-special");
+
+ if(recapTestMode){
+  recapTestMode=false;
+  $("bottomStatus").textContent="TEST DU RÉCAPITULATIF TERMINÉ";
+  return;
+ }
+
+ if(gameFinished)return;
+
+ if(questionIndex===9){
+  questionIndex++;
+  renderQuestion();
+  announceCurrentQuestion();
+ }
+}
+
+/* COMPATIBILITÉ AVEC L'ANCIEN BOUTON TOP 7 */
+
+function announceTop7(){
+ showMidGameRecap(true);
+}
+
+/* PODIUM FINAL APRÈS LA QUESTION 20 */
+
+function showFinalPodium(testMode=false){
  clearInterval(timer);
  timer=null;
+ clearTimeout(recapTimeout);
+
+ gameFinished=true;
+ recapTestMode=false;
+
  clearInterval(tickerInterval);
  clearTimeout(tickerMessageTimeout);
 
  const top=sortedPlayers().slice(0,3);
+ const winner=top[0];
 
+ const rows=top.length?top.map((p,i)=>`
+  <div class="special-ranking-row">
+   <span class="rank-number">${i===0?"🥇":i===1?"🥈":"🥉"}</span>
+   <span class="rank-name">${escapeHTML(p.name)}</span>
+   <span class="rank-score">${p.score.toLocaleString("fr-FR")} pts</span>
+  </div>
+ `).join(""):`
+  <div class="special-ranking-row">
+   <span class="rank-name">Aucun joueur classé pour le moment.</span>
+  </div>
+ `;
+
+ $("specialScreen").innerHTML=`
+  <div class="special-heading">🏆 PODIUM FINAL</div>
+  <div class="special-subheading">
+   ${testMode?"SIMULATION DU PODIUM":"QUIZ CULTURE G — 20 QUESTIONS TERMINÉES"}
+  </div>
+  ${winner?`
+   <div class="special-winner">
+    <div style="font-size:30px">🏆</div>
+    <div style="font-size:10px;font-weight:900;color:#ffda75">
+     GRAND GAGNANT
+    </div>
+    <div class="special-winner-name">${escapeHTML(winner.name)}</div>
+    <div class="special-winner-score">
+     ${winner.score.toLocaleString("fr-FR")} POINTS
+    </div>
+   </div>
+  `:""}
+  <div class="special-ranking">${rows}</div>
+  <div class="special-subheading">
+   BRAVO À TOUS LES PARTICIPANTS !
+  </div>
+  ${testMode?`
+   <button class="special-button" onclick="closePodiumTest()">
+    FERMER LE TEST
+   </button>
+  `:""}
+ `;
+
+ $("liveScreen").classList.add("is-special");
  $("questionNumber").textContent="PARTIE TERMINÉE";
  $("bottomStatus").textContent="🏆 FIN DU QUIZ !";
- $("podiumTitle").textContent="🏆 PODIUM FINAL";
 
- $("podiumList").innerHTML=top.length?top.map((p,i)=>`
-  <div class="podium-line">
-   ${i===0?"🥇":i===1?"🥈":"🥉"}
-   ${escapeHTML(p.name)} — ${p.score.toLocaleString("fr-FR")} points
-  </div>
- `).join(""):"Aucun joueur classé pour le moment.";
-
- $("podium").classList.add("visible");
-
- /* Pas d'annonce vocale du podium. */
+ if(winner){
+  speakSequence([
+   testMode?"Simulation du podium final.":"Le quiz est terminé.",
+   "Bravo "+winner.name+" ! Tu remportes Quiz Culture G !",
+   "Félicitations à tous les participants !"
+  ]);
+ }else{
+  speakSequence([
+   "Le quiz est terminé. Merci à tous les participants !"
+  ]);
+ }
 }
+
+function closePodiumTest(){
+ $("liveScreen").classList.remove("is-special");
+ gameFinished=false;
+ $("bottomStatus").textContent="TEST DU PODIUM TERMINÉ";
+}
+
+/* QUESTION SUIVANTE */
 
 function nextQuestion(){
  clearInterval(timer);
  timer=null;
 
+ if(gameFinished)return;
+
  if(questionIndex===questions.length-1){
-  showFinalPodium();
+  showFinalPodium(false);
   return;
  }
 
@@ -1499,8 +1741,6 @@ function updateLikes(amount){
 
  likes+=amount;
 
- /* Chaque palier de 500 déclenche le bonus de la prochaine manche.
-    Le compteur conserve le reste après le ou les paliers. */
  while(likes>=500){
   likes-=500;
   globalDoubleNext=true;
@@ -1635,12 +1875,16 @@ function testQuestionVoice(){
 }
 
 function stopVoice(){
+ voiceRunId++;
+
  if("speechSynthesis" in window){
   speechSynthesis.cancel();
  }
 
  voiceQueue=[];
  speaking=false;
+ voiceSequenceCallback=null;
+
  simStatus("Lecture vocale arrêtée.");
 }
 
@@ -1712,9 +1956,11 @@ function testTop7(){
  });
 
  renderRanking();
- announceTop7();
- simStatus("Test du Top 7 lancé.");
+ showMidGameRecap(true);
+ simStatus("Test du récapitulatif Top 7 lancé. Clique sur Reprendre pour fermer le test.");
 }
+
+/* RÉINITIALISATION */
 
 function resetQuiz(){
  clearInterval(timer);
@@ -1722,6 +1968,9 @@ function resetQuiz(){
 
  clearInterval(tickerInterval);
  clearTimeout(tickerMessageTimeout);
+ clearTimeout(recapTimeout);
+
+ voiceRunId++;
 
  if("speechSynthesis" in window){
   speechSynthesis.cancel();
@@ -1729,6 +1978,7 @@ function resetQuiz(){
 
  voiceQueue=[];
  speaking=false;
+ voiceSequenceCallback=null;
 
  questionIndex=0;
  seconds=10;
@@ -1743,8 +1993,13 @@ function resetQuiz(){
  roundValidated=false;
  globalDoubleNext=false;
 
+ recapTestMode=false;
+
  tickerIndex=0;
  tickerPriority=false;
+
+ $("liveScreen").classList.remove("is-special");
+ $("specialScreen").innerHTML="";
 
  $("likesNumber").textContent="0 / 500";
  $("likesFill").style.width="0%";
@@ -1763,7 +2018,7 @@ function resetQuiz(){
 }
 
 function simulateLiveLikes(){
- /* Conservée pour compatibilité, mais aucun like fictif n'est ajouté. */
+ /* Conservée pour compatibilité, aucun like fictif n'est ajouté. */
 }
 
 /*
@@ -1808,8 +2063,6 @@ startTicker();
 
 $("bottomStatus").textContent="ACTIVE LA VOIX POUR COMMENCER";
 
-/* Plus de génération automatique de faux likes. */
-
 /* RACCOURCIS CLAVIER */
 
 document.addEventListener("keydown",event=>{
@@ -1819,6 +2072,7 @@ document.addEventListener("keydown",event=>{
 
  if(event.code==="ArrowLeft" && questionIndex>0 && !gameFinished){
   questionIndex--;
+  $("liveScreen").classList.remove("is-special");
   renderQuestion();
   announceCurrentQuestion();
  }
