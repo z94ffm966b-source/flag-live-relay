@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -6,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080b18">
 <title>QUIZ CULTURE G — LIVE</title>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
@@ -84,18 +84,10 @@ body{
  font-weight:700;
 }
 
-.creator-name{
- color:#fff;
-}
+.creator-name{color:#fff}
+.live-indicator{color:#ff7188;font-weight:900}
 
-.live-indicator{
- color:#ff7188;
- font-weight:900;
-}
-
-.likes{
- margin-top:13px;
-}
+.likes{margin-top:13px}
 
 .likes-top{
  display:flex;
@@ -106,10 +98,7 @@ body{
  color:#d9e3ff;
 }
 
-.likes-number{
- color:#ff7192;
- font-size:12px;
-}
+.likes-number{color:#ff7192;font-size:12px}
 
 .likes-track{
  height:8px;
@@ -152,9 +141,7 @@ body{
  font-weight:900;
 }
 
-.timer-area{
- margin-top:13px;
-}
+.timer-area{margin-top:13px}
 
 .timer-label{
  display:flex;
@@ -166,10 +153,7 @@ body{
  margin-bottom:6px;
 }
 
-.timer-number{
- color:#58d7ff;
- font-size:12px;
-}
+.timer-number{color:#58d7ff;font-size:12px}
 
 .timer-track{
  width:100%;
@@ -221,10 +205,7 @@ body{
  font-weight:900;
 }
 
-.answer-text{
- text-align:left;
- line-height:1.25;
-}
+.answer-text{text-align:left;line-height:1.25}
 
 .answer-a{background:linear-gradient(135deg,#2775ed,#1645a9)}
 .answer-b{background:linear-gradient(135deg,#20b979,#087b50)}
@@ -236,9 +217,7 @@ body{
  background:linear-gradient(135deg,#159b5c,#087343);
 }
 
-.answer.wrong{
- opacity:.38;
-}
+.answer.wrong{opacity:.38}
 
 .chat-instruction{
  text-align:center;
@@ -273,26 +252,24 @@ body{
 
 .gifts{
  display:grid;
- grid-template-columns:repeat(3,1fr);
- gap:8px;
+ grid-template-columns:repeat(4,1fr);
+ gap:6px;
  margin-top:15px;
 }
 
 .gift{
  min-width:0;
  text-align:center;
- padding:10px 3px;
+ padding:9px 2px;
  border-radius:12px;
  background:#ffffff0c;
  border:1px solid #ffffff22;
 }
 
-.gift-emoji{
- font-size:25px;
-}
+.gift-emoji{font-size:23px}
 
 .gift-name{
- font-size:9px;
+ font-size:8px;
  font-weight:900;
  margin-top:4px;
 }
@@ -307,10 +284,9 @@ body{
 .gift.rose{border-color:#ff8db555}
 .gift.ice{border-color:#62caff55}
 .gift.bomb{border-color:#ff637855}
+.gift.sub{border-color:#a477ff88}
 
-.part{
- margin-top:14px;
-}
+.part{margin-top:14px}
 
 .part-label{
  display:flex;
@@ -354,10 +330,7 @@ body{
  margin-bottom:7px;
 }
 
-.ranking-title span{
- color:#ffda75;
- font-size:9px;
-}
+.ranking-title span{color:#ffda75;font-size:9px}
 
 .ranking-row{
  display:flex;
@@ -368,9 +341,7 @@ body{
  font-size:9px;
 }
 
-.ranking-row:last-child{
- border-bottom:0;
-}
+.ranking-row:last-child{border-bottom:0}
 
 .rank-number{
  width:19px;
@@ -410,6 +381,49 @@ body{
  font-size:8px;
  color:#8c9dc3;
  letter-spacing:1.5px;
+}
+
+.voice-button{
+ margin-top:9px;
+ width:100%;
+ border:1px solid #62caff66;
+ border-radius:10px;
+ padding:9px;
+ color:white;
+ background:#36aaff22;
+ font-size:10px;
+ font-weight:900;
+ cursor:pointer;
+}
+
+.voice-button.active{
+ background:#159b5c55;
+ border-color:#5bffa9;
+}
+
+.podium{
+ display:none;
+ margin-top:12px;
+ padding:12px;
+ border:1px solid #ffda7566;
+ border-radius:13px;
+ background:#ffda7510;
+ text-align:center;
+}
+
+.podium.visible{display:block}
+
+.podium-title{
+ font-size:12px;
+ font-weight:900;
+ color:#ffda75;
+ margin-bottom:8px;
+}
+
+.podium-line{
+ font-size:10px;
+ font-weight:800;
+ padding:4px;
 }
 
 @media(max-height:700px){
@@ -505,17 +519,25 @@ body{
   <div class="gift rose">
    <div class="gift-emoji">🌹</div>
    <div class="gift-name">ROSE</div>
-   <div class="gift-description">Double les points</div>
+   <div class="gift-description">POINTS DOUBLÉS</div>
   </div>
+
   <div class="gift ice">
    <div class="gift-emoji">🧊</div>
-   <div class="gift-name">GEL</div>
-   <div class="gift-description">Gèle le premier</div>
+   <div class="gift-name">20 PIÈCES</div>
+   <div class="gift-description">GÈLE LE PREMIER</div>
   </div>
+
   <div class="gift bomb">
    <div class="gift-emoji">💣</div>
-   <div class="gift-name">BOMBE</div>
-   <div class="gift-description">Vole des points</div>
+   <div class="gift-name">99+ PIÈCES</div>
+   <div class="gift-description">½ DES POINTS DU PREMIER</div>
+  </div>
+
+  <div class="gift sub">
+   <div class="gift-emoji">⭐</div>
+   <div class="gift-name">ABONNEMENT</div>
+   <div class="gift-description">POINTS DOUBLÉS</div>
   </div>
  </section>
 
@@ -532,7 +554,7 @@ body{
  <section class="ranking">
   <div class="ranking-title">
    <span>🏆 CLASSEMENT DU LIVE</span>
-   <span>TOP 5</span>
+   <span id="rankingLabel">TOP 5</span>
   </div>
   <div id="rankingList">
    <div class="ranking-row">
@@ -543,6 +565,15 @@ body{
    </div>
   </div>
  </section>
+
+ <section class="podium" id="podium">
+  <div class="podium-title" id="podiumTitle">🏆 PODIUM FINAL</div>
+  <div id="podiumList"></div>
+ </section>
+
+ <button class="voice-button" id="voiceButton" onclick="activateVoice()">
+  🔊 ACTIVER LA VOIX
+ </button>
 
  <div class="bottom-status" id="bottomStatus">
   JOUE • RÉPONDS • GAGNE
@@ -579,34 +610,54 @@ let seconds=10;
 let likes=0;
 let timer=null;
 let revealed=false;
+let gameFinished=false;
+let voiceEnabled=false;
+let voiceQueue=[];
+let speaking=false;
+let frozenPlayer=null;
+let frozenUntil=0;
 
-let players=[
- {name:"Atlas_59",score:1250},
- {name:"LunaQuiz",score:980},
- {name:"MaxPower",score:850},
- {name:"Nina_Off",score:720},
- {name:"GeoMaster",score:540},
- {name:"TheoLive",score:430},
- {name:"Emma_200",score:310},
- {name:"PixelFox",score:250}
-];
+let players=[];
 
 const $=id=>document.getElementById(id);
 
-function renderRanking(){
- const top=players
-  .slice()
-  .sort((a,b)=>b.score-a.score)
-  .slice(0,5);
+function getPlayer(name){
+ name=String(name||"").trim().slice(0,30);
+ if(!name)return null;
 
- $("rankingList").innerHTML=top.map((p,i)=>`
+ let player=players.find(p=>p.name.toLowerCase()===name.toLowerCase());
+
+ if(!player){
+  player={
+   name,
+   score:0,
+   multiplier:1,
+   answered:[],
+   subscribed:false
+  };
+  players.push(player);
+ }
+
+ return player;
+}
+
+function sortedPlayers(){
+ return players.slice().sort((a,b)=>b.score-a.score);
+}
+
+function renderRanking(){
+ const top=sortedPlayers().slice(0,5);
+
+ $("rankingList").innerHTML=top.length?top.map((p,i)=>`
   <div class="ranking-row">
    <span class="rank-number">${i+1}.</span>
    <span class="rank-avatar">${escapeHTML(p.name.charAt(0).toUpperCase())}</span>
    <span class="rank-name">${escapeHTML(p.name)}</span>
    <span class="rank-score">${p.score.toLocaleString("fr-FR")} pts</span>
   </div>
- `).join("");
+ `).join(""):`<div class="ranking-row">En attente des joueurs...</div>`;
+
+ $("rankingLabel").textContent=questionIndex>=9?"TOP 7":"TOP 5";
 }
 
 function escapeHTML(value){
@@ -618,6 +669,124 @@ function escapeHTML(value){
   "'":"&#39;"
  }[c]));
 }
+
+/* VOIX FRANÇAISE */
+
+function getFrenchVoice(){
+ if(!("speechSynthesis" in window))return null;
+
+ const voices=speechSynthesis.getVoices();
+
+ return voices.find(v=>
+  v.lang.toLowerCase().startsWith("fr") &&
+  /male|homme|thomas|henri|paul/i.test(v.name)
+ ) || voices.find(v=>
+  v.lang.toLowerCase().startsWith("fr")
+ ) || null;
+}
+
+function speak(text){
+ if(!voiceEnabled || !("speechSynthesis" in window))return;
+
+ voiceQueue.push(text);
+ processVoiceQueue();
+}
+
+function processVoiceQueue(){
+ if(speaking || !voiceQueue.length || !voiceEnabled)return;
+
+ const text=voiceQueue.shift();
+ const utterance=new SpeechSynthesisUtterance(text);
+ const voice=getFrenchVoice();
+
+ if(voice)utterance.voice=voice;
+
+ utterance.lang="fr-FR";
+ utterance.rate=0.95;
+ utterance.pitch=0.85;
+ utterance.volume=1;
+
+ speaking=true;
+
+ utterance.onend=()=>{
+  speaking=false;
+  processVoiceQueue();
+ };
+
+ utterance.onerror=()=>{
+  speaking=false;
+  processVoiceQueue();
+ };
+
+ speechSynthesis.speak(utterance);
+}
+
+function speakSequence(messages,callback){
+ if(!voiceEnabled){
+  if(callback)callback();
+  return;
+ }
+
+ voiceQueue=[];
+ speaking=false;
+
+ if("speechSynthesis" in window){
+  speechSynthesis.cancel();
+ }
+
+ messages.forEach(message=>voiceQueue.push(message));
+
+ if(callback){
+  const waitForQueue=()=>{
+   if(!speaking && voiceQueue.length===0){
+    callback();
+   }else{
+    setTimeout(waitForQueue,200);
+   }
+  };
+
+  setTimeout(waitForQueue,200);
+ }
+
+ processVoiceQueue();
+}
+
+function activateVoice(){
+ voiceEnabled=true;
+
+ $("voiceButton").textContent="🔊 VOIX ACTIVÉE";
+ $("voiceButton").classList.add("active");
+
+ speakSequence([
+  "La voix du quiz est activée.",
+  "Bienvenue dans Quiz Culture G !"
+ ],()=>{
+  announceCurrentQuestion();
+ });
+}
+
+function announceCurrentQuestion(){
+ if(gameFinished || revealed)return;
+
+ const q=questions[questionIndex];
+
+ const messages=[
+  "Question numéro "+(questionIndex+1)+".",
+  q[0]+".",
+  q[1],
+  "Réponse A : "+q[2][0],
+  "Réponse B : "+q[2][1],
+  "Réponse C : "+q[2][2],
+  "Réponse D : "+q[2][3],
+  "Vous avez dix secondes pour répondre."
+ ];
+
+ speakSequence(messages,()=>{
+  if(!revealed && !gameFinished)startTimer();
+ });
+}
+
+/* QUESTIONS */
 
 function renderQuestion(){
  const q=questions[questionIndex];
@@ -638,7 +807,11 @@ function renderQuestion(){
  revealed=false;
  seconds=10;
  updateTimer();
+
  $("bottomStatus").textContent="JOUE • RÉPONDS • GAGNE";
+ $("podium").classList.remove("visible");
+
+ renderRanking();
 }
 
 function updateTimer(){
@@ -653,22 +826,6 @@ function updateTimer(){
   $("timerFill").style.background=
    "linear-gradient(90deg,#32df9a,#36baff)";
  }
-}
-
-function revealAnswer(){
- if(revealed)return;
- revealed=true;
-
- const correct=questions[questionIndex][4];
-
- document.querySelectorAll(".answer").forEach((el,i)=>{
-  el.classList.add(i===correct?"correct":"wrong");
- });
-
- $("bottomStatus").textContent="RÉPONSE RÉVÉLÉE";
- clearInterval(timer);
-
- setTimeout(nextQuestion,3500);
 }
 
 function startTimer(){
@@ -687,18 +844,219 @@ function startTimer(){
  },1000);
 }
 
+function revealAnswer(){
+ if(revealed || gameFinished)return;
+
+ revealed=true;
+ clearInterval(timer);
+
+ const correct=questions[questionIndex][4];
+
+ document.querySelectorAll(".answer").forEach((el,i)=>{
+  el.classList.add(i===correct?"correct":"wrong");
+ });
+
+ $("bottomStatus").textContent="RÉPONSE RÉVÉLÉE";
+
+ speak("La bonne réponse était "+questions[questionIndex][2][correct]+".");
+
+ if(questionIndex===9){
+  setTimeout(announceTop7,1800);
+ }else{
+  setTimeout(nextQuestion,3500);
+ }
+}
+
+/* RÉPONSES DES JOUEURS */
+
+function submitAnswer(username,letter){
+ if(gameFinished || revealed)return;
+
+ const player=getPlayer(username);
+ if(!player)return;
+
+ letter=String(letter).trim().toUpperCase();
+ const answerIndex="ABCD".indexOf(letter);
+
+ if(answerIndex===-1)return;
+ if(player.answered.includes(questionIndex))return;
+
+ player.answered.push(questionIndex);
+
+ const correct=questions[questionIndex][4];
+
+ if(answerIndex===correct){
+  if(frozenPlayer===player.name && Date.now()<frozenUntil){
+   speak(player.name+" a trouvé la bonne réponse, mais ses points sont gelés.");
+   return;
+  }
+
+  const points=100*player.multiplier;
+  player.score+=points;
+
+  renderRanking();
+
+  $("bottomStatus").textContent=
+   player.name+" GAGNE "+points+" POINTS !";
+
+  speak("Bravo "+player.name+" ! Bonne réponse ! "+points+" points !");
+ }else{
+  speak(player.name+" a donné une mauvaise réponse.");
+ }
+}
+
+/* CADEAUX ET ABONNEMENTS */
+
+function giveRose(username){
+ const player=getPlayer(username);
+ if(!player)return;
+
+ player.multiplier*=2;
+
+ renderRanking();
+
+ $("bottomStatus").textContent=
+  "🌹 "+player.name+" : POINTS DOUBLÉS !";
+
+ speak("Merci pour la rose de "+player.name+". Ses points sont doublés !");
+}
+
+function subscribePlayer(username){
+ const player=getPlayer(username);
+ if(!player)return;
+
+ if(player.subscribed)return;
+
+ player.subscribed=true;
+ player.multiplier*=2;
+
+ renderRanking();
+
+ $("bottomStatus").textContent=
+  "⭐ "+player.name+" : ABONNEMENT ET POINTS DOUBLÉS !";
+
+ speak("Merci pour l'abonnement de "+player.name+" ! Ses points sont doublés !");
+}
+
+function freezeLeader(username){
+ const leader=sortedPlayers()[0];
+ if(!leader)return;
+
+ frozenPlayer=leader.name;
+ frozenUntil=Date.now()+30000;
+
+ $("bottomStatus").textContent=
+  "🧊 "+leader.name+" EST GELÉ PENDANT 30 SECONDES !";
+
+ speak(username+" utilise un glaçon ! "+leader.name+" est gelé pendant trente secondes !");
+}
+
+function bombLeader(username){
+ const sender=getPlayer(username);
+ if(!sender)return;
+
+ const leader=sortedPlayers()[0];
+
+ if(!leader || leader.name===sender.name)return;
+
+ const stolen=Math.floor(leader.score/2);
+
+ leader.score-=stolen;
+ sender.score+=stolen;
+
+ renderRanking();
+
+ $("bottomStatus").textContent=
+  "💣 "+sender.name+" VOLE "+stolen+" POINTS À "+leader.name+" !";
+
+ speak("Bombe ! "+sender.name+" vole "+stolen+" points à "+leader.name+" !");
+}
+
+/* CLASSEMENT ET PODIUM */
+
+function announceTop7(){
+ const top=sortedPlayers().slice(0,7);
+
+ $("rankingLabel").textContent="TOP 7";
+
+ $("rankingList").innerHTML=top.map((p,i)=>`
+  <div class="ranking-row">
+   <span class="rank-number">${i+1}.</span>
+   <span class="rank-avatar">${escapeHTML(p.name.charAt(0).toUpperCase())}</span>
+   <span class="rank-name">${escapeHTML(p.name)}</span>
+   <span class="rank-score">${p.score.toLocaleString("fr-FR")} pts</span>
+  </div>
+ `).join("");
+
+ $("bottomStatus").textContent="TOP 7 — FIN DE LA PREMIÈRE PHASE";
+
+ const firstThree=top.slice(0,3);
+
+ const messages=["Fin de la dixième question. Voici le top sept."];
+
+ firstThree.forEach((p,i)=>{
+  messages.push(
+   (i===0?"Première place : ":i===1?"Deuxième place : ":"Troisième place : ")+
+   p.name+", avec "+p.score+" points."
+  );
+ });
+
+ speakSequence(messages,()=>{
+  setTimeout(nextQuestion,3500);
+ });
+}
+
+function showFinalPodium(){
+ gameFinished=true;
+ clearInterval(timer);
+
+ const top=sortedPlayers().slice(0,3);
+
+ $("questionNumber").textContent="PARTIE TERMINÉE";
+ $("bottomStatus").textContent="🏆 FIN DU QUIZ !";
+ $("podiumTitle").textContent="🏆 PODIUM FINAL";
+
+ $("podiumList").innerHTML=top.length?top.map((p,i)=>`
+  <div class="podium-line">
+   ${i===0?"🥇":i===1?"🥈":"🥉"}
+   ${escapeHTML(p.name)} — ${p.score.toLocaleString("fr-FR")} points
+  </div>
+ `).join(""):"Aucun joueur classé pour le moment.";
+
+ $("podium").classList.add("visible");
+
+ const messages=["Le quiz est terminé ! Voici le podium final."];
+
+ top.forEach((p,i)=>{
+  messages.push(
+   (i===0?"Et le grand gagnant est ":i===1?"En deuxième position, ":"En troisième position, ")+
+   p.name+", avec "+p.score+" points."
+  );
+ });
+
+ speakSequence(messages);
+}
+
 function nextQuestion(){
  clearInterval(timer);
 
- questionIndex++;
-
- if(questionIndex>=questions.length){
-  questionIndex=0;
+ if(questionIndex===questions.length-1){
+  showFinalPodium();
+  return;
  }
 
+ questionIndex++;
+
  renderQuestion();
- startTimer();
+
+ if(questionIndex===9){
+  announceCurrentQuestion();
+ }else{
+  announceCurrentQuestion();
+ }
 }
+
+/* LIKES ET PROGRESSION */
 
 function updateLikes(amount){
  likes=Math.min(500,likes+amount);
@@ -716,37 +1074,80 @@ function updatePart(number){
  $("partFill").style.width=(part/16*100)+"%";
 }
 
-/* Aperçu autonome : likes simulés pour tester la progression. */
+/* APERÇU AUTONOME */
+
 function simulateLiveLikes(){
  if(likes<500){
   updateLikes(Math.floor(Math.random()*8)+2);
  }
 }
 
+/*
+ RACCORDEMENT TIKTOK LIVE CONNECTOR
+
+ Les événements du connecteur doivent appeler ces fonctions :
+
+ Réponse dans le chat :
+ quizLive.answer("Pseudo", "A");
+
+ Rose :
+ quizLive.rose("Pseudo");
+
+ Abonnement :
+ quizLive.subscribe("Pseudo");
+
+ Glaçon :
+ quizLive.ice("Pseudo");
+
+ Bombe :
+ quizLive.bomb("Pseudo");
+
+ Like :
+ quizLive.like(1);
+*/
+
+window.quizLive={
+ answer:submitAnswer,
+ rose:giveRose,
+ subscribe:subscribePlayer,
+ ice:freezeLeader,
+ bomb:bombLeader,
+ like:updateLikes,
+ next:nextQuestion,
+ reveal:revealAnswer
+};
+
+/* INITIALISATION */
+
 renderQuestion();
 renderRanking();
 updatePart(1);
-startTimer();
+
+$("bottomStatus").textContent="ACTIVE LA VOIX POUR COMMENCER";
 
 setInterval(simulateLiveLikes,1800);
 
-/* Raccourcis clavier pour tester l'aperçu sans ajouter de boutons. */
+/* RACCOURCIS CLAVIER POUR TESTER */
+
 document.addEventListener("keydown",event=>{
  if(event.code==="ArrowRight"){
   nextQuestion();
  }
- if(event.code==="ArrowLeft"){
-  questionIndex=Math.max(0,questionIndex-1);
+
+ if(event.code==="ArrowLeft" && questionIndex>0 && !gameFinished){
+  questionIndex--;
   renderQuestion();
-  startTimer();
+  announceCurrentQuestion();
  }
+
  if(event.code==="Space"){
   event.preventDefault();
+
   if(timer){
    clearInterval(timer);
    timer=null;
    $("bottomStatus").textContent="PAUSE";
-  }else{
+  }else if(!gameFinished && !revealed){
    $("bottomStatus").textContent="JOUE • RÉPONDS • GAGNE";
    startTimer();
   }
