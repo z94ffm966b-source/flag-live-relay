@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -250,9 +251,49 @@ body{
 .chat-letter.c{background:#e59b23}
 .chat-letter.d{background:#a05be9}
 
+/* BARRE DE MESSAGES */
+
+.message-bar{
+ width:100%;
+ min-height:37px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ margin-top:10px;
+ padding:7px 10px;
+ border:1px solid #36aaff55;
+ border-radius:10px;
+ background:linear-gradient(90deg,#17396a,#25204d);
+ box-shadow:0 3px 12px #0003;
+ overflow:hidden;
+ text-align:center;
+}
+
+.message-text{
+ font-size:9px;
+ line-height:1.3;
+ font-weight:900;
+ letter-spacing:.3px;
+ color:#fff;
+ animation:messageAppear .35s ease;
+}
+
+.message-text.highlight{
+ color:#ffda75;
+}
+
+.message-text.thanks{
+ color:#65f2b0;
+}
+
+@keyframes messageAppear{
+ from{opacity:0;transform:translateY(5px)}
+ to{opacity:1;transform:translateY(0)}
+}
+
 .gifts{
  display:grid;
- grid-template-columns:repeat(4,1fr);
+ grid-template-columns:repeat(3,1fr);
  gap:6px;
  margin-top:15px;
 }
@@ -284,7 +325,6 @@ body{
 .gift.rose{border-color:#ff8db555}
 .gift.ice{border-color:#62caff55}
 .gift.bomb{border-color:#ff637855}
-.gift.sub{border-color:#a477ff88}
 
 .part{margin-top:14px}
 
@@ -434,6 +474,7 @@ body{
  .gifts{margin-top:9px}
  .ranking{margin-top:9px;padding:7px}
  .ranking-row{padding:3px 0}
+ .message-bar{margin-top:7px;min-height:32px}
 }
 
 @media(max-width:360px){
@@ -515,6 +556,14 @@ body{
   <div class="chat-letter d">D</div>
  </div>
 
+ <!-- BARRE DE MESSAGES DÉFILANTS -->
+ <section class="message-bar">
+  <div class="message-text" id="messageText">
+   ⭐ Abonne-toi pour profiter du bonus x2 !
+  </div>
+ </section>
+
+ <!-- LES 3 CADEAUX -->
  <section class="gifts">
   <div class="gift rose">
    <div class="gift-emoji">🌹</div>
@@ -532,12 +581,6 @@ body{
    <div class="gift-emoji">💣</div>
    <div class="gift-name">99+ PIÈCES</div>
    <div class="gift-description">½ DES POINTS DU PREMIER</div>
-  </div>
-
-  <div class="gift sub">
-   <div class="gift-emoji">⭐</div>
-   <div class="gift-name">ABONNEMENT</div>
-   <div class="gift-description">POINTS DOUBLÉS</div>
   </div>
  </section>
 
@@ -619,6 +662,24 @@ let frozenUntil=0;
 
 let players=[];
 
+/* MESSAGES DE LA BARRE */
+
+const tickerMessages=[
+ "⭐ Abonne-toi pour profiter du bonus x2 !",
+ "🎯 Nous sommes à la partie 1 sur 16 !",
+ "💬 Tape A, B, C ou D dans le chat pour répondre !",
+ "🏆 Qui va prendre la première place du classement ?",
+ "❤️ Pense à liker le live pour atteindre les 500 likes !",
+ "🌹 Envoie une rose pour doubler tes points !",
+ "🧊 Le glaçon permet de geler le premier du classement !",
+ "💣 La bombe permet de voler la moitié des points du premier !"
+];
+
+let tickerIndex=0;
+let tickerInterval=null;
+let tickerMessageTimeout=null;
+let tickerPriority=false;
+
 const $=id=>document.getElementById(id);
 
 function getPlayer(name){
@@ -668,6 +729,65 @@ function escapeHTML(value){
   '"':"&quot;",
   "'":"&#39;"
  }[c]));
+}
+
+/* BARRE DE MESSAGES */
+
+function showTickerMessage(message,type="normal",duration=5000){
+ const element=$("messageText");
+
+ element.textContent=message;
+ element.className="message-text";
+
+ if(type==="thanks"){
+  element.classList.add("thanks");
+ }else if(type==="highlight"){
+  element.classList.add("highlight");
+ }
+
+ element.style.animation="none";
+ void element.offsetWidth;
+ element.style.animation="";
+
+ if(type!=="normal"){
+  tickerPriority=true;
+
+  clearTimeout(tickerMessageTimeout);
+
+  tickerMessageTimeout=setTimeout(()=>{
+   tickerPriority=false;
+   showNextTickerMessage();
+  },duration);
+ }
+}
+
+function showNextTickerMessage(){
+ if(tickerPriority || gameFinished)return;
+
+ tickerIndex=(tickerIndex+1)%tickerMessages.length;
+
+ const part=Math.min(
+  16,
+  Math.floor(questionIndex*16/questions.length)+1
+ );
+
+ let message=tickerMessages[tickerIndex];
+
+ if(message.includes("partie 1 sur 16")){
+  message="🎯 Nous sommes à la partie "+part+" sur 16 !";
+ }
+
+ showTickerMessage(message);
+}
+
+function startTicker(){
+ clearInterval(tickerInterval);
+
+ showTickerMessage(tickerMessages[0]);
+
+ tickerInterval=setInterval(()=>{
+  showNextTickerMessage();
+ },4500);
 }
 
 /* VOIX FRANÇAISE */
@@ -811,6 +931,13 @@ function renderQuestion(){
  $("bottomStatus").textContent="JOUE • RÉPONDS • GAGNE";
  $("podium").classList.remove("visible");
 
+ const part=Math.min(
+  16,
+  Math.floor(questionIndex*16/questions.length)+1
+ );
+
+ updatePart(part);
+
  renderRanking();
 }
 
@@ -850,7 +977,7 @@ function revealAnswer(){
  revealed=true;
  clearInterval(timer);
 
- const correct=questions[questionIndex][4];
+ const correct=questions[questionIndex][3];
 
  document.querySelectorAll(".answer").forEach((el,i)=>{
   el.classList.add(i===correct?"correct":"wrong");
@@ -883,7 +1010,7 @@ function submitAnswer(username,letter){
 
  player.answered.push(questionIndex);
 
- const correct=questions[questionIndex][4];
+ const correct=questions[questionIndex][3];
 
  if(answerIndex===correct){
   if(frozenPlayer===player.name && Date.now()<frozenUntil){
@@ -935,7 +1062,13 @@ function subscribePlayer(username){
  $("bottomStatus").textContent=
   "⭐ "+player.name+" : ABONNEMENT ET POINTS DOUBLÉS !";
 
- speak("Merci pour l'abonnement de "+player.name+" ! Ses points sont doublés !");
+ showTickerMessage(
+  "⭐ MERCI "+player.name.toUpperCase()+" POUR TON ABONNEMENT !",
+  "thanks",
+  6000
+ );
+
+ speak("Merci "+player.name+" pour ton abonnement ! Tes points sont doublés !");
 }
 
 function freezeLeader(username){
@@ -1009,6 +1142,8 @@ function announceTop7(){
 function showFinalPodium(){
  gameFinished=true;
  clearInterval(timer);
+ clearInterval(tickerInterval);
+ clearTimeout(tickerMessageTimeout);
 
  const top=sortedPlayers().slice(0,3);
 
@@ -1049,11 +1184,7 @@ function nextQuestion(){
 
  renderQuestion();
 
- if(questionIndex===9){
-  announceCurrentQuestion();
- }else{
-  announceCurrentQuestion();
- }
+ announceCurrentQuestion();
 }
 
 /* LIKES ET PROGRESSION */
@@ -1084,8 +1215,6 @@ function simulateLiveLikes(){
 
 /*
  RACCORDEMENT TIKTOK LIVE CONNECTOR
-
- Les événements du connecteur doivent appeler ces fonctions :
 
  Réponse dans le chat :
  quizLive.answer("Pseudo", "A");
@@ -1122,6 +1251,7 @@ window.quizLive={
 renderQuestion();
 renderRanking();
 updatePart(1);
+startTicker();
 
 $("bottomStatus").textContent="ACTIVE LA VOIX POUR COMMENCER";
 
