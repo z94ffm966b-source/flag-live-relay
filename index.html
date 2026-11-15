@@ -25,8 +25,10 @@ body{
  margin:0;
  min-height:100vh;
  display:flex;
+ flex-direction:column;
  align-items:center;
- justify-content:center;
+ justify-content:flex-start;
+ gap:18px;
  padding:20px;
  background:
  radial-gradient(ellipse at 50% 0%,#253b72 0%,transparent 55%),
@@ -50,6 +52,7 @@ body{
  display:flex;
  flex-direction:column;
  overflow:hidden;
+ flex-shrink:0;
 }
 
 .header{
@@ -251,8 +254,6 @@ body{
 .chat-letter.c{background:#e59b23}
 .chat-letter.d{background:#a05be9}
 
-/* BARRE DE MESSAGES */
-
 .message-bar{
  width:100%;
  min-height:37px;
@@ -278,13 +279,8 @@ body{
  animation:messageAppear .35s ease;
 }
 
-.message-text.highlight{
- color:#ffda75;
-}
-
-.message-text.thanks{
- color:#65f2b0;
-}
+.message-text.highlight{color:#ffda75}
+.message-text.thanks{color:#65f2b0}
 
 @keyframes messageAppear{
  from{opacity:0;transform:translateY(5px)}
@@ -466,6 +462,139 @@ body{
  padding:4px;
 }
 
+/* PANNEAU SIMULATEUR */
+
+.simulator{
+ width:min(100%,700px);
+ padding:18px;
+ border:1px solid #ffffff22;
+ border-radius:18px;
+ background:linear-gradient(180deg,#141f3c,#0b1124);
+ box-shadow:0 15px 45px #0007;
+ margin-bottom:30px;
+}
+
+.simulator-header{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:10px;
+ margin-bottom:15px;
+}
+
+.simulator-title{
+ font-size:16px;
+ font-weight:900;
+}
+
+.simulator-tag{
+ padding:5px 9px;
+ border-radius:20px;
+ background:#22c87520;
+ border:1px solid #22c87555;
+ color:#63e9a5;
+ font-size:9px;
+ font-weight:900;
+}
+
+.simulator-description{
+ color:#aab8d8;
+ font-size:11px;
+ line-height:1.5;
+ margin-bottom:17px;
+}
+
+.sim-section{
+ margin-top:15px;
+ padding:13px;
+ border-radius:12px;
+ background:#ffffff08;
+ border:1px solid #ffffff16;
+}
+
+.sim-section-title{
+ font-size:11px;
+ font-weight:900;
+ letter-spacing:.7px;
+ margin-bottom:10px;
+ color:#dce7ff;
+}
+
+.sim-input{
+ width:100%;
+ padding:11px;
+ border:1px solid #ffffff25;
+ border-radius:9px;
+ background:#080d1e;
+ color:white;
+ font-family:inherit;
+ font-size:12px;
+ outline:none;
+}
+
+.sim-input:focus{
+ border-color:#36aaff;
+}
+
+.sim-grid{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:8px;
+}
+
+.sim-button{
+ min-height:39px;
+ padding:9px;
+ border:1px solid #ffffff22;
+ border-radius:9px;
+ background:#ffffff12;
+ color:white;
+ font-family:inherit;
+ font-size:10px;
+ font-weight:900;
+ cursor:pointer;
+ transition:.15s;
+}
+
+.sim-button:hover{
+ background:#ffffff25;
+ transform:translateY(-1px);
+}
+
+.sim-button:active{transform:scale(.97)}
+
+.sim-button.blue{background:#2775ed35;border-color:#2775ed88}
+.sim-button.green{background:#20b97930;border-color:#20b97988}
+.sim-button.pink{background:#ff6d9a25;border-color:#ff6d9a88}
+.sim-button.purple{background:#a477ff25;border-color:#a477ff88}
+.sim-button.red{background:#ff536825;border-color:#ff536888}
+.sim-button.yellow{background:#ffbd3520;border-color:#ffbd3588}
+
+.sim-status{
+ margin-top:12px;
+ padding:10px;
+ min-height:37px;
+ border-radius:9px;
+ background:#080d1e;
+ border:1px solid #ffffff15;
+ color:#9fb3d9;
+ font-size:10px;
+ line-height:1.5;
+}
+
+.sim-note{
+ margin-top:12px;
+ font-size:9px;
+ color:#8495b8;
+ line-height:1.5;
+}
+
+.sim-divider{
+ height:1px;
+ background:#ffffff18;
+ margin:14px 0;
+}
+
 @media(max-height:700px){
  body{padding:8px}
  .live-screen{min-height:0;padding:12px}
@@ -483,6 +612,8 @@ body{
  .brand{font-size:13px}
  .answer{font-size:9px;min-height:55px}
  .gift-description{font-size:6px}
+ .simulator{padding:12px}
+ .sim-button{font-size:9px}
 }
 </style>
 </head>
@@ -556,14 +687,12 @@ body{
   <div class="chat-letter d">D</div>
  </div>
 
- <!-- BARRE DE MESSAGES DÉFILANTS -->
  <section class="message-bar">
   <div class="message-text" id="messageText">
    ⭐ Abonne-toi pour profiter du bonus x2 !
   </div>
  </section>
 
- <!-- LES 3 CADEAUX -->
  <section class="gifts">
   <div class="gift rose">
    <div class="gift-emoji">🌹</div>
@@ -624,6 +753,115 @@ body{
 
 </main>
 
+<!-- SIMULATEUR SOUS LE LIVE -->
+
+<section class="simulator">
+
+ <div class="simulator-header">
+  <div class="simulator-title">🧪 SIMULATEUR DU LIVE</div>
+  <div class="simulator-tag">MODE TEST</div>
+ </div>
+
+ <div class="simulator-description">
+  Teste les fonctionnalités du quiz sans être connecté à TikTok.
+  Les actions effectuées ici modifient uniquement cet aperçu.
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">👤 JOUEUR À SIMULER</div>
+  <input class="sim-input" id="testUsername" value="JoueurTest" maxlength="30" placeholder="Pseudo du joueur">
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">💬 TESTER LES RÉPONSES DU CHAT</div>
+  <div class="sim-grid">
+   <button class="sim-button blue" onclick="testAnswer('A')">Répondre A</button>
+   <button class="sim-button green" onclick="testAnswer('B')">Répondre B</button>
+   <button class="sim-button yellow" onclick="testAnswer('C')">Répondre C</button>
+   <button class="sim-button purple" onclick="testAnswer('D')">Répondre D</button>
+   <button class="sim-button green" onclick="testCorrectAnswer()">✅ Bonne réponse automatique</button>
+   <button class="sim-button red" onclick="testWrongAnswer()">❌ Mauvaise réponse automatique</button>
+  </div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">🎁 TESTER LES CADEAUX ET ABONNEMENTS</div>
+  <div class="sim-grid">
+   <button class="sim-button pink" onclick="testRose()">🌹 Envoyer une rose</button>
+   <button class="sim-button purple" onclick="testSubscribe()">⭐ Simuler un abonnement</button>
+   <button class="sim-button blue" onclick="testIce()">🧊 Envoyer un glaçon</button>
+   <button class="sim-button red" onclick="testBomb()">💣 Envoyer une bombe</button>
+  </div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">❤️ TESTER LES LIKES</div>
+  <div class="sim-grid">
+   <button class="sim-button pink" onclick="testLikes(1)">+1 like</button>
+   <button class="sim-button pink" onclick="testLikes(10)">+10 likes</button>
+   <button class="sim-button pink" onclick="testLikes(100)">+100 likes</button>
+   <button class="sim-button pink" onclick="testLikes(500)">+500 likes</button>
+  </div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">🔊 TESTER LA VOIX</div>
+  <div class="sim-grid">
+   <button class="sim-button blue" onclick="testVoice()">🎙️ Tester la voix française</button>
+   <button class="sim-button blue" onclick="testQuestionVoice()">📢 Lire la question actuelle</button>
+   <button class="sim-button yellow" onclick="stopVoice()">🔇 Arrêter la voix</button>
+  </div>
+  <div class="sim-note">
+   Active d'abord la voix avec le bouton situé dans le quiz si le navigateur bloque la lecture automatique.
+  </div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">⏱️ TESTER LE DÉROULEMENT DU QUIZ</div>
+  <div class="sim-grid">
+   <button class="sim-button green" onclick="startTimer()">▶️ Démarrer le chrono</button>
+   <button class="sim-button yellow" onclick="pauseTimer()">⏸️ Mettre en pause</button>
+   <button class="sim-button blue" onclick="revealAnswer()">👁️ Révéler la réponse</button>
+   <button class="sim-button purple" onclick="nextQuestion()">➡️ Question suivante</button>
+  </div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">🏆 TESTER LE CLASSEMENT ET LE PODIUM</div>
+  <div class="sim-grid">
+   <button class="sim-button yellow" onclick="addTestPlayers()">👥 Ajouter 5 joueurs de test</button>
+   <button class="sim-button yellow" onclick="testTop7()">🏆 Tester le Top 7</button>
+   <button class="sim-button purple" onclick="showFinalPodium()">🥇 Tester le podium final</button>
+  </div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">📢 TESTER LA BARRE DE MESSAGES</div>
+  <div class="sim-grid">
+   <button class="sim-button blue" onclick="testTicker()">🔄 Message automatique</button>
+   <button class="sim-button green" onclick="testThanks()">⭐ Message de remerciement</button>
+   <button class="sim-button yellow" onclick="testPartMessage()">🎯 Message de progression</button>
+  </div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">🔄 RÉINITIALISER LES TESTS</div>
+  <button class="sim-button red" style="width:100%" onclick="resetQuiz()">
+   🗑️ TOUT REMETTRE À ZÉRO
+  </button>
+ </div>
+
+ <div class="sim-status" id="simStatus">
+  En attente d'une action de test...
+ </div>
+
+ <div class="sim-note">
+  Attention : les joueurs, cadeaux et likes simulés ne proviennent pas de TikTok.
+  Le raccordement réel nécessite que TikTok Live Connector transmette ses événements au quiz.
+ </div>
+
+</section>
+
 <script>
 const questions=[
 ["GÉOGRAPHIE","Quelle est la capitale du Japon ?",["Kyoto","Tokyo","Osaka","Nagoya"],1],
@@ -659,26 +897,7 @@ let voiceQueue=[];
 let speaking=false;
 let frozenPlayer=null;
 let frozenUntil=0;
-
 let players=[];
-
-/* MESSAGES DE LA BARRE */
-
-const tickerMessages=[
- "⭐ Abonne-toi pour profiter du bonus x2 !",
- "🎯 Nous sommes à la partie 1 sur 16 !",
- "💬 Tape A, B, C ou D dans le chat pour répondre !",
- "🏆 Qui va prendre la première place du classement ?",
- "❤️ Pense à liker le live pour atteindre les 500 likes !",
- "🌹 Envoie une rose pour doubler tes points !",
- "🧊 Le glaçon permet de geler le premier du classement !",
- "💣 La bombe permet de voler la moitié des points du premier !"
-];
-
-let tickerIndex=0;
-let tickerInterval=null;
-let tickerMessageTimeout=null;
-let tickerPriority=false;
 
 const $=id=>document.getElementById(id);
 
@@ -733,17 +952,30 @@ function escapeHTML(value){
 
 /* BARRE DE MESSAGES */
 
+const tickerMessages=[
+ "⭐ Abonne-toi pour profiter du bonus x2 !",
+ "🎯 Nous sommes à la partie 1 sur 16 !",
+ "💬 Tape A, B, C ou D dans le chat pour répondre !",
+ "🏆 Qui va prendre la première place du classement ?",
+ "❤️ Pense à liker le live pour atteindre les 500 likes !",
+ "🌹 Envoie une rose pour doubler tes points !",
+ "🧊 Le glaçon permet de geler le premier du classement !",
+ "💣 La bombe permet de voler la moitié des points du premier !"
+];
+
+let tickerIndex=0;
+let tickerInterval=null;
+let tickerMessageTimeout=null;
+let tickerPriority=false;
+
 function showTickerMessage(message,type="normal",duration=5000){
  const element=$("messageText");
 
  element.textContent=message;
  element.className="message-text";
 
- if(type==="thanks"){
-  element.classList.add("thanks");
- }else if(type==="highlight"){
-  element.classList.add("highlight");
- }
+ if(type==="thanks")element.classList.add("thanks");
+ else if(type==="highlight")element.classList.add("highlight");
 
  element.style.animation="none";
  void element.offsetWidth;
@@ -751,7 +983,6 @@ function showTickerMessage(message,type="normal",duration=5000){
 
  if(type!=="normal"){
   tickerPriority=true;
-
   clearTimeout(tickerMessageTimeout);
 
   tickerMessageTimeout=setTimeout(()=>{
@@ -782,7 +1013,6 @@ function showNextTickerMessage(){
 
 function startTicker(){
  clearInterval(tickerInterval);
-
  showTickerMessage(tickerMessages[0]);
 
  tickerInterval=setInterval(()=>{
@@ -937,7 +1167,6 @@ function renderQuestion(){
  );
 
  updatePart(part);
-
  renderRanking();
 }
 
@@ -956,6 +1185,8 @@ function updateTimer(){
 }
 
 function startTimer(){
+ if(gameFinished || revealed)return;
+
  clearInterval(timer);
  seconds=10;
  updateTimer();
@@ -966,9 +1197,18 @@ function startTimer(){
 
   if(seconds<=0){
    clearInterval(timer);
+   timer=null;
    revealAnswer();
   }
  },1000);
+}
+
+function pauseTimer(){
+ if(timer){
+  clearInterval(timer);
+  timer=null;
+  $("bottomStatus").textContent="PAUSE";
+ }
 }
 
 function revealAnswer(){
@@ -976,6 +1216,7 @@ function revealAnswer(){
 
  revealed=true;
  clearInterval(timer);
+ timer=null;
 
  const correct=questions[questionIndex][3];
 
@@ -1039,7 +1280,6 @@ function giveRose(username){
  if(!player)return;
 
  player.multiplier*=2;
-
  renderRanking();
 
  $("bottomStatus").textContent=
@@ -1124,7 +1364,6 @@ function announceTop7(){
  $("bottomStatus").textContent="TOP 7 — FIN DE LA PREMIÈRE PHASE";
 
  const firstThree=top.slice(0,3);
-
  const messages=["Fin de la dixième question. Voici le top sept."];
 
  firstThree.forEach((p,i)=>{
@@ -1142,6 +1381,7 @@ function announceTop7(){
 function showFinalPodium(){
  gameFinished=true;
  clearInterval(timer);
+ timer=null;
  clearInterval(tickerInterval);
  clearTimeout(tickerMessageTimeout);
 
@@ -1174,6 +1414,7 @@ function showFinalPodium(){
 
 function nextQuestion(){
  clearInterval(timer);
+ timer=null;
 
  if(questionIndex===questions.length-1){
   showFinalPodium();
@@ -1181,9 +1422,7 @@ function nextQuestion(){
  }
 
  questionIndex++;
-
  renderQuestion();
-
  announceCurrentQuestion();
 }
 
@@ -1203,6 +1442,238 @@ function updatePart(number){
 
  $("partNumber").textContent=`PARTIE ${part}/16`;
  $("partFill").style.width=(part/16*100)+"%";
+}
+
+/* SIMULATEUR */
+
+function simStatus(message){
+ $("simStatus").textContent="✓ "+message;
+}
+
+function testName(){
+ return $("testUsername").value.trim()||"JoueurTest";
+}
+
+function testAnswer(letter){
+ const name=testName();
+ submitAnswer(name,letter);
+ simStatus(name+" a envoyé la réponse "+letter+".");
+}
+
+function testCorrectAnswer(){
+ const correct=questions[questionIndex][3];
+ testAnswer("ABCD"[correct]);
+}
+
+function testWrongAnswer(){
+ const correct=questions[questionIndex][3];
+ const wrong=(correct+1)%4;
+ testAnswer("ABCD"[wrong]);
+}
+
+function testRose(){
+ giveRose(testName());
+ simStatus("Rose simulée pour "+testName()+".");
+}
+
+function testSubscribe(){
+ subscribePlayer(testName());
+ simStatus("Abonnement simulé pour "+testName()+".");
+}
+
+function testIce(){
+ const name=testName();
+
+ if(!players.length){
+  const leader=getPlayer("JoueurLeaderTest");
+  leader.score=500;
+ }
+
+ freezeLeader(name);
+ renderRanking();
+ simStatus("Glaçon simulé. Le premier du classement est gelé.");
+}
+
+function testBomb(){
+ const name=testName();
+ const sender=getPlayer(name);
+
+ let leader=sortedPlayers()[0];
+
+ if(!leader){
+  leader=getPlayer("JoueurLeaderTest");
+  leader.score=1000;
+ }
+
+ if(leader.name===sender.name){
+  const other=getPlayer("JoueurLeaderTest");
+  if(other.name===sender.name){
+   const another=getPlayer("AutreLeaderTest");
+   another.score=1000;
+  }else{
+   other.score=Math.max(other.score,sender.score+1000);
+  }
+ }
+
+ renderRanking();
+ bombLeader(name);
+ simStatus("Bombe simulée pour "+name+".");
+}
+
+function testLikes(amount){
+ updateLikes(amount);
+ simStatus(amount+" likes simulés.");
+}
+
+function testVoice(){
+ if(!voiceEnabled){
+  simStatus("Active d'abord la voix avec le bouton du quiz.");
+  return;
+ }
+
+ speakSequence([
+  "Test de la voix française.",
+  "Bienvenue sur Quiz Culture G.",
+  "La réponse A est Kyoto.",
+  "La réponse B est Tokyo.",
+  "Merci à tous les participants !"
+ ]);
+
+ simStatus("Lecture du message de test vocal.");
+}
+
+function testQuestionVoice(){
+ if(!voiceEnabled){
+  simStatus("Active d'abord la voix avec le bouton du quiz.");
+  return;
+ }
+
+ announceCurrentQuestion();
+ simStatus("Lecture de la question et des quatre réponses.");
+}
+
+function stopVoice(){
+ if("speechSynthesis" in window){
+  speechSynthesis.cancel();
+ }
+
+ voiceQueue=[];
+ speaking=false;
+ simStatus("Lecture vocale arrêtée.");
+}
+
+function testTicker(){
+ tickerPriority=false;
+ showNextTickerMessage();
+ simStatus("Message automatique affiché.");
+}
+
+function testThanks(){
+ const name=testName();
+
+ showTickerMessage(
+  "⭐ MERCI "+name.toUpperCase()+" POUR TON ABONNEMENT !",
+  "thanks",
+  6000
+ );
+
+ simStatus("Message de remerciement affiché pour "+name+".");
+}
+
+function testPartMessage(){
+ const part=Math.min(
+  16,
+  Math.floor(questionIndex*16/questions.length)+1
+ );
+
+ showTickerMessage(
+  "🎯 NOUS SOMMES À LA PARTIE "+part+" SUR 16 !",
+  "highlight",
+  5000
+ );
+
+ simStatus("Message de progression affiché.");
+}
+
+function addTestPlayers(){
+ const names=[
+  "Atlas_59",
+  "LunaQuiz",
+  "MaxPower",
+  "Nina_Off",
+  "GeoMaster"
+ ];
+
+ names.forEach((name,i)=>{
+  const p=getPlayer(name);
+  p.score=500-i*75;
+ });
+
+ renderRanking();
+ simStatus("Cinq joueurs de test ajoutés au classement.");
+}
+
+function testTop7(){
+ const names=[
+  "Atlas_59",
+  "LunaQuiz",
+  "MaxPower",
+  "Nina_Off",
+  "GeoMaster",
+  "TheoLive",
+  "Emma_200"
+ ];
+
+ names.forEach((name,i)=>{
+  const p=getPlayer(name);
+  p.score=1000-i*100;
+ });
+
+ renderRanking();
+ announceTop7();
+ simStatus("Test du Top 7 lancé.");
+}
+
+function resetQuiz(){
+ clearInterval(timer);
+ timer=null;
+
+ clearInterval(tickerInterval);
+ clearTimeout(tickerMessageTimeout);
+
+ if("speechSynthesis" in window){
+  speechSynthesis.cancel();
+ }
+
+ voiceQueue=[];
+ speaking=false;
+
+ questionIndex=0;
+ seconds=10;
+ likes=0;
+ revealed=false;
+ gameFinished=false;
+ frozenPlayer=null;
+ frozenUntil=0;
+ players=[];
+
+ tickerIndex=0;
+ tickerPriority=false;
+
+ $("likesNumber").textContent="0 / 500";
+ $("likesFill").style.width="0%";
+
+ $("podium").classList.remove("visible");
+
+ renderQuestion();
+ renderRanking();
+ updatePart(1);
+ updateTimer();
+ startTicker();
+
+ $("bottomStatus").textContent="ACTIVE LA VOIX POUR COMMENCER";
+
+ simStatus("Quiz entièrement réinitialisé.");
 }
 
 /* APERÇU AUTONOME */
@@ -1257,7 +1728,7 @@ $("bottomStatus").textContent="ACTIVE LA VOIX POUR COMMENCER";
 
 setInterval(simulateLiveLikes,1800);
 
-/* RACCOURCIS CLAVIER POUR TESTER */
+/* RACCOURCIS CLAVIER */
 
 document.addEventListener("keydown",event=>{
  if(event.code==="ArrowRight"){
@@ -1274,9 +1745,7 @@ document.addEventListener("keydown",event=>{
   event.preventDefault();
 
   if(timer){
-   clearInterval(timer);
-   timer=null;
-   $("bottomStatus").textContent="PAUSE";
+   pauseTimer();
   }else if(!gameFinished && !revealed){
    $("bottomStatus").textContent="JOUE • RÉPONDS • GAGNE";
    startTimer();
