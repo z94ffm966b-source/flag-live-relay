@@ -4,14 +4,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FLAG LIVE — Quiz Live V2</title>
+<meta name="theme-color" content="#080b18">
+<title>FLAG LIVE — Quiz Live V3</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 :root{--bg:#080b18;--panel:#11182b;--blue:#36c5ff;--purple:#9065ff;--green:#35e6a0;--red:#ff5577;--text:#f5f7ff;--muted:#8793ad}
 *{box-sizing:border-box}
 body{margin:0;background:radial-gradient(ellipse at 50% -20%,#29346a 0%,transparent 55%),linear-gradient(145deg,#080b18,#101027 65%,#080b18);color:var(--text);font-family:Inter,Arial,sans-serif}
-button,select{font:inherit;cursor:pointer}
-.app{max-width:1500px;margin:auto;padding:22px}
+button,select,input{font:inherit;cursor:pointer}
+.app{max-width:1550px;margin:auto;padding:22px}
 header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
 .brand{display:flex;align-items:center;gap:13px}
 .logo{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;font-size:24px;background:linear-gradient(135deg,var(--blue),var(--purple));box-shadow:0 0 30px #557aff55}
@@ -28,7 +29,7 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
 .topline{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-bottom:10px}
 .progress{height:5px;background:#ffffff12;border-radius:10px;overflow:hidden}
 .progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--purple));transition:width .4s}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:18px;margin-top:18px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px;margin-top:18px}
 .main{min-width:0}
 .stage{position:relative;overflow:hidden;border:1px solid #ffffff16;border-radius:24px;padding:25px;background:linear-gradient(145deg,#17213b,#10152a 60%,#191331);box-shadow:0 20px 70px #0005}
 .stage:before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:#6a55ff13;filter:blur(30px);top:-220px;right:-100px;pointer-events:none}
@@ -68,7 +69,7 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
 .vote-line b{width:17px;color:var(--blue)}
 .vote-bg{height:7px;flex:1;background:#ffffff12;border-radius:10px;overflow:hidden}
 .vote-bg i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));width:0;transition:width .4s}
-.vote-line small{color:var(--muted);width:30px;text-align:right}
+.vote-line small{color:var(--muted);width:40px;text-align:right}
 .giftgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
 .giftcard{border:1px solid #ffffff20;background:linear-gradient(145deg,#172b43,#17152e);border-radius:15px;padding:13px 5px;text-align:center;min-width:0}
 .giftcard .emoji{font-size:28px}
@@ -101,11 +102,11 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
 .support-track{white-space:nowrap;overflow:hidden}
 .support-inner{display:inline-flex;gap:25px;animation:scroll 22s linear infinite;font-size:11px;color:#c9baff}
 @keyframes scroll{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
-.toast{position:fixed;bottom:25px;left:50%;transform:translate(-50%,20px);background:#202a43;border:1px solid #ffffff22;border-radius:14px;padding:13px 18px;font-size:13px;opacity:0;transition:.3s;pointer-events:none;z-index:20}
+.toast{position:fixed;bottom:25px;left:50%;transform:translate(-50%,20px);background:#202a43;border:1px solid #ffffff22;border-radius:14px;padding:13px 18px;font-size:13px;opacity:0;transition:.3s;pointer-events:none;z-index:40}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .footer{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:18px;color:#68738d;font-size:10px}
 .sound-title{color:#b8a6ff}
-.modal{position:fixed;inset:0;background:#050817e8;display:none;place-items:center;padding:20px;z-index:10}
+.modal{position:fixed;inset:0;background:#050817e8;display:none;place-items:center;padding:20px;z-index:35}
 .modal.show{display:grid}
 .modalbox{width:min(650px,100%);background:linear-gradient(145deg,#192542,#15132d);border:1px solid #ffffff25;border-radius:22px;padding:22px;box-shadow:0 20px 80px #0009}
 .modalbox h2{margin:0 0 5px;font-size:20px}
@@ -116,8 +117,8 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
 .podium small{color:var(--green);font-size:10px}
 .modal-list{font-size:12px;line-height:2;color:#dce6ff}
 
-/* NOTIFICATIONS LIVE */
-.notification-area{position:fixed;top:18px;left:50%;transform:translateX(-50%);width:min(540px,calc(100% - 24px));z-index:30;display:flex;flex-direction:column;gap:9px;pointer-events:none}
+/* NOTIFICATIONS */
+.notification-area{position:fixed;top:18px;left:50%;transform:translateX(-50%);width:min(540px,calc(100% - 24px));z-index:50;display:flex;flex-direction:column;gap:9px;pointer-events:none}
 .live-notification{display:flex;align-items:center;gap:13px;padding:14px 17px;border:1px solid #ffffff30;border-radius:16px;background:linear-gradient(110deg,#172b49f5,#251746f5);box-shadow:0 12px 40px #0009;animation:notifIn .45s cubic-bezier(.2,.8,.2,1) both;backdrop-filter:blur(12px)}
 .live-notification.out{animation:notifOut .35s ease forwards}
 .notif-icon{width:43px;height:43px;flex:none;display:grid;place-items:center;border-radius:13px;background:#ffffff13;font-size:25px}
@@ -127,8 +128,35 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
 .notif-message strong{color:#72d9ff}
 @keyframes notifIn{from{opacity:0;transform:translateY(-25px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes notifOut{to{opacity:0;transform:translateY(-18px) scale(.97)}}
-@media(max-width:850px){.layout{grid-template-columns:1fr}.sidebar{display:grid;grid-template-columns:1fr 1fr}.demo-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:560px){.app{padding:12px}.stage{padding:16px}.answers{grid-template-columns:1fr}.sidebar{grid-template-columns:1fr}.demo-grid{grid-template-columns:1fr}.question{font-size:26px}.brand h1{font-size:18px}.notification-area{top:8px}.live-notification{padding:11px 13px}.notif-message{font-size:12px}}
+
+/* APERÇU TIKTOK 9:16 */
+.preview-panel{background:linear-gradient(145deg,#151d32,#101527);border:1px solid #ffffff13;border-radius:19px;padding:15px}
+.preview-heading{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:900;margin-bottom:12px}
+.preview-heading span{color:var(--muted);font-size:9px}
+.phone-frame{width:min(100%,260px);aspect-ratio:9/16;margin:auto;padding:7px;border-radius:25px;background:linear-gradient(145deg,#667bff,#252044);box-shadow:0 15px 35px #0008}
+.phone-screen{height:100%;border-radius:19px;overflow:hidden;position:relative;padding:12px 10px;background:radial-gradient(ellipse at 50% 0%,#344b8b 0%,#10162f 48%,#090d1e 100%);display:flex;flex-direction:column;align-items:center;text-align:center}
+.phone-live{width:100%;display:flex;justify-content:space-between;font-size:8px;font-weight:900;color:#ff8298}
+.phone-brand{font-size:9px;font-weight:900;letter-spacing:2px;color:#b8c9ff;margin-top:10px}
+.phone-title{font-size:19px;font-weight:900;line-height:1.05;margin:7px 0;color:#fff}
+.phone-round{font-size:8px;color:#a9baff;letter-spacing:1px;margin:5px 0}
+.phone-flag{font-size:48px;margin:8px 0 5px;filter:drop-shadow(0 5px 12px #0008)}
+.phone-question{font-size:12px;font-weight:800;line-height:1.25;min-height:43px;display:grid;place-items:center;margin:4px 0 8px}
+.phone-timer{font-size:31px;font-weight:900;color:#54d6ff;line-height:1;margin:4px 0}
+.phone-timer-label{font-size:7px;color:#aab6d4;letter-spacing:2px;margin-bottom:9px}
+.phone-answers{display:grid;grid-template-columns:1fr 1fr;gap:5px;width:100%}
+.phone-answer{padding:7px 4px;border-radius:8px;background:#ffffff10;border:1px solid #ffffff20;font-size:8px;font-weight:800;line-height:1.2;min-height:31px;display:flex;align-items:center;justify-content:center}
+.phone-answer.correct{background:#35e6a033;border-color:#35e6a0}
+.phone-status{font-size:8px;color:#b8c9ff;margin-top:9px;min-height:18px}
+.phone-ranking{width:100%;margin-top:auto;background:#ffffff0b;border:1px solid #ffffff18;border-radius:10px;padding:8px;text-align:left}
+.phone-ranking-title{font-size:8px;font-weight:900;color:#b9caff;margin-bottom:5px}
+.phone-rank-line{display:flex;justify-content:space-between;font-size:8px;padding:3px 0;color:#e5eaff}
+.phone-foot{font-size:7px;color:#8292bb;letter-spacing:1px;margin-top:8px}
+.music-controls{display:flex;align-items:center;gap:9px;margin-top:10px}
+.music-controls input{width:100%;accent-color:#8b6cff}
+.music-controls small{font-size:9px;color:var(--muted);white-space:nowrap}
+@media(max-width:1050px){.layout{grid-template-columns:minmax(0,1fr) 300px}}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.sidebar{display:grid;grid-template-columns:1fr 1fr}.preview-panel{grid-column:1/-1}.phone-frame{width:min(100%,250px)}.demo-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.app{padding:12px}.stage{padding:16px}.answers{grid-template-columns:1fr}.sidebar{grid-template-columns:1fr}.preview-panel{grid-column:auto}.demo-grid{grid-template-columns:1fr}.question{font-size:26px}.brand h1{font-size:18px}.notification-area{top:8px}.live-notification{padding:11px 13px}.notif-message{font-size:12px}}
 </style>
 </head>
 <body>
@@ -158,7 +186,7 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
   <div class="eyebrow" id="phase">PRÉPAREZ-VOUS</div>
   <div class="flag" id="flag">🌍</div>
   <div class="question" id="question">Bienvenue dans FLAG LIVE !</div>
-  <div class="timer-row"><div class="timer" id="timer">20</div><div class="timer-track"><div class="timer-fill" id="timerFill"></div></div></div>
+  <div class="timer-row"><div class="timer" id="timer">10</div><div class="timer-track"><div class="timer-fill" id="timerFill"></div></div></div>
   <div class="answers" id="answers">
    <div class="answer"><span class="letter">A</span>Lance la partie</div>
    <div class="answer"><span class="letter">B</span>Observe les votes</div>
@@ -194,12 +222,48 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
 </main>
 
 <aside class="sidebar">
+
+ <section class="preview-panel">
+  <div class="preview-heading">📱 APERÇU DU LIVE <span>FORMAT 9:16</span></div>
+  <div class="phone-frame">
+   <div class="phone-screen">
+    <div class="phone-live"><span>● LIVE</span><span>👁 248</span></div>
+    <div class="phone-brand">FLAG LIVE PRÉSENTE</div>
+    <div class="phone-title">LE GRAND<br>QUIZ DES PAYS</div>
+    <div class="phone-round" id="previewRound">MANCHE 01 · QUESTION 01</div>
+    <div class="phone-flag" id="previewFlag">🌍</div>
+    <div class="phone-question" id="previewQuestion">Bienvenue dans FLAG LIVE !</div>
+    <div class="phone-timer" id="previewTimer">10</div>
+    <div class="phone-timer-label">SECONDES POUR RÉPONDRE</div>
+    <div class="phone-answers" id="previewAnswers">
+     <div class="phone-answer">A · —</div><div class="phone-answer">B · —</div>
+     <div class="phone-answer">C · —</div><div class="phone-answer">D · —</div>
+    </div>
+    <div class="phone-status" id="previewStatus">Préparez-vous !</div>
+    <div class="phone-ranking">
+     <div class="phone-ranking-title">🏆 TOP 3 DU LIVE</div>
+     <div id="previewRanking">
+      <div class="phone-rank-line"><span>1. En attente</span><b>—</b></div>
+     </div>
+    </div>
+    <div class="phone-foot">JOUE • RÉPONDS • GAGNE</div>
+   </div>
+  </div>
+ </section>
+
  <section class="panel"><div class="panel-title">🏆 CLASSEMENT GÉNÉRAL <span>TOP 7</span></div><div id="leaderboard"></div></section>
- <section class="panel"><div class="panel-title">🗳️ VOTES EN DIRECT <span>PAR RÉPONSE</span></div><div id="voteBars"></div><div class="demo-note">Les pourcentages sont retirés de l'écran du jeu. Seuls les volumes de votes sont montrés ici.</div></section>
+ <section class="panel"><div class="panel-title">🗳️ VOTES EN DIRECT <span>PAR RÉPONSE</span></div><div id="voteBars"></div><div class="demo-note">Les pourcentages restent masqués. Seuls les volumes de votes sont montrés ici.</div></section>
  <section class="panel"><div class="panel-title">👥 DERNIERS VOTANTS <span id="voterTotal">0</span></div><div class="voters" id="voters"><span class="voter">En attente des votes…</span></div></section>
- <section class="panel"><div class="panel-title">🎙️ ANIMATEUR <span id="audioState">OFF</span></div>
+ <section class="panel">
+  <div class="panel-title">🎙️ ANIMATEUR <span id="audioState">OFF</span></div>
   <button class="btn primary" style="width:100%" onclick="enableAudio()">🔊 ACTIVER LA VOIX ET LE SON</button>
-  <button class="btn" style="width:100%;margin-top:8px" onclick="toggleMusic()">♫ MUSIQUE ON / OFF</button>
+  <button class="btn" style="width:100%;margin-top:8px" onclick="toggleMusic()" id="musicButton">♫ MUSIQUE ON / OFF</button>
+  <div class="music-controls">
+   <small>VOLUME</small>
+   <input type="range" id="musicVolume" min="0" max="100" value="22" oninput="setMusicVolume(this.value)">
+   <small id="musicVolumeLabel">22 %</small>
+  </div>
+  <div class="demo-note">Ambiance originale douce. Le volume musical reste indépendant de la voix.</div>
  </section>
 </aside>
 </div>
@@ -234,11 +298,13 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
    <button class="btn" onclick="announceTest()">🎙️ Tester la voix</button>
   </div>
  </div>
- <div class="demo-note">Règles : bonne réponse = 100 points + bonus de rapidité. Abonné = points gagnés doublés. Rose = prochain gain de points doublé. Les multiplicateurs peuvent se cumuler. Le gel bloque temporairement les gains du premier. Le cadeau de 99 pièces retire la moitié du score actuel du premier et l'ajoute au donneur.</div>
+ <div class="demo-note">
+  Règles : bonne réponse = 100 points + 10 points par seconde restante. Abonné = points gagnés doublés. Rose = prochain gain doublé. 500 likes = points doublés sur la prochaine question. Le gel bloque temporairement les gains du premier. Le cadeau de 99 pièces retire la moitié du score du premier et l'ajoute au donneur.
+ </div>
  <div class="eventlog"><h3>JOURNAL DES ÉVÉNEMENTS</h3><div id="logs"></div></div>
 </section>
 
-<div class="footer"><span>FLAG LIVE · V2 SIMULATION</span><span class="sound-title">♫ SIGNAL PULSE — ORIGINAL THEME</span></div>
+<div class="footer"><span>FLAG LIVE · V3</span><span class="sound-title">♫ AMBIANCE ORIGINALE DOUCE</span></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -278,12 +344,14 @@ const questions=[
 
 const names=["Atlas_59","LunaQuiz","MaxPower","Nina_Off","GeoMaster","TheoLive","Emma_200","PixelFox","MikaFR","SarahGame","NoahPlay","Zoe_Quiz","LeoFR","MayaLive","TomGame"];
 let people=names.map(name=>({name,avatar:name[0].toUpperCase(),score:0,sub:false,rose:false,frozenUntil:0}));
-let supporters=[],voterNames=[],votes=[0,0,0,0],index=-1,round=1,seconds=20;
+let supporters=[],voterNames=[],votes=[0,0,0,0],index=-1,round=1,seconds=10;
 let active=false,paused=false,answered=false,timer=null,likes=0,bonusNext=false;
-let firstCorrectAnnounced=false;
-let audioEnabled=false,musicOn=false,audioCtx=null,musicTimer=null;
+let currentQuestionBonus=false;
+let correctPlayers=new Set();
+let audioEnabled=false,musicOn=false,audioCtx=null,musicTimer=null,musicMaster=null;
 let voiceQueue=[],speaking=false;
 let notificationTimers=[];
+let podiumShownFor=-1;
 
 const $=id=>document.getElementById(id);
 const sorted=()=>[...people].sort((a,b)=>b.score-a.score);
@@ -304,7 +372,7 @@ function escapeHTML(s){
  return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 
-/* NOTIFICATIONS EN HAUT DE L'ÉCRAN */
+/* NOTIFICATIONS */
 function notify(icon,label,message){
  const area=$("notificationArea");
  const card=document.createElement("div");
@@ -341,6 +409,7 @@ function renderBoard(){
   </div>`).join("");
  $("leaderName").textContent=list[0]?.name||"—";
  $("participantCount").textContent=people.length;
+ updatePreview();
 }
 
 function renderVotes(){
@@ -361,9 +430,9 @@ function renderLikes(){
  $("likes").textContent=likes;
  $("likeFill").style.width=Math.min(100,likes/5)+"%";
  $("likeHint").textContent=bonusNext?
-  "Objectif atteint ! La prochaine question rapporte le double.":
+  "Objectif atteint ! Les points de la prochaine question seront doublés.":
   likes>=500?
-  "Objectif atteint : doublement prêt pour la prochaine question.":
+  "Objectif atteint : bonus prêt pour la prochaine question.":
   "Atteins 500 likes pendant cette question pour doubler les points de la prochaine.";
 }
 
@@ -381,17 +450,41 @@ function renderQuestion(){
  $("category").textContent=q[1];
  $("flag").textContent=q[0];
  $("question").textContent=q[2];
- $("phase").textContent="À VOUS DE JOUER";
+ $("phase").textContent="PRÉPAREZ-VOUS";
  $("answers").innerHTML=q[3].map((a,i)=>`
   <div class="answer" id="ans${i}">
    <span class="letter">${"ABCD"[i]}</span>${escapeHTML(a)}
   </div>`).join("");
- $("status").textContent="Votez dans les commentaires : A, B, C ou D.";
+ $("status").textContent="Écoutez la question et les propositions.";
  votes=[0,0,0,0];
  voterNames=[];
+ correctPlayers.clear();
  answered=false;
- firstCorrectAnnounced=false;
  renderVotes();
+ updateTimer();
+ updatePreview();
+}
+
+/* APERÇU VERTICAL */
+function updatePreview(){
+ if(index<0){
+  $("previewRound").textContent="EN ATTENTE DU LANCEMENT";
+  $("previewFlag").textContent="🌍";
+  $("previewQuestion").textContent="Bienvenue dans FLAG LIVE !";
+  $("previewAnswers").innerHTML=["A","B","C","D"].map(x=>`<div class="phone-answer">${x} · —</div>`).join("");
+ }else{
+  const q=current();
+  $("previewRound").textContent=`MANCHE ${String(round).padStart(2,"0")} · QUESTION ${String(index+1).padStart(2,"0")}`;
+  $("previewFlag").textContent=q[0];
+  $("previewQuestion").textContent=q[2];
+  $("previewAnswers").innerHTML=q[3].map((a,i)=>`
+   <div class="phone-answer ${answered&&i===q[4]?"correct":""}">${"ABCD"[i]} · ${escapeHTML(a)}</div>`).join("");
+ }
+ $("previewTimer").textContent=seconds;
+ $("previewStatus").textContent=answered?"RÉPONSE RÉVÉLÉE":paused?"PAUSE":active?"À VOUS DE JOUER":"PRÉPAREZ-VOUS";
+ const list=sorted().slice(0,3);
+ $("previewRanking").innerHTML=list.map((p,i)=>`
+  <div class="phone-rank-line"><span>${i+1}. ${escapeHTML(p.name)}</span><b>${p.score.toLocaleString("fr-FR")}</b></div>`).join("");
 }
 
 /* DÉMARRAGE ET CHRONOMÈTRE */
@@ -401,16 +494,26 @@ function startGame(){
   index=0;
   likes=0;
   bonusNext=false;
+  currentQuestionBonus=false;
  }
  active=true;
  paused=false;
  clearInterval(timer);
+
+ /* Le bonus gagné sur la question précédente est consommé ici. */
+ currentQuestionBonus=bonusNext;
+ bonusNext=false;
+ renderLikes();
+
  renderQuestion();
- seconds=20;
+ seconds=10;
  updateTimer();
+
  $("pauseBtn").textContent="Ⅱ PAUSE";
  $("phase").textContent="PRÉSENTATION DE LA QUESTION";
  $("status").textContent="Écoutez bien la question et les propositions…";
+ updatePreview();
+
  speakQuestion(()=>{
   if(!active||paused||answered)return;
   beginTimer();
@@ -421,11 +524,12 @@ function beginTimer(){
  clearInterval(timer);
  $("phase").textContent="À VOUS DE JOUER";
  $("status").textContent="C'est à vous ! Votez maintenant.";
+ updatePreview();
  timer=setInterval(()=>{
   if(paused||answered)return;
   seconds--;
   updateTimer();
-  if(seconds<=5&&seconds>0)sfx("tick");
+  if(seconds<=3&&seconds>0)sfx("tick");
   if(seconds<=0){
    clearInterval(timer);
    revealAnswer();
@@ -435,18 +539,20 @@ function beginTimer(){
 
 function updateTimer(){
  $("timer").textContent=seconds;
- $("timer").classList.toggle("urgent",seconds<=5);
- $("timerFill").style.width=(seconds/20*100)+"%";
+ $("timer").classList.toggle("urgent",seconds<=3);
+ $("timerFill").style.width=(seconds/10*100)+"%";
+ updatePreview();
 }
 
 function nextQuestion(){
  clearInterval(timer);
  if(index<0)index=0;
  else if(index%20===19){
-  showPodium();
+  if(podiumShownFor!==index)showPodium();
   round++;
   index=0;
   people.forEach(p=>p.frozenUntil=0);
+  podiumShownFor=-1;
  }else{
   index++;
  }
@@ -460,16 +566,20 @@ function nextQuestion(){
 
 function togglePause(){
  if(index<0)return;
+ if(answered)return;
  paused=!paused;
  $("pauseBtn").textContent=paused?"▶ REPRENDRE":"Ⅱ PAUSE";
  $("status").textContent=paused?"Partie en pause.":"La partie reprend !";
  if(paused){
   clearInterval(timer);
-  speak("Petite pause dans le jeu. On reprend dans un instant.");
+  if(window.speechSynthesis)speechSynthesis.cancel();
+  voiceQueue=[];
+  speaking=false;
  }else{
-  speak("Et c'est reparti !");
   beginTimer();
+  speak("Et c'est reparti !");
  }
+ updatePreview();
 }
 
 /* VOTES ET POINTS */
@@ -478,7 +588,7 @@ function submitVote(person,choice){
   toast("Lance une question avant de voter.");
   return;
  }
- if(!person)return;
+ if(!person||choice<0||choice>3)return;
 
  votes[choice]++;
  voterNames.push(person.name);
@@ -487,33 +597,28 @@ function submitVote(person,choice){
  log(person.name+" vote "+ "ABCD"[choice]);
 
  if(choice===current()[4]){
+  /* Tous les gagnants sont mémorisés jusqu'à la révélation. */
+  correctPlayers.add(person.name);
+
   const base=100+Math.max(0,seconds)*10;
   let multiplier=1;
-
   if(person.sub)multiplier*=2;
   if(person.rose){
    multiplier*=2;
    person.rose=false;
   }
-  if(bonusNext)multiplier*=2;
+  if(currentQuestionBonus)multiplier*=2;
 
   if(person.frozenUntil>=index+1){
-   log(person.name+" est gelé : aucun point gagné.");
+   log(person.name+" a trouvé, mais est gelé : aucun point gagné.");
   }else{
    const gain=base*multiplier;
    person.score+=gain;
-   log(person.name+" gagne "+gain+" points.");
-
-   /* SEUL LE PREMIER BONNE RÉPONSE EST ANNONCÉ */
-   if(!firstCorrectAnnounced){
-    firstCorrectAnnounced=true;
-    notify("🏆","PREMIÈRE BONNE RÉPONSE",
-      `<strong>${escapeHTML(person.name)}</strong> est le premier à trouver la bonne réponse !`);
-    speak("Et nous avons un premier gagnant ! Bravo à "+person.name+" ! Quelle rapidité !");
-   }
+   log(person.name+" trouve et gagne "+gain+" points.");
   }
   renderBoard();
  }
+ updatePreview();
 }
 
 function manualVote(){
@@ -543,7 +648,7 @@ function simulateVoteBatch(){
  }
 }
 
-/* RÉVÉLATION */
+/* RÉVÉLATION ET ANNONCE DES GAGNANTS */
 function revealAnswer(){
  if(index<0||answered)return;
  answered=true;
@@ -561,14 +666,27 @@ function revealAnswer(){
  });
 
  sfx("correct");
- speak("Et la bonne réponse était "+q[3][q[4]]+". Bravo à tous ceux qui ont trouvé !");
- if((index+1)%10===0)showPodium();
 
- if(bonusNext){
-  bonusNext=false;
-  renderLikes();
+ const winners=[...correctPlayers];
+ if(winners.length){
+  const winnerText=winners.join(", ");
+  notify("🏆","JOUEURS QUI ONT TROUVÉ",
+   `Bravo à <strong>${escapeHTML(winnerText)}</strong> !`);
+  speak("Et la bonne réponse était "+q[3][q[4]]+". Bravo à tous ceux qui ont trouvé ! Les gagnants sont : "+winners.join(", ")+". Félicitations !");
+  log("Bonne réponse trouvée par : "+winners.join(", "));
+ }else{
+  notify("⏱️","FIN DE LA QUESTION","Personne n'a trouvé cette fois !");
+  speak("Et la bonne réponse était "+q[3][q[4]]+". Personne n'a trouvé cette fois ! On fera mieux à la prochaine question.");
+  log("Aucun joueur n'a trouvé la bonne réponse.");
  }
+
+ if((index+1)%10===0&&podiumShownFor!==index){
+  showPodium();
+  podiumShownFor=index;
+ }
+
  renderBoard();
+ updatePreview();
 }
 
 /* LIKES */
@@ -589,7 +707,7 @@ function addLikes(n){
   toast("500 likes atteints ! Prochaine question doublée.");
   notify("❤️","OBJECTIF ATTEINT","Incroyable ! Les <strong>500 likes</strong> sont atteints !");
   speak("Incroyable ! Vous êtes formidables ! 500 likes atteints ! Les points de la prochaine question seront doublés !");
-  log("Objectif de 500 likes atteint.");
+  log("Objectif de 500 likes atteint : bonus pour la prochaine question.");
  }
  renderLikes();
 }
@@ -610,7 +728,6 @@ function simulateFollow(){
  p.sub=true;
  addSupport(p);
  renderBoard();
-
  notify("⭐","NOUVEL ABONNEMENT",
   `Merci <strong>${escapeHTML(p.name)}</strong> pour ton abonnement ! Bienvenue dans l'équipe !`);
  speak("Un grand merci à "+p.name+" pour son abonnement ! Bienvenue dans l'équipe FLAG LIVE ! Tes prochains points sont maintenant doublés !");
@@ -623,10 +740,9 @@ function simulateRose(){
  if(!p)return;
  p.rose=true;
  addSupport(p);
-
  notify("🌹","CADEAU REÇU",
-  `Merci <strong>${escapeHTML(p.name)}</strong> pour ta rose ! C'est adorable !`);
- speak("Merci beaucoup "+p.name+" pour ta rose ! C'est très gentil ! Tes prochains points seront doublés !");
+  `Merci <strong>${escapeHTML(p.name)}</strong> pour ta rose !`);
+ speak("Merci beaucoup "+p.name+" pour ta rose ! Tes prochains points seront doublés !");
  log(p.name+" reçoit une rose : prochain gain x2.");
  toast("Rose simulée pour "+p.name);
 }
@@ -635,10 +751,8 @@ function simulateIce(){
  const p=selectedPlayer();
  const leader=sorted()[0];
  if(!p||!leader)return;
-
  leader.frozenUntil=index+2;
  addSupport(p);
-
  notify("🧊","CADEAU SPÉCIAL",
   `<strong>${escapeHTML(p.name)}</strong> envoie un cadeau ! ${escapeHTML(leader.name)} est gelé !`);
  speak("Attention ! "+p.name+" vient d'envoyer un cadeau ! Le numéro un, "+leader.name+", est temporairement gelé !");
@@ -654,13 +768,11 @@ function simulateBomb(){
   toast("Le premier ne peut pas se voler lui-même.");
   return;
  }
-
  const stolen=Math.floor(leader.score/2);
  leader.score-=stolen;
  p.score+=stolen;
  addSupport(p);
  renderBoard();
-
  notify("💣","GROS CADEAU",
   `<strong>${escapeHTML(p.name)}</strong> récupère ${stolen.toLocaleString("fr-FR")} points à ${escapeHTML(leader.name)} !`);
  speak("Quel retournement de situation ! "+p.name+" récupère "+stolen+" points à "+leader.name+" !");
@@ -681,7 +793,7 @@ function showPodium(){
  $("topSeven").innerHTML="<b>CLASSEMENT DES 7 PREMIERS</b><br>"+
   list.slice(0,7).map((p,i)=>`${i+1}. ${escapeHTML(p.name)} — ${p.score.toLocaleString("fr-FR")} pts`).join("<br>");
 
- $("podiumSubtitle").textContent=(index+1)+"e question — classement de la manche";
+ $("podiumSubtitle").textContent=(index+1)+"e question — classement général";
  $("podiumModal").classList.add("show");
 
  notify("🏆","CLASSEMENT","Le classement des meilleurs joueurs est disponible !");
@@ -700,10 +812,15 @@ function resetGame(){
  answered=false;
  index=-1;
  round=1;
- seconds=20;
+ seconds=10;
  likes=0;
  bonusNext=false;
- firstCorrectAnnounced=false;
+ currentQuestionBonus=false;
+ correctPlayers.clear();
+ podiumShownFor=-1;
+ voiceQueue=[];
+ if(window.speechSynthesis)speechSynthesis.cancel();
+ speaking=false;
 
  people.forEach(p=>{
   p.score=0;
@@ -724,18 +841,26 @@ function resetGame(){
   <div class="answer"><span class="letter">B</span>Observe les votes</div>
   <div class="answer"><span class="letter">C</span>Découvre le classement</div>
   <div class="answer"><span class="letter">D</span>Amuse-toi !</div>`;
- $("timer").textContent="20";
+ $("timer").textContent="10";
  $("timerFill").style.width="100%";
  $("status").textContent="La simulation est prête.";
  $("roundLabel").textContent="MANCHE 01 · QUESTION 01";
  $("questionCount").textContent="0 / 20 QUESTIONS";
  $("overallProgress").style.width="0%";
  $("pauseBtn").textContent="Ⅱ PAUSE";
+ $("previewRound").textContent="EN ATTENTE DU LANCEMENT";
+ $("previewFlag").textContent="🌍";
+ $("previewQuestion").textContent="Bienvenue dans FLAG LIVE !";
+ $("previewTimer").textContent="10";
+ $("previewAnswers").innerHTML=["A","B","C","D"].map(x=>`<div class="phone-answer">${x} · —</div>`).join("");
+ $("previewStatus").textContent="Préparez-vous !";
+ $("podiumModal").classList.remove("show");
 
  renderBoard();
  renderVotes();
  renderLikes();
  renderSupports();
+ updatePreview();
  log("Simulation réinitialisée.");
 }
 
@@ -745,15 +870,7 @@ function chooseFrenchVoice(){
  const voices=speechSynthesis.getVoices();
  const french=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith("fr"));
  if(!french.length)return null;
-
- const preferred=[
-  /denise/i,
-  /henri/i,
-  /google.*français/i,
-  /france/i,
-  /français/i
- ];
-
+ const preferred=[/denise/i,/henri/i,/google.*français/i,/france/i,/français/i];
  for(const pattern of preferred){
   const found=french.find(v=>pattern.test(v.name));
   if(found)return found;
@@ -775,54 +892,43 @@ function playNext(){
   speaking=false;
   return;
  }
-
  speaking=true;
  const item=voiceQueue.shift();
  const u=new SpeechSynthesisUtterance(item.text);
  u.lang="fr-FR";
-
- /* Réglages plus proches d'un animateur de jeu télévisé */
- u.rate=0.94;
+ u.rate=.94;
  u.pitch=1.04;
  u.volume=1;
-
  const voice=chooseFrenchVoice();
  if(voice)u.voice=voice;
 
- u.onend=()=>{
+ let finished=false;
+ const finish=()=>{
+  if(finished)return;
+  finished=true;
   speaking=false;
   if(item.callback)item.callback();
   playNext();
  };
- u.onerror=()=>{
-  speaking=false;
-  if(item.callback)item.callback();
-  playNext();
- };
-
+ u.onend=finish;
+ u.onerror=finish;
  speechSynthesis.speak(u);
 }
 
 function speakQuestion(callback){
  const q=current();
-
  if(!audioEnabled){
   if(callback)callback();
   return;
  }
-
  const phrases=[
   "Attention, tout le monde ! Voici la prochaine question.",
   "Question numéro "+(index+1)+".",
   q[2],
   "Voici les quatre propositions."
  ];
-
- q[3].forEach((a,i)=>{
-  phrases.push("Réponse "+ "ABCD"[i]+". "+a+".");
- });
-
- phrases.push("Vous avez vingt secondes. C'est parti !");
+ q[3].forEach((a,i)=>phrases.push("Réponse "+ "ABCD"[i]+". "+a+"."));
+ phrases.push("Vous avez dix secondes. C'est parti !");
  speakSequence(phrases,callback);
 }
 
@@ -831,7 +937,6 @@ function speakSequence(messages,callback){
   if(callback)callback();
   return;
  }
-
  messages.forEach((message,i)=>{
   speak(message,i===messages.length-1?callback:null);
  });
@@ -845,91 +950,123 @@ function announceTest(){
  ]);
 }
 
-/* AUDIO ET MUSIQUE */
-function enableAudio(){
- audioEnabled=true;
-
+/* AUDIO ET AMBIANCE MUSICALE */
+function ensureAudio(){
  try{
   audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();
-  audioCtx.resume();
- }catch(e){}
+  if(audioCtx.state==="suspended")audioCtx.resume();
+  return true;
+ }catch(e){
+  toast("Audio indisponible sur ce navigateur.");
+  return false;
+ }
+}
 
+function enableAudio(){
+ audioEnabled=true;
+ ensureAudio();
  $("audioState").textContent="ACTIVÉ";
  toast("Voix activée !");
  speakSequence([
   "Bonsoir à tous et bienvenue dans FLAG LIVE !",
   "Installez-vous, le quiz va bientôt commencer !"
  ]);
-
  startMusic();
 }
 
+function setMusicVolume(value){
+ const v=Number(value);
+ $("musicVolumeLabel").textContent=v+" %";
+ if(musicMaster)musicMaster.gain.setTargetAtTime((v/100)*.035,audioCtx.currentTime,.08);
+}
+
 function startMusic(){
- if(!audioCtx||musicOn)return;
+ if(musicOn)return;
+ if(!ensureAudio())return;
  musicOn=true;
+ $("musicButton").textContent="♫ MUSIQUE : ON";
 
- const notes=[130.81,164.81,196,164.81,146.83,174.61,220,174.61];
- let n=0;
+ /* Ambiance originale douce : accords légers et notes espacées. */
+ musicMaster=audioCtx.createGain();
+ musicMaster.gain.value=(Number($("musicVolume").value)/100)*.035;
+ musicMaster.connect(audioCtx.destination);
 
- musicTimer=setInterval(()=>{
-  if(!musicOn)return;
+ const chords=[
+  [130.81,164.81,196],
+  [110,146.83,174.61],
+  [98,130.81,164.81],
+  [116.54,146.83,174.61]
+ ];
+ let step=0;
 
-  const o=audioCtx.createOscillator();
-  const g=audioCtx.createGain();
-
-  o.type="triangle";
-  o.frequency.value=notes[n++%notes.length];
-
-  /* Volume musical constant : aucun boost lors des annonces */
-  g.gain.value=.012;
-
-  o.connect(g);
-  g.connect(audioCtx.destination);
-  o.start();
-  g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.9);
-  o.stop(audioCtx.currentTime+.9);
- },600);
+ function playSoftChord(){
+  if(!musicOn||!audioCtx)return;
+  const chord=chords[step%chords.length];
+  chord.forEach((freq,i)=>{
+   const osc=audioCtx.createOscillator();
+   const gain=audioCtx.createGain();
+   osc.type="sine";
+   osc.frequency.value=freq;
+   gain.gain.setValueAtTime(.0001,audioCtx.currentTime);
+   gain.gain.linearRampToValueAtTime(i===0?.24:.12,audioCtx.currentTime+.7);
+   gain.gain.setTargetAtTime(.0001,audioCtx.currentTime+2.8,.8);
+   osc.connect(gain);
+   gain.connect(musicMaster);
+   osc.start();
+   osc.stop(audioCtx.currentTime+6);
+  });
+  step++;
+ }
+ playSoftChord();
+ musicTimer=setInterval(playSoftChord,4200);
 }
 
 function stopMusic(){
  musicOn=false;
  clearInterval(musicTimer);
+ if(musicMaster&&audioCtx){
+  const old=musicMaster;
+  old.gain.setTargetAtTime(.0001,audioCtx.currentTime,.05);
+  setTimeout(()=>{try{old.disconnect()}catch(e){}},500);
+ }
+ musicMaster=null;
+ $("musicButton").textContent="♫ MUSIQUE : OFF";
 }
 
 function toggleMusic(){
  if(!audioEnabled){
-  enableAudio();
-  return;
+  audioEnabled=true;
+  ensureAudio();
+  $("audioState").textContent="ACTIVÉ";
  }
  if(musicOn){
   stopMusic();
   toast("Musique coupée");
  }else{
   startMusic();
-  toast("Musique activée");
+  toast("Ambiance activée");
  }
 }
 
 function sfx(kind){
  if(!audioCtx||!audioEnabled)return;
-
  const play=(f,d)=>{
   const o=audioCtx.createOscillator();
   const g=audioCtx.createGain();
   o.frequency.value=f;
-  g.gain.value=.05;
+  o.type="sine";
+  g.gain.value=.025;
   o.connect(g);
   g.connect(audioCtx.destination);
   o.start();
   g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+d);
   o.stop(audioCtx.currentTime+d);
  };
-
- if(kind==="tick")play(660,.08);
+ if(kind==="tick")play(520,.07);
  if(kind==="correct"){
-  play(523,.13);
-  setTimeout(()=>play(659,.13),130);
-  setTimeout(()=>play(784,.3),260);
+  play(523,.15);
+  setTimeout(()=>play(659,.15),150);
+  setTimeout(()=>play(784,.25),300);
  }
 }
 
@@ -938,6 +1075,7 @@ renderBoard();
 renderVotes();
 renderLikes();
 renderSupports();
+updatePreview();
 </script>
 </body>
 </html>
