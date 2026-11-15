@@ -660,7 +660,7 @@ body{
  outline:none;
 }
 
-.sim-input:focus{border-color:#36aaff}
+ .sim-input:focus{border-color:#36aaff}
 
 .sim-grid{
  display:grid;
@@ -879,6 +879,31 @@ body{
  </div>
 
  <div class="sim-section">
+  <div class="sim-section-title">📚 BANQUE DE 320 QUESTIONS</div>
+  <div class="sim-grid">
+   <button class="sim-button green" type="button" onclick="exportQuestionBank()">⬇️ Exporter la banque JSON</button>
+   <button class="sim-button blue" type="button" onclick="document.getElementById('questionBankFile').click()">⬆️ Importer une banque JSON</button>
+  </div>
+  <input id="questionBankFile" type="file" accept=".json,application/json" style="display:none" onchange="importQuestionBank(event)">
+  <div class="sim-note">Le fichier exporté contient les 320 questions, leurs quatre propositions et l'index de la bonne réponse. L'import remplace la banque actuelle après vérification.</div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">🔌 TIKTOK LIVE CONNECTOR</div>
+  <label for="connectorSocketUrl" class="sim-note">Adresse WebSocket du connecteur</label>
+  <input class="sim-input" id="connectorSocketUrl" type="url" placeholder="ws://adresse-du-connecteur:port">
+  <div class="sim-grid" style="margin-top:8px">
+   <button class="sim-button green" type="button" onclick="connectLiveConnector()">🔌 Connecter le live</button>
+   <button class="sim-button red" type="button" onclick="disconnectLiveConnector()">Déconnecter</button>
+  </div>
+  <label for="connectorInterfaceUrl" class="sim-note" style="display:block;margin-top:10px">URL de l'interface web du connecteur</label>
+  <input class="sim-input" id="connectorInterfaceUrl" type="url" placeholder="https://...">
+  <button class="sim-button blue" type="button" style="width:100%;margin-top:8px" onclick="openLiveConnectorInterface()">🌐 Ouvrir l'interface du connecteur</button>
+  <div class="sim-status" id="connectorStatus">Connecteur non configuré. Renseigne l'adresse fournie par ton logiciel TikTok Live Connector.</div>
+  <div class="sim-note">Le connecteur doit envoyer des événements JSON de type chat/comment, gift, subscribe ou like. L'adresse exacte et le format des événements dépendent du logiciel de connexion utilisé.</div>
+ </div>
+
+ <div class="sim-section">
   <div class="sim-section-title">👤 JOUEUR À SIMULER</div>
   <input class="sim-input" id="testUsername" value="JoueurTest" maxlength="30" placeholder="Pseudo du joueur">
  </div>
@@ -977,7 +1002,7 @@ body{
    Chaque partie mélange plusieurs thèmes.
 ========================================================= */
 
-const rawQuestions = [
+let rawQuestions = [
 /* PARTIE 1 */
 ["HISTOIRE","Quel traité met officiellement fin à la Première Guerre mondiale entre l'Allemagne et les Alliés ?","Traité de Versailles","Traité de Trianon","Traité de Brest-Litovsk","Traité de Saint-Germain",0],
 ["SCIENCES","Quel mécanisme permet aux plantes de transformer l'énergie lumineuse en énergie chimique ?","La fermentation","La photosynthèse","La respiration cellulaire","La transpiration",1],
@@ -1331,7 +1356,7 @@ const rawQuestions = [
 ["CULTURE GÉNÉRALE","Quel philosophe grec est le maître d'Alexandre le Grand ?","Socrate","Platon","Aristote","Épicure",2]
 ];
 
-const questions = rawQuestions.map(q=>[
+let questions = rawQuestions.map(q=>[
  q[0],q[1],[q[2],q[3],q[4],q[5]],q[6]
 ]);
 
@@ -1377,6 +1402,120 @@ let tickerMessageTimeout=null;
 let tickerPriority=false;
 
 const $=id=>document.getElementById(id);
+
+/* =========================================================
+   IMPORT / EXPORT DE LA BANQUE DE QUESTIONS
+========================================================= */
+
+function validateQuestionBank(candidate){
+ if(!Array.isArray(candidate) || candidate.length!==TOTAL_QUESTIONS){
+  throw new Error("La banque doit contenir exactement "+TOTAL_QUESTIONS+" questions.");
+ }
+ candidate.forEach((q,index)=>{
+  if(!Array.isArray(q) || q.length!==7 ||
+     typeof q[0]!=="string" || !q[0].trim() ||
+     typeof q[1]!=="string" || !q[1].trim() ||
+     ![q[2],q[3],q[4],q[5]].every(a=>typeof a==="string" && a.trim()) ||
+     !Number.isInteger(q[6]) || q[6]<0 || q[6]>3){
+   throw new Error("Question invalide à la ligne "+(index+1)+". Format attendu : thème, question, 4 réponses, index correct (0 à 3).");
+  }
+ });
+ return true;
+}
+
+function exportQuestionBank(){
+ const payload={format:"QUIZ_CULTURE_G_QUESTION_BANK",version:1,total:rawQuestions.length,questions:rawQuestions};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"});
+ const url=URL.createObjectURL(blob);
+ const link=document.createElement("a");
+ link.href=url;
+ link.download="quiz-culture-g-banque-320-questions.json";
+ document.body.appendChild(link);
+ link.click();
+ link.remove();
+ URL.revokeObjectURL(url);
+ if(typeof simStatus==="function")simStatus("Banque de "+rawQuestions.length+" questions exportée en JSON.");
+}
+
+async function importQuestionBank(event){
+ const file=event.target.files && event.target.files[0];
+ if(!file)return;
+ try{
+  const parsed=JSON.parse(await file.text());
+  const candidate=Array.isArray(parsed)?parsed:parsed.questions;
+  validateQuestionBank(candidate);
+  rawQuestions=candidate.map(q=>q.slice());
+  questions=rawQuestions.map(q=>[q[0],q[1],[q[2],q[3],q[4],q[5]],q[6]]);
+  questionIndex=Math.min(questionIndex,questions.length-1);
+  renderQuestion();
+  renderRanking();
+  if(typeof simStatus==="function")simStatus("Import réussi : "+questions.length+" questions chargées.");
+ }catch(error){
+  if(typeof simStatus==="function")simStatus("Import refusé : "+error.message);
+  else alert("Import refusé : "+error.message);
+ }finally{event.target.value="";}
+}
+
+/* =========================================================
+   CONNEXION TIKTOK LIVE CONNECTOR — WEBSOCKET CONFIGURABLE
+========================================================= */
+
+let liveConnectorSocket=null;
+function connectorStatus(message){const el=$("connectorStatus");if(el)el.textContent=message;}
+
+function openLiveConnectorInterface(){
+ const value=$("connectorInterfaceUrl").value.trim();
+ if(!value){connectorStatus("Ajoute d'abord l'URL exacte de l'interface fournie par ton connecteur.");return;}
+ try{const url=new URL(value);if(!["http:","https:"].includes(url.protocol))throw new Error("URL http(s) requise");window.open(url.href,"_blank","noopener,noreferrer");}
+ catch(error){connectorStatus("URL d'interface invalide : "+error.message);}
+}
+
+function disconnectLiveConnector(){
+ if(liveConnectorSocket){liveConnectorSocket.onclose=null;liveConnectorSocket.close();liveConnectorSocket=null;}
+ connectorStatus("Connecteur déconnecté.");
+}
+
+function connectLiveConnector(){
+ const value=$("connectorSocketUrl").value.trim();
+ if(!value){connectorStatus("Renseigne l'adresse WebSocket fournie par ton connecteur.");return;}
+ let url;
+ try{url=new URL(value);if(!["ws:","wss:"].includes(url.protocol))throw new Error("L'adresse doit commencer par ws:// ou wss://");}
+ catch(error){connectorStatus("Adresse WebSocket invalide : "+error.message);return;}
+ disconnectLiveConnector();
+ try{
+  liveConnectorSocket=new WebSocket(url.href);
+  connectorStatus("Connexion en cours à "+url.href+"…");
+  liveConnectorSocket.onopen=()=>connectorStatus("Connecté au TikTok Live Connector.");
+  liveConnectorSocket.onerror=()=>connectorStatus("Erreur de connexion. Vérifie l'adresse et que le connecteur accepte les WebSocket.");
+  liveConnectorSocket.onclose=()=>connectorStatus("Connexion au connecteur fermée.");
+  liveConnectorSocket.onmessage=event=>{
+   try{handleConnectorEvent(JSON.parse(event.data));}
+   catch(error){connectorStatus("Événement reçu mais JSON non reconnu : "+error.message);}
+  };
+ }catch(error){connectorStatus("Impossible de démarrer la connexion : "+error.message);}
+}
+
+function handleConnectorEvent(data){
+ if(!data || typeof data!=="object")return;
+ const type=String(data.type||data.event||data.action||"").toLowerCase();
+ const username=String(data.username||data.user||data.nickname||data.uniqueId||data.sender||"").trim();
+ const message=String(data.comment||data.message||data.text||"").trim();
+ if(["chat","comment","message"].includes(type)){
+  const match=message.toUpperCase().match(/\b([ABCD])\b/);
+  if(username && match)submitAnswer(username,match[1]);
+  return;
+ }
+ if(["subscribe","subscription","follow","member"].includes(type)){if(username)subscribePlayer(username);return;}
+ if(["like","likes"].includes(type)){updateLikes(Number(data.count||data.likeCount||data.amount||1));return;}
+ if(["gift","gift_received"].includes(type)){
+  const gift=String(data.giftName||data.gift||data.giftType||"").toLowerCase();
+  const amount=Number(data.diamondCount||data.coins||data.amount||0);
+  if(!username)return;
+  if(gift.includes("rose")||gift.includes("🌹"))giveRose(username);
+  else if(gift.includes("ice")||gift.includes("glaçon")||gift.includes("glacon"))freezeLeader(username);
+  else if(gift.includes("bomb")||gift.includes("bombe")||amount>=99)bombLeader(username);
+ }
+}
 
 /* =========================================================
    JOUEURS ET CLASSEMENT
@@ -1607,27 +1746,14 @@ function announceCurrentQuestion(){
  if(gameFinished || revealed)return;
 
  const q=questions[questionIndex];
- const part=Math.floor(questionIndex/QUESTIONS_PER_PART)+1;
 
- const messages=[];
-
- if(questionIndex%QUESTIONS_PER_PART===0 && questionIndex!==0){
-  messages.push(
-   part===16
-    ?"Nous commençons la seizième partie. C'est la dernière partie du live."
-    :"Nous commençons la partie "+part+"."
-  );
- }
-
- messages.push(
-  "Question "+(questionIndex+1)+" sur "+TOTAL_QUESTIONS+".",
-  q[0]+".",
+ const messages=[
   q[1],
   "Réponse A : "+q[2][0],
   "Réponse B : "+q[2][1],
   "Réponse C : "+q[2][2],
   "Réponse D : "+q[2][3]
- );
+ ];
 
  speakSequence(messages,()=>{
   if(!revealed && !gameFinished)startTimer();
@@ -1750,6 +1876,7 @@ function submitAnswer(username,letter){
  if(player.answered.includes(questionIndex))return;
 
  player.answered.push(questionIndex);
+ renderRanking();
 
  roundAnswers.push({
   player,
@@ -2447,6 +2574,7 @@ renderQuestion();
 renderRanking();
 updatePart(1);
 startTicker();
+connectorStatus("Connecteur non configuré. Renseigne l'adresse fournie par ton logiciel TikTok Live Connector.");
 
 $("bottomStatus").textContent="ACTIVE LA VOIX POUR COMMENCER";
 
