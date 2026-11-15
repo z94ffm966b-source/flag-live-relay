@@ -3,339 +3,441 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080b18">
-<title>FLAG LIVE — Quiz en direct</title>
+<title>QUIZ CULTURE G — LIVE</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-:root{
- --bg:#080b18;--panel:#11182b;--green:#22c875;
- --blue:#36aaff;--red:#ff5368;--yellow:#ffbd35;
- --purple:#a477ff;--text:#f5f7ff;--muted:#8793ad;
-}
 *{box-sizing:border-box}
+
+:root{
+ --bg:#080b18;
+ --green:#22c875;
+ --blue:#36aaff;
+ --red:#ff5368;
+ --yellow:#ffbd35;
+ --purple:#a477ff;
+}
+
 body{
- margin:0;min-height:100vh;padding:18px;
- background:radial-gradient(ellipse at 50% 0%,#253b72 0%,transparent 55%),
+ margin:0;
+ min-height:100vh;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
+ background:
+ radial-gradient(ellipse at 50% 0%,#253b72 0%,transparent 55%),
  linear-gradient(145deg,#070b18,#10152b 55%,#080b18);
- color:white;font-family:Inter,Arial,sans-serif
+ color:white;
+ font-family:Inter,Arial,sans-serif;
 }
-button,select,input{font:inherit}
-button{cursor:pointer}
-.app{max-width:1550px;margin:auto}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px;gap:12px}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{
- width:45px;height:45px;border-radius:14px;display:grid;
- place-items:center;font-size:23px;
- background:linear-gradient(135deg,var(--blue),var(--purple))
-}
-.brand h1{font-size:21px;margin:0;font-weight:900;letter-spacing:1px}
-.brand small{color:var(--muted);font-size:9px;letter-spacing:3px}
-.live{
- border:1px solid #ff557766;background:#ff557714;color:#ff7790;
- border-radius:30px;padding:9px 14px;font-size:11px;font-weight:900
-}
-.live:before{
- content:"";display:inline-block;width:7px;height:7px;
- background:#ff5577;border-radius:50%;margin-right:8px
-}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px}
-.main{min-width:0}
+
 .live-screen{
- width:min(100%,520px);min-height:780px;margin:auto;padding:17px;
- border:1px solid #ffffff20;border-radius:25px;
- background:radial-gradient(ellipse at 50% 0%,#243c73 0%,transparent 48%),
+ width:min(100%,440px);
+ min-height:calc(min(100vh - 30px,780px));
+ aspect-ratio:9/16;
+ max-height:900px;
+ padding:17px;
+ border:1px solid #ffffff20;
+ border-radius:25px;
+ background:
+ radial-gradient(ellipse at 50% 0%,#243c73 0%,transparent 48%),
  linear-gradient(180deg,#111b37,#080d1e 75%);
- box-shadow:0 25px 70px #0008;display:flex;flex-direction:column;
- overflow:hidden
+ box-shadow:0 25px 90px #0009;
+ display:flex;
+ flex-direction:column;
+ overflow:hidden;
 }
-.screen-header{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.screen-brand{font-size:17px;font-weight:900;letter-spacing:1.5px}
+
+.header{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:8px;
+}
+
+.brand{
+ font-size:15px;
+ font-weight:900;
+ letter-spacing:1.2px;
+}
+
 .question-number{
- background:#ffffff12;border:1px solid #ffffff25;
- border-radius:20px;padding:8px 10px;font-size:10px;font-weight:900;
- white-space:nowrap
+ background:#ffffff12;
+ border:1px solid #ffffff25;
+ border-radius:20px;
+ padding:8px 10px;
+ font-size:10px;
+ font-weight:900;
+ white-space:nowrap;
 }
+
 .creator{
- display:flex;justify-content:space-between;align-items:center;
- margin-top:7px;color:#c2cde8;font-size:10px;font-weight:700
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-top:7px;
+ color:#c2cde8;
+ font-size:10px;
+ font-weight:700;
 }
-.creator-name{color:white}
-.live-indicator{color:#ff7188;font-weight:900}
-.likes{margin-top:13px}
+
+.creator-name{
+ color:#fff;
+}
+
+.live-indicator{
+ color:#ff7188;
+ font-weight:900;
+}
+
+.likes{
+ margin-top:13px;
+}
+
 .likes-top{
- display:flex;justify-content:space-between;align-items:center;
- font-size:9px;font-weight:800;color:#d9e3ff
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ font-size:9px;
+ font-weight:800;
+ color:#d9e3ff;
 }
-.likes-number{color:#ff7192;font-size:12px}
-.likes-track,.timer-track,.part-track{
- height:8px;background:#ffffff18;border-radius:20px;
- overflow:hidden;margin-top:7px
+
+.likes-number{
+ color:#ff7192;
+ font-size:12px;
 }
+
+.likes-track{
+ height:8px;
+ background:#ffffff18;
+ border-radius:20px;
+ overflow:hidden;
+ margin-top:7px;
+}
+
 .likes-fill{
- height:100%;width:0%;border-radius:20px;
- background:linear-gradient(90deg,#ff547e,#ff9d63);transition:width .4s
+ height:100%;
+ width:0%;
+ border-radius:20px;
+ background:linear-gradient(90deg,#ff547e,#ff9d63);
+ transition:width .4s ease;
 }
+
 .question-card{
- background:#fff;color:#111827;border-radius:16px;padding:17px 13px;
- margin-top:15px;text-align:center;box-shadow:0 7px 25px #0003
+ background:#fff;
+ color:#111827;
+ border-radius:16px;
+ padding:15px 12px;
+ margin-top:15px;
+ text-align:center;
+ box-shadow:0 7px 25px #0003;
 }
+
 .theme{
- color:#159d5c;font-size:10px;font-weight:900;
- letter-spacing:2px;text-transform:uppercase;margin-bottom:8px
+ color:#159d5c;
+ font-size:10px;
+ font-weight:900;
+ letter-spacing:2px;
+ text-transform:uppercase;
+ margin-bottom:8px;
 }
+
 .question-text{
- font-size:clamp(17px,3vw,23px);line-height:1.3;font-weight:900
+ font-size:clamp(16px,4vw,21px);
+ line-height:1.3;
+ font-weight:900;
 }
-.timer-area{margin-top:13px}
+
+.timer-area{
+ margin-top:13px;
+}
+
 .timer-label{
- display:flex;justify-content:space-between;align-items:center;
- font-size:9px;font-weight:800;color:#d7e2ff;margin-bottom:6px
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ font-size:9px;
+ font-weight:800;
+ color:#d7e2ff;
+ margin-bottom:6px;
 }
-.timer-number{color:#58d7ff;font-size:12px}
-.timer-track{height:10px;margin-top:0}
+
+.timer-number{
+ color:#58d7ff;
+ font-size:12px;
+}
+
+.timer-track{
+ width:100%;
+ height:10px;
+ background:#ffffff19;
+ border-radius:20px;
+ overflow:hidden;
+}
+
 .timer-fill{
- height:100%;width:100%;
+ height:100%;
+ width:100%;
  background:linear-gradient(90deg,#32df9a,#36baff);
- border-radius:20px;transition:width 1s linear
+ border-radius:20px;
+ transition:width 1s linear;
 }
-.answers{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+
+.answers{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:9px;
+ margin-top:14px;
+}
+
 .answer{
- min-height:62px;display:flex;align-items:center;gap:8px;padding:9px;
- border-radius:12px;color:white;font-size:11px;font-weight:800;
- border:1px solid #ffffff35;box-shadow:0 4px 12px #0003;transition:.2s
+ min-height:62px;
+ display:flex;
+ align-items:center;
+ gap:8px;
+ padding:9px;
+ border-radius:12px;
+ color:white;
+ font-size:11px;
+ font-weight:800;
+ border:1px solid #ffffff35;
+ box-shadow:0 4px 12px #0003;
+ transition:.2s;
 }
+
 .answer-letter{
- width:27px;height:27px;flex:none;display:grid;place-items:center;
- border-radius:8px;background:#ffffff28;font-size:12px;font-weight:900
+ width:27px;
+ height:27px;
+ flex:none;
+ display:grid;
+ place-items:center;
+ border-radius:8px;
+ background:#ffffff28;
+ font-size:12px;
+ font-weight:900;
 }
-.answer-text{text-align:left;line-height:1.25}
+
+.answer-text{
+ text-align:left;
+ line-height:1.25;
+}
+
 .answer-a{background:linear-gradient(135deg,#2775ed,#1645a9)}
 .answer-b{background:linear-gradient(135deg,#20b979,#087b50)}
 .answer-c{background:linear-gradient(135deg,#e59b23,#b96512)}
 .answer-d{background:linear-gradient(135deg,#a05be9,#6335b5)}
-.answer.correct{outline:3px solid #5bffa9;background:linear-gradient(135deg,#159b5c,#087343)}
-.answer.wrong{opacity:.38}
-.chat-instruction{text-align:center;margin-top:12px;font-size:11px;font-weight:900}
-.chat-letters{display:flex;justify-content:center;gap:13px;margin-top:7px}
-.chat-letter{
- width:25px;height:25px;border-radius:7px;display:grid;
- place-items:center;font-size:11px;font-weight:900
+
+.answer.correct{
+ outline:3px solid #5bffa9;
+ background:linear-gradient(135deg,#159b5c,#087343);
 }
+
+.answer.wrong{
+ opacity:.38;
+}
+
+.chat-instruction{
+ text-align:center;
+ margin-top:12px;
+ font-size:11px;
+ font-weight:900;
+ letter-spacing:.2px;
+ color:#fff;
+}
+
+.chat-letters{
+ display:flex;
+ justify-content:center;
+ gap:13px;
+ margin-top:7px;
+}
+
+.chat-letter{
+ width:25px;
+ height:25px;
+ border-radius:7px;
+ display:grid;
+ place-items:center;
+ font-size:11px;
+ font-weight:900;
+}
+
 .chat-letter.a{background:#2775ed}
 .chat-letter.b{background:#20b979}
 .chat-letter.c{background:#e59b23}
 .chat-letter.d{background:#a05be9}
-.gifts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px}
-.gift{
- min-width:0;text-align:center;padding:10px 3px;border-radius:12px;
- background:#ffffff0c;border:1px solid #ffffff22
+
+.gifts{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:8px;
+ margin-top:15px;
 }
-.gift-emoji{font-size:25px}
-.gift-name{font-size:9px;font-weight:900;margin-top:4px}
-.gift-description{color:#aab8d8;font-size:7px;margin-top:4px;line-height:1.3}
+
+.gift{
+ min-width:0;
+ text-align:center;
+ padding:10px 3px;
+ border-radius:12px;
+ background:#ffffff0c;
+ border:1px solid #ffffff22;
+}
+
+.gift-emoji{
+ font-size:25px;
+}
+
+.gift-name{
+ font-size:9px;
+ font-weight:900;
+ margin-top:4px;
+}
+
+.gift-description{
+ color:#aab8d8;
+ font-size:7px;
+ margin-top:4px;
+ line-height:1.3;
+}
+
 .gift.rose{border-color:#ff8db555}
 .gift.ice{border-color:#62caff55}
 .gift.bomb{border-color:#ff637855}
-.part{margin-top:14px}
-.part-label{
- display:flex;justify-content:space-between;
- font-size:9px;color:#c6d2ee;font-weight:800;margin-bottom:6px
-}
-.part-track{height:7px;margin-top:0}
-.part-fill{
- height:100%;width:0;
- background:linear-gradient(90deg,#36c5ff,#a477ff);
- border-radius:20px;transition:width .4s
-}
-.ranking{
- margin-top:13px;padding:10px;border:1px solid #ffffff20;
- border-radius:13px;background:#ffffff0b
-}
-.ranking-title{
- display:flex;justify-content:space-between;align-items:center;
- font-size:10px;font-weight:900;letter-spacing:1px;margin-bottom:7px
-}
-.ranking-title span{color:#ffda75;font-size:9px}
-.ranking-row{
- display:flex;align-items:center;gap:7px;padding:5px 0;
- border-bottom:1px solid #ffffff0c;font-size:9px
-}
-.ranking-row:last-child{border-bottom:0}
-.rank-number{width:19px;font-weight:900;color:#aab9d8}
-.rank-avatar{
- width:22px;height:22px;display:grid;place-items:center;
- border-radius:50%;background:linear-gradient(135deg,#36c5ff,#9065ff);
- font-size:9px;font-weight:900
-}
-.rank-name{
- flex:1;font-weight:700;overflow:hidden;
- text-overflow:ellipsis;white-space:nowrap
-}
-.rank-score{color:#5ce6a4;font-weight:900;white-space:nowrap}
-.bottom-status{
- margin-top:auto;padding-top:9px;text-align:center;
- font-size:8px;color:#8c9dc3;letter-spacing:1.5px
-}
-.controls{
- display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-top:17px
-}
-.btn{
- border:1px solid #ffffff20;background:#ffffff0b;color:white;
- border-radius:12px;padding:11px 14px;font-weight:800;font-size:11px
-}
-.btn.primary{background:linear-gradient(100deg,#318cff,#865cff);border:0}
-.btn.green{background:#35e6a018;border-color:#35e6a055;color:var(--green)}
-.btn.red{background:#ff557718;border-color:#ff557755;color:#ff9bad}
-.btn:hover{filter:brightness(1.15)}
-.sidebar{display:flex;flex-direction:column;gap:14px}
-.panel{
- background:linear-gradient(145deg,#151d32,#101527);
- border:1px solid #ffffff13;border-radius:19px;padding:16px;min-width:0
-}
-.panel-title{
- display:flex;justify-content:space-between;align-items:center;
- font-size:11px;font-weight:900;letter-spacing:1px;margin-bottom:13px
-}
-.panel-title span{color:var(--muted);font-size:9px;letter-spacing:0}
-.player{
- display:flex;align-items:center;gap:9px;padding:8px 0;
- border-bottom:1px solid #ffffff0b
-}
-.player:last-child{border:0}
-.avatar{
- width:29px;height:29px;border-radius:50%;display:grid;place-items:center;
- background:linear-gradient(135deg,#36c5ff,#9065ff);font-size:12px;font-weight:900
-}
-.player-name{
- font-size:11px;font-weight:700;flex:1;min-width:0;
- overflow:hidden;text-overflow:ellipsis
-}
-.player-score{font-size:11px;color:var(--green);font-weight:900;white-space:nowrap}
-.rank{font-size:10px;color:var(--muted);width:15px}
-.vote-line{display:flex;align-items:center;gap:9px;margin:10px 0;font-size:11px}
-.vote-line b{width:17px;color:var(--blue)}
-.vote-bg{height:7px;flex:1;background:#ffffff12;border-radius:10px;overflow:hidden}
-.vote-bg i{
- display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));
- width:0;transition:width .4s
-}
-.vote-line small{color:var(--muted);width:40px;text-align:right}
-.voters{display:flex;gap:7px;flex-wrap:wrap;max-height:100px;overflow:hidden}
-.voter{
- background:#ffffff0d;border:1px solid #ffffff13;
- border-radius:20px;padding:6px 9px;font-size:10px;color:#dce6ff
-}
-.demo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-.demo-card{
- background:#ffffff08;border:1px solid #ffffff13;
- border-radius:14px;padding:12px;min-width:0
-}
-.demo-card h3{font-size:10px;color:var(--blue);margin:0 0 10px;letter-spacing:1px}
-.demo-card button,.demo-card select{width:100%;margin:4px 0}
-.demo-card select{
- background:#18233d;color:white;border:1px solid #ffffff25;
- border-radius:9px;padding:9px;font-size:10px
-}
-.demo-card .btn{padding:9px 6px;font-size:9px}
-.demo-note{font-size:10px;color:var(--muted);line-height:1.6;margin-top:12px}
-.music-controls{display:flex;align-items:center;gap:8px;margin-top:10px}
-.music-controls input{width:100%;accent-color:#8b6cff}
-.music-controls small{font-size:9px;color:var(--muted);white-space:nowrap}
-.eventlog{
- margin-top:12px;background:#080d1a;border:1px solid #ffffff12;
- border-radius:12px;padding:11px;max-height:160px;overflow:auto
-}
-.eventlog h3{font-size:10px;color:var(--muted);margin:0 0 8px}
-.logline{font-size:10px;padding:5px 0;border-bottom:1px solid #ffffff0b;color:#c8d2e8}
-.support-panel{
- margin-top:14px;background:#151d32;border:1px solid #ffffff13;
- border-radius:18px;padding:14px;overflow:hidden
-}
-.support-title{font-size:11px;font-weight:900;letter-spacing:1px;margin-bottom:10px}
-.support-inner{font-size:11px;color:#c9baff;white-space:normal;overflow-wrap:anywhere}
-.toast{
- position:fixed;bottom:20px;left:50%;transform:translate(-50%,20px);
- background:#202a43;border:1px solid #ffffff22;border-radius:14px;
- padding:12px 17px;font-size:12px;opacity:0;transition:.3s;
- pointer-events:none;z-index:60
-}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-.modal{
- position:fixed;inset:0;background:#050817e8;display:none;
- place-items:center;padding:20px;z-index:55
-}
-.modal.show{display:grid}
-.modalbox{
- width:min(650px,100%);background:linear-gradient(145deg,#192542,#15132d);
- border:1px solid #ffffff25;border-radius:22px;padding:22px;box-shadow:0 20px 80px #0009
-}
-.modalbox h2{margin:0 0 5px;font-size:20px}
-.modalbox p{color:var(--muted);font-size:11px}
-.podium{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:20px 0}
-.podium div{
- background:#ffffff0b;border:1px solid #ffffff15;
- border-radius:13px;padding:14px 5px;text-align:center
-}
-.podium strong{display:block;font-size:12px;margin-top:8px}
-.podium small{color:var(--green);font-size:10px}
-.modal-list{font-size:12px;line-height:2;color:#dce6ff}
-.notification-area{
- position:fixed;top:12px;left:50%;transform:translateX(-50%);
- width:min(540px,calc(100% - 24px));z-index:70;
- display:flex;flex-direction:column;gap:9px;pointer-events:none
-}
-.live-notification{
- display:flex;align-items:center;gap:12px;padding:13px 16px;
- border:1px solid #ffffff30;border-radius:16px;
- background:linear-gradient(110deg,#172b49f5,#251746f5);
- box-shadow:0 12px 40px #0009;animation:notifIn .4s ease both
-}
-.notif-icon{
- width:40px;height:40px;flex:none;display:grid;place-items:center;
- border-radius:13px;background:#ffffff13;font-size:23px
-}
-.notif-content{min-width:0;flex:1}
-.notif-label{font-size:9px;font-weight:900;letter-spacing:2px;color:#a8b8d8;margin-bottom:4px}
-.notif-message{font-size:12px;font-weight:800;line-height:1.35;color:white;overflow-wrap:anywhere}
-@keyframes notifIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
 
-@media(max-width:1000px){
- .layout{grid-template-columns:1fr}
- .sidebar{display:grid;grid-template-columns:1fr 1fr}
- .sidebar .wide{grid-column:1/-1}
+.part{
+ margin-top:14px;
 }
-@media(max-width:600px){
- body{padding:8px}.app{width:100%}.brand h1{font-size:17px}
- .live-screen{min-height:calc(100vh - 100px);padding:13px}
- .sidebar{grid-template-columns:1fr}
- .sidebar .wide{grid-column:auto}
- .answers{gap:7px}.answer{min-height:55px;font-size:10px}
- .demo-grid{grid-template-columns:1fr}
+
+.part-label{
+ display:flex;
+ justify-content:space-between;
+ font-size:9px;
+ color:#c6d2ee;
+ font-weight:800;
+ margin-bottom:6px;
+}
+
+.part-track{
+ height:7px;
+ border-radius:20px;
+ background:#ffffff17;
+ overflow:hidden;
+}
+
+.part-fill{
+ height:100%;
+ width:6.25%;
+ background:linear-gradient(90deg,#36c5ff,#a477ff);
+ border-radius:20px;
+ transition:width .4s;
+}
+
+.ranking{
+ margin-top:13px;
+ padding:10px;
+ border:1px solid #ffffff20;
+ border-radius:13px;
+ background:#ffffff0b;
+}
+
+.ranking-title{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ font-size:10px;
+ font-weight:900;
+ letter-spacing:1px;
+ margin-bottom:7px;
+}
+
+.ranking-title span{
+ color:#ffda75;
+ font-size:9px;
+}
+
+.ranking-row{
+ display:flex;
+ align-items:center;
+ gap:7px;
+ padding:5px 0;
+ border-bottom:1px solid #ffffff0c;
+ font-size:9px;
+}
+
+.ranking-row:last-child{
+ border-bottom:0;
+}
+
+.rank-number{
+ width:19px;
+ font-weight:900;
+ color:#aab9d8;
+}
+
+.rank-avatar{
+ width:22px;
+ height:22px;
+ display:grid;
+ place-items:center;
+ border-radius:50%;
+ background:linear-gradient(135deg,#36c5ff,#9065ff);
+ font-size:9px;
+ font-weight:900;
+}
+
+.rank-name{
+ flex:1;
+ font-weight:700;
+ overflow:hidden;
+ text-overflow:ellipsis;
+ white-space:nowrap;
+}
+
+.rank-score{
+ color:#5ce6a4;
+ font-weight:900;
+ white-space:nowrap;
+}
+
+.bottom-status{
+ margin-top:auto;
+ padding-top:9px;
+ text-align:center;
+ font-size:8px;
+ color:#8c9dc3;
+ letter-spacing:1.5px;
+}
+
+@media(max-height:700px){
+ body{padding:8px}
+ .live-screen{min-height:0;padding:12px}
+ .question-card{margin-top:9px;padding:10px}
+ .answer{min-height:49px}
+ .gifts{margin-top:9px}
+ .ranking{margin-top:9px;padding:7px}
+ .ranking-row{padding:3px 0}
+}
+
+@media(max-width:360px){
+ body{padding:7px}
+ .live-screen{padding:11px}
+ .brand{font-size:13px}
+ .answer{font-size:9px;min-height:55px}
+ .gift-description{font-size:6px}
 }
 </style>
 </head>
 
 <body>
-<div class="notification-area" id="notificationArea"></div>
 
-<div class="app">
-<header>
- <div class="brand">
-  <div class="logo">🚩</div>
-  <div><h1>FLAG LIVE</h1><small>LE QUIZ EN DIRECT</small></div>
- </div>
- <div class="live">EN DIRECT</div>
-</header>
+<main class="live-screen">
 
-<div class="layout">
-<main class="main">
-
-<section class="live-screen">
- <div class="screen-header">
-  <div class="screen-brand">🚩 FLAG LIVE</div>
+ <div class="header">
+  <div class="brand">QUIZ CULTURE G</div>
   <div class="question-number" id="questionNumber">QUESTION 1/20</div>
  </div>
 
@@ -349,12 +451,16 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
    <span>❤️ OBJECTIF DE LIKES</span>
    <span class="likes-number" id="likesNumber">0 / 500</span>
   </div>
-  <div class="likes-track"><div class="likes-fill" id="likesFill"></div></div>
+  <div class="likes-track">
+   <div class="likes-fill" id="likesFill"></div>
+  </div>
  </section>
 
  <section class="question-card">
   <div class="theme" id="theme">GÉOGRAPHIE</div>
-  <div class="question-text" id="questionText">Quelle est la capitale du Japon ?</div>
+  <div class="question-text" id="questionText">
+   Quelle est la capitale du Japon ?
+  </div>
  </section>
 
  <section class="timer-area">
@@ -362,12 +468,32 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
    <span>TEMPS POUR RÉPONDRE</span>
    <span class="timer-number" id="timerNumber">10 SECONDES</span>
   </div>
-  <div class="timer-track"><div class="timer-fill" id="timerFill"></div></div>
+  <div class="timer-track">
+   <div class="timer-fill" id="timerFill"></div>
+  </div>
  </section>
 
- <section class="answers" id="answers"></section>
+ <section class="answers" id="answers">
+  <div class="answer answer-a">
+   <span class="answer-letter">A</span>
+   <span class="answer-text">Kyoto</span>
+  </div>
+  <div class="answer answer-b">
+   <span class="answer-letter">B</span>
+   <span class="answer-text">Tokyo</span>
+  </div>
+  <div class="answer answer-c">
+   <span class="answer-letter">C</span>
+   <span class="answer-text">Osaka</span>
+  </div>
+  <div class="answer answer-d">
+   <span class="answer-letter">D</span>
+   <span class="answer-text">Nagoya</span>
+  </div>
+ </section>
 
  <div class="chat-instruction">TAPEZ VOTRE RÉPONSE DANS LE CHAT !</div>
+
  <div class="chat-letters">
   <div class="chat-letter a">A</div>
   <div class="chat-letter b">B</div>
@@ -379,26 +505,28 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
   <div class="gift rose">
    <div class="gift-emoji">🌹</div>
    <div class="gift-name">ROSE</div>
-   <div class="gift-description">Double le prochain gain</div>
+   <div class="gift-description">Double les points</div>
   </div>
   <div class="gift ice">
    <div class="gift-emoji">🧊</div>
-   <div class="gift-name">20 PIÈCES</div>
-   <div class="gift-description">Gèle temporairement le premier</div>
+   <div class="gift-name">GEL</div>
+   <div class="gift-description">Gèle le premier</div>
   </div>
   <div class="gift bomb">
    <div class="gift-emoji">💣</div>
-   <div class="gift-name">99+ PIÈCES</div>
-   <div class="gift-description">Vole la moitié des points du premier</div>
+   <div class="gift-name">BOMBE</div>
+   <div class="gift-description">Vole des points</div>
   </div>
  </section>
 
  <section class="part">
   <div class="part-label">
    <span>PROGRESSION DE LA PARTIE</span>
-   <span id="partNumber">PARTIE 1/2</span>
+   <span id="partNumber">PARTIE 1/16</span>
   </div>
-  <div class="part-track"><div class="part-fill" id="partFill"></div></div>
+  <div class="part-track">
+   <div class="part-fill" id="partFill"></div>
+  </div>
  </section>
 
  <section class="ranking">
@@ -406,329 +534,149 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
    <span>🏆 CLASSEMENT DU LIVE</span>
    <span>TOP 5</span>
   </div>
-  <div id="rankingList"></div>
+  <div id="rankingList">
+   <div class="ranking-row">
+    <span class="rank-number">1.</span>
+    <span class="rank-avatar">A</span>
+    <span class="rank-name">En attente</span>
+    <span class="rank-score">0 pts</span>
+   </div>
+  </div>
  </section>
 
- <div class="bottom-status" id="bottomStatus">JOUE • RÉPONDS • GAGNE</div>
-</section>
-
-<div class="controls">
- <button class="btn primary" onclick="startGame()">▶ LANCER</button>
- <button class="btn" onclick="togglePause()" id="pauseBtn">Ⅱ PAUSE</button>
- <button class="btn" onclick="nextQuestion()">QUESTION SUIVANTE ↗</button>
- <button class="btn" onclick="resetGame()">↻ RECOMMENCER</button>
-</div>
-
-<section class="support-panel">
- <div class="support-title">💜 MERCI À NOS SOUTIENS</div>
- <div class="support-inner" id="supportInner">En attente des premiers soutiens…</div>
-</section>
+ <div class="bottom-status" id="bottomStatus">
+  JOUE • RÉPONDS • GAGNE
+ </div>
 
 </main>
 
-<aside class="sidebar">
-
- <section class="panel">
-  <div class="panel-title">🏆 CLASSEMENT GÉNÉRAL <span>TOP 7</span></div>
-  <div id="leaderboard"></div>
- </section>
-
- <section class="panel">
-  <div class="panel-title">🗳️ VOTES EN DIRECT <span>PAR RÉPONSE</span></div>
-  <div id="voteBars"></div>
-  <div class="demo-note">Nombre de votes reçus par réponse.</div>
- </section>
-
- <section class="panel">
-  <div class="panel-title">👥 DERNIERS VOTANTS <span id="voterTotal">0</span></div>
-  <div class="voters" id="voters">
-   <span class="voter">En attente des votes…</span>
-  </div>
- </section>
-
- <section class="panel">
-  <div class="panel-title">🎙️ ANIMATEUR <span id="audioState">OFF</span></div>
-  <button class="btn primary" style="width:100%" onclick="enableAudio()">🔊 ACTIVER LA VOIX ET LE SON</button>
-  <button class="btn" style="width:100%;margin-top:8px" onclick="toggleMusic()" id="musicButton">♫ MUSIQUE ON / OFF</button>
-  <div class="music-controls">
-   <small>VOLUME</small>
-   <input type="range" id="musicVolume" min="0" max="100" value="22" oninput="setMusicVolume(this.value)">
-   <small id="musicVolumeLabel">22 %</small>
-  </div>
-  <div class="demo-note">Musique originale. Volume indépendant de la voix et des annonces.</div>
- </section>
-
- <section class="panel wide">
-  <div class="panel-title">🧪 OUTILS DE SIMULATION <span>ADMINISTRATION</span></div>
-
-  <div class="demo-grid">
-   <div class="demo-card">
-    <h3>🗳️ VOTES</h3>
-    <select id="votePlayer"></select>
-    <select id="voteChoice">
-     <option value="0">Réponse A</option>
-     <option value="1">Réponse B</option>
-     <option value="2">Réponse C</option>
-     <option value="3">Réponse D</option>
-    </select>
-    <button class="btn green" onclick="manualVote()">Envoyer un faux vote</button>
-    <button class="btn" onclick="simulateCorrect()">Bonne réponse</button>
-    <button class="btn" onclick="simulateVoteBatch()">Simuler 10 votes</button>
-    <button class="btn primary" onclick="revealAnswer()">Révéler la réponse</button>
-   </div>
-
-   <div class="demo-card">
-    <h3>🎁 CADEAUX</h3>
-    <select id="giftPlayer"></select>
-    <button class="btn green" onclick="simulateFollow()">⭐ Abonnement</button>
-    <button class="btn" onclick="simulateRose()">🌹 Rose</button>
-    <button class="btn" onclick="simulateIce()">🧊 Gel 20 pièces</button>
-    <button class="btn red" onclick="simulateBomb()">💣 Bombe 99+</button>
-   </div>
-
-   <div class="demo-card">
-    <h3>❤️ LIKES ET CLASSEMENT</h3>
-    <button class="btn" onclick="addLikes(50)">+50 likes</button>
-    <button class="btn" onclick="addLikes(100)">+100 likes</button>
-    <button class="btn green" onclick="addLikes(500)">Atteindre 500 likes</button>
-    <button class="btn" onclick="showPodium()">🏆 Tester le podium</button>
-    <button class="btn" onclick="announceTest()">🎙️ Tester la voix</button>
-   </div>
-  </div>
-
-  <div class="demo-note">
-   Bonne réponse : 100 points + 10 points par seconde restante.
-   Abonnement : prochain gain x2. Rose : prochain gain x2.
-   500 likes : prochaine question x2.
-   Gel : bloque temporairement les gains du premier.
-   Bombe : transfère la moitié des points du premier au donneur.
-  </div>
-
-  <div class="eventlog">
-   <h3>JOURNAL DES ÉVÉNEMENTS</h3>
-   <div id="logs"></div>
-  </div>
- </section>
-</aside>
-</div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<div class="modal" id="podiumModal">
- <div class="modalbox">
-  <h2>🏆 CLASSEMENT DE LA MANCHE</h2>
-  <p id="podiumSubtitle">Classement général</p>
-  <div class="podium" id="podium"></div>
-  <div class="modal-list" id="topSeven"></div>
-  <button class="btn primary" style="width:100%;margin-top:15px" onclick="closePodium()">FERMER</button>
- </div>
-</div>
-
 <script>
 const questions=[
-["🇯🇵","GÉOGRAPHIE","Quelle est la capitale du Japon ?",["Kyoto","Tokyo","Osaka","Nagoya"],1],
-["🇨🇦","GÉOGRAPHIE","Quelle est la capitale du Canada ?",["Toronto","Vancouver","Ottawa","Montréal"],2],
-["🇦🇺","GÉOGRAPHIE","Quel est le plus grand désert d'Australie ?",["Grand désert de Victoria","Simpson","Gibson","Tanami"],0],
-["🇧🇷","GÉOGRAPHIE","Quelle langue est principalement parlée au Brésil ?",["Espagnol","Portugais","Français","Italien"],1],
-["🇳🇴","GÉOGRAPHIE","Dans quelle région du monde se trouve la Norvège ?",["Balkans","Scandinavie","Caucase","Pays baltes"],1],
-["🇪🇬","GÉOGRAPHIE","Quel fleuve traverse l'Égypte ?",["Le Niger","Le Congo","Le Nil","Le Zambèze"],2],
-["🇨🇭","GÉOGRAPHIE","Combien de langues nationales compte la Suisse ?",["2","3","4","5"],2],
-["🇲🇽","HISTOIRE","Quelle civilisation est associée à Chichén Itzá ?",["Les Mayas","Les Incas","Les Aztèques","Les Olmèques"],0],
-["🇮🇳","GÉOGRAPHIE","Quelle est la capitale de l'Inde ?",["Mumbai","New Delhi","Jaipur","Kolkata"],1],
-["🇮🇸","GÉOGRAPHIE","Quelle est la capitale de l'Islande ?",["Oslo","Helsinki","Reykjavik","Nuuk"],2],
-["🇵🇪","GÉOGRAPHIE","Dans quel pays se trouve le Machu Picchu ?",["Bolivie","Pérou","Chili","Équateur"],1],
-["🇹🇷","GÉOGRAPHIE","Quelle ville se situe à cheval sur deux continents ?",["Ankara","Istanbul","Izmir","Antalya"],1],
-["🇿🇦","GÉOGRAPHIE","Combien de capitales officielles l'Afrique du Sud possède-t-elle ?",["1","2","3","4"],2],
-["🇳🇿","GÉOGRAPHIE","Quelle est la capitale de la Nouvelle-Zélande ?",["Auckland","Christchurch","Wellington","Hamilton"],2],
-["🇰🇷","GÉOGRAPHIE","Quelle est la capitale de la Corée du Sud ?",["Busan","Séoul","Incheon","Daegu"],1],
-["🇲🇦","GÉOGRAPHIE","Quelle est la capitale du Maroc ?",["Casablanca","Marrakech","Rabat","Fès"],2],
-["🇬🇷","HISTOIRE","Quelle cité antique est associée à la naissance de la démocratie ?",["Sparte","Athènes","Corinthe","Thèbes"],1],
-["🇩🇪","GÉOGRAPHIE","Quel fleuve traverse Cologne ?",["Danube","Rhin","Elbe","Oder"],1],
-["🇵🇹","GÉOGRAPHIE","Quelle est la capitale du Portugal ?",["Porto","Lisbonne","Braga","Coimbra"],1],
-["🇸🇪","GÉOGRAPHIE","Quelle est la monnaie de la Suède ?",["Euro","Couronne suédoise","Franc","Livre"],1]
+["GÉOGRAPHIE","Quelle est la capitale du Japon ?",["Kyoto","Tokyo","Osaka","Nagoya"],1],
+["GÉOGRAPHIE","Quelle est la capitale du Canada ?",["Toronto","Vancouver","Ottawa","Montréal"],2],
+["GÉOGRAPHIE","Quel est le plus grand désert d'Australie ?",["Grand désert de Victoria","Simpson","Gibson","Tanami"],0],
+["GÉOGRAPHIE","Quelle langue est principalement parlée au Brésil ?",["Espagnol","Portugais","Français","Italien"],1],
+["GÉOGRAPHIE","Dans quelle région du monde se trouve la Norvège ?",["Balkans","Scandinavie","Caucase","Pays baltes"],1],
+["GÉOGRAPHIE","Quel fleuve traverse l'Égypte ?",["Le Niger","Le Congo","Le Nil","Le Zambèze"],2],
+["GÉOGRAPHIE","Combien de langues nationales compte la Suisse ?",["2","3","4","5"],2],
+["HISTOIRE","Quelle civilisation est associée à Chichén Itzá ?",["Les Mayas","Les Incas","Les Aztèques","Les Olmèques"],0],
+["GÉOGRAPHIE","Quelle est la capitale de l'Inde ?",["Mumbai","New Delhi","Jaipur","Kolkata"],1],
+["GÉOGRAPHIE","Quelle est la capitale de l'Islande ?",["Oslo","Helsinki","Reykjavik","Nuuk"],2],
+["GÉOGRAPHIE","Dans quel pays se trouve le Machu Picchu ?",["Bolivie","Pérou","Chili","Équateur"],1],
+["GÉOGRAPHIE","Quelle ville se situe à cheval sur deux continents ?",["Ankara","Istanbul","Izmir","Antalya"],1],
+["GÉOGRAPHIE","Combien de capitales officielles l'Afrique du Sud possède-t-elle ?",["1","2","3","4"],2],
+["GÉOGRAPHIE","Quelle est la capitale de la Nouvelle-Zélande ?",["Auckland","Christchurch","Wellington","Hamilton"],2],
+["GÉOGRAPHIE","Quelle est la capitale de la Corée du Sud ?",["Busan","Séoul","Incheon","Daegu"],1],
+["GÉOGRAPHIE","Quelle est la capitale du Maroc ?",["Casablanca","Marrakech","Rabat","Fès"],2],
+["HISTOIRE","Quelle cité antique est associée à la naissance de la démocratie ?",["Sparte","Athènes","Corinthe","Thèbes"],1],
+["GÉOGRAPHIE","Quel fleuve traverse Cologne ?",["Danube","Rhin","Elbe","Oder"],1],
+["GÉOGRAPHIE","Quelle est la capitale du Portugal ?",["Porto","Lisbonne","Braga","Coimbra"],1],
+["GÉOGRAPHIE","Quelle est la monnaie de la Suède ?",["Euro","Couronne suédoise","Franc","Livre"],1]
 ];
 
-const names=[
- "Atlas_59","LunaQuiz","MaxPower","Nina_Off","GeoMaster",
- "TheoLive","Emma_200","PixelFox","MikaFR","SarahGame",
- "NoahPlay","Zoe_Quiz","LeoFR","MayaLive","TomGame"
+let questionIndex=0;
+let seconds=10;
+let likes=0;
+let timer=null;
+let revealed=false;
+
+let players=[
+ {name:"Atlas_59",score:1250},
+ {name:"LunaQuiz",score:980},
+ {name:"MaxPower",score:850},
+ {name:"Nina_Off",score:720},
+ {name:"GeoMaster",score:540},
+ {name:"TheoLive",score:430},
+ {name:"Emma_200",score:310},
+ {name:"PixelFox",score:250}
 ];
-
-let people=names.map(name=>({
- name,avatar:name[0].toUpperCase(),score:0,
- subNext:false,rose:false,frozenUntil:0
-}));
-
-let supporters=[],voterNames=[],votes=[0,0,0,0];
-let index=-1,round=1,seconds=10;
-let active=false,paused=false,answered=false,timer=null;
-let likes=0,bonusNext=false,currentQuestionBonus=false;
-let votedUsers=new Set();
-let firstCorrectPlayer=null;
-let audioEnabled=false,musicOn=false,audioCtx=null;
-let musicTimer=null,musicMaster=null;
-let voiceQueue=[],speaking=false;
 
 const $=id=>document.getElementById(id);
-const sorted=()=>[...people].sort((a,b)=>b.score-a.score);
-const current=()=>questions[index];
 
-function escapeHTML(s){
- return String(s).replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+function renderRanking(){
+ const top=players
+  .slice()
+  .sort((a,b)=>b.score-a.score)
+  .slice(0,5);
+
+ $("rankingList").innerHTML=top.map((p,i)=>`
+  <div class="ranking-row">
+   <span class="rank-number">${i+1}.</span>
+   <span class="rank-avatar">${escapeHTML(p.name.charAt(0).toUpperCase())}</span>
+   <span class="rank-name">${escapeHTML(p.name)}</span>
+   <span class="rank-score">${p.score.toLocaleString("fr-FR")} pts</span>
+  </div>
+ `).join("");
+}
+
+function escapeHTML(value){
+ return String(value).replace(/[&<>"']/g,c=>({
+  "&":"&amp;",
+  "<":"&lt;",
+  ">":"&gt;",
+  '"':"&quot;",
+  "'":"&#39;"
  }[c]));
 }
 
-function toast(s){
- $("toast").textContent=s;
- $("toast").classList.add("show");
- setTimeout(()=>$("toast").classList.remove("show"),2300);
-}
-
-function log(s){
- const d=document.createElement("div");
- d.className="logline";
- d.textContent=new Date().toLocaleTimeString("fr-FR")+" · "+s;
- $("logs").prepend(d);
-}
-
-function notify(icon,label,message){
- const area=$("notificationArea");
- const card=document.createElement("div");
- card.className="live-notification";
- card.innerHTML=`<div class="notif-icon">${icon}</div>
- <div class="notif-content">
- <div class="notif-label">${escapeHTML(label)}</div>
- <div class="notif-message">${message}</div></div>`;
- area.prepend(card);
- while(area.children.length>3)area.lastElementChild.remove();
- setTimeout(()=>card.remove(),5000);
-}
-
-function updateSelects(){
- const opts=people.map((p,i)=>
- `<option value="${i}">${escapeHTML(p.name)}</option>`).join("");
- $("votePlayer").innerHTML=opts;
- $("giftPlayer").innerHTML=opts;
-}
-
-function renderBoard(){
- const list=sorted();
-
- $("leaderboard").innerHTML=list.slice(0,7).map((p,i)=>`
- <div class="player">
- <span class="rank">${i+1}.</span>
- <span class="avatar">${escapeHTML(p.avatar)}</span>
- <span class="player-name">${escapeHTML(p.name)}</span>
- <span class="player-score">${p.score.toLocaleString("fr-FR")} pts</span>
- </div>`).join("");
-
- $("rankingList").innerHTML=list.slice(0,5).map((p,i)=>`
- <div class="ranking-row">
- <span class="rank-number">${i+1}.</span>
- <span class="rank-avatar">${escapeHTML(p.avatar)}</span>
- <span class="rank-name">${escapeHTML(p.name)}</span>
- <span class="rank-score">${p.score.toLocaleString("fr-FR")} pts</span>
- </div>`).join("");
-}
-
-function renderVotes(){
- $("voteBars").innerHTML=votes.map((v,i)=>`
- <div class="vote-line">
- <b>${"ABCD"[i]}</b>
- <div class="vote-bg"><i style="width:${Math.min(100,v*8)}%"></i></div>
- <small>${v} vote${v===1?"":"s"}</small>
- </div>`).join("");
-
- $("voterTotal").textContent=voterNames.length;
- $("voters").innerHTML=voterNames.length?
- voterNames.slice(-16).reverse().map(n=>
- `<span class="voter">${escapeHTML(n)}</span>`).join("") :
- '<span class="voter">En attente des votes…</span>';
-}
-
-function renderLikes(){
- $("likesNumber").textContent=likes+" / 500";
- $("likesFill").style.width=Math.min(100,likes/5)+"%";
-}
-
-function renderSupports(){
- $("supportInner").textContent=supporters.length?
- supporters.map(n=>"💜 "+n).join(" · "):
- "En attente des premiers soutiens…";
-}
-
 function renderQuestion(){
- const q=current();
+ const q=questions[questionIndex];
 
- $("questionNumber").textContent=`QUESTION ${index+1}/${questions.length}`;
- $("theme").textContent=q[1];
- $("questionText").textContent=q[2];
+ $("questionNumber").textContent=
+  `QUESTION ${questionIndex+1}/${questions.length}`;
 
- $("answers").innerHTML=q[3].map((a,i)=>`
- <div class="answer answer-${"abcd"[i]}" id="ans${i}">
- <span class="answer-letter">${"ABCD"[i]}</span>
- <span class="answer-text">${escapeHTML(a)}</span>
- </div>`).join("");
+ $("theme").textContent=q[0];
+ $("questionText").textContent=q[1];
 
- $("partNumber").textContent=`PARTIE ${round}/2`;
- $("partFill").style.width=((index+1)/questions.length*100)+"%";
+ $("answers").innerHTML=q[2].map((answer,i)=>`
+  <div class="answer answer-${"abcd"[i]}" id="answer${i}">
+   <span class="answer-letter">${"ABCD"[i]}</span>
+   <span class="answer-text">${escapeHTML(answer)}</span>
+  </div>
+ `).join("");
 
- votes=[0,0,0,0];
- voterNames=[];
- votedUsers.clear();
- firstCorrectPlayer=null;
- answered=false;
+ revealed=false;
  seconds=10;
-
- $("bottomStatus").textContent="JOUE • RÉPONDS • GAGNE";
- renderVotes();
  updateTimer();
+ $("bottomStatus").textContent="JOUE • RÉPONDS • GAGNE";
 }
 
 function updateTimer(){
  $("timerNumber").textContent=seconds+" SECONDES";
  $("timerFill").style.width=(seconds/10*100)+"%";
- $("timerNumber").style.color=seconds<=3?"#ff5368":"#58d7ff";
- $("timerFill").style.background=seconds<=3?
- "#ff5368":"linear-gradient(90deg,#32df9a,#36baff)";
-}
 
-function startGame(){
- if(active&&!paused)return;
-
- if(index===-1){
-  index=0;likes=0;bonusNext=false;
+ if(seconds<=3){
+  $("timerNumber").style.color="#ff5368";
+  $("timerFill").style.background="#ff5368";
+ }else{
+  $("timerNumber").style.color="#58d7ff";
+  $("timerFill").style.background=
+   "linear-gradient(90deg,#32df9a,#36baff)";
  }
-
- active=true;
- paused=false;
- clearInterval(timer);
-
- currentQuestionBonus=bonusNext;
- bonusNext=false;
-
- renderLikes();
- renderQuestion();
-
- $("pauseBtn").textContent="Ⅱ PAUSE";
- $("bottomStatus").textContent="PRÉPAREZ-VOUS";
-
- speakQuestion(()=>{
-  if(!active||paused||answered)return;
-  beginTimer();
- });
 }
 
-function beginTimer(){
+function revealAnswer(){
+ if(revealed)return;
+ revealed=true;
+
+ const correct=questions[questionIndex][4];
+
+ document.querySelectorAll(".answer").forEach((el,i)=>{
+  el.classList.add(i===correct?"correct":"wrong");
+ });
+
+ $("bottomStatus").textContent="RÉPONSE RÉVÉLÉE";
  clearInterval(timer);
 
- $("bottomStatus").textContent="À VOUS DE JOUER";
+ setTimeout(nextQuestion,3500);
+}
+
+function startTimer(){
+ clearInterval(timer);
+ seconds=10;
+ updateTimer();
 
  timer=setInterval(()=>{
-  if(paused||answered)return;
-
   seconds--;
   updateTimer();
 
@@ -742,630 +690,69 @@ function beginTimer(){
 function nextQuestion(){
  clearInterval(timer);
 
- if(index<0){
-  index=0;
- }else if(index>=questions.length-1){
-  showPodium();
-  round++;
-  index=0;
-  people.forEach(p=>p.frozenUntil=0);
- }else{
-  index++;
+ questionIndex++;
+
+ if(questionIndex>=questions.length){
+  questionIndex=0;
  }
 
- likes=0;
- active=false;
- paused=false;
- answered=false;
-
- startGame();
+ renderQuestion();
+ startTimer();
 }
 
-function togglePause(){
- if(index<0||answered)return;
+function updateLikes(amount){
+ likes=Math.min(500,likes+amount);
 
- paused=!paused;
- $("pauseBtn").textContent=paused?"▶ REPRENDRE":"Ⅱ PAUSE";
+ $("likesNumber").textContent=
+  likes.toLocaleString("fr-FR")+" / 500";
 
- if(paused){
-  clearInterval(timer);
-  if(window.speechSynthesis)speechSynthesis.cancel();
-  voiceQueue=[];
-  speaking=false;
-  $("bottomStatus").textContent="PAUSE";
- }else{
-  beginTimer();
-  speak("Et c'est reparti !");
+ $("likesFill").style.width=(likes/500*100)+"%";
+}
+
+function updatePart(number){
+ const part=Math.max(1,Math.min(16,number));
+
+ $("partNumber").textContent=`PARTIE ${part}/16`;
+ $("partFill").style.width=(part/16*100)+"%";
+}
+
+/* Aperçu autonome : likes simulés pour tester la progression. */
+function simulateLiveLikes(){
+ if(likes<500){
+  updateLikes(Math.floor(Math.random()*8)+2);
  }
 }
 
-function submitVote(person,choice,userId){
- if(index<0||answered||!active){
-  toast("Aucune question en cours.");
-  return;
+renderQuestion();
+renderRanking();
+updatePart(1);
+startTimer();
+
+setInterval(simulateLiveLikes,1800);
+
+/* Raccourcis clavier pour tester l'aperçu sans ajouter de boutons. */
+document.addEventListener("keydown",event=>{
+ if(event.code==="ArrowRight"){
+  nextQuestion();
  }
-
- if(!person||choice<0||choice>3)return;
-
- const key=userId||person.name;
-
- if(votedUsers.has(key)){
-  toast(person.name+" a déjà voté.");
-  return;
+ if(event.code==="ArrowLeft"){
+  questionIndex=Math.max(0,questionIndex-1);
+  renderQuestion();
+  startTimer();
  }
-
- votedUsers.add(key);
- votes[choice]++;
- voterNames.push(person.name);
- renderVotes();
-
- log(person.name+" vote "+ "ABCD"[choice]);
-
- if(choice===current()[4]){
-  if(!firstCorrectPlayer)firstCorrectPlayer=person.name;
-
-  const base=100+Math.max(0,seconds)*10;
-  let multiplier=1;
-
-  if(person.subNext){
-   multiplier*=2;
-   person.subNext=false;
-  }
-
-  if(person.rose){
-   multiplier*=2;
-   person.rose=false;
-  }
-
-  if(currentQuestionBonus)multiplier*=2;
-
-  if(person.frozenUntil>=index+1){
-   log(person.name+" trouve mais est gelé : aucun point.");
+ if(event.code==="Space"){
+  event.preventDefault();
+  if(timer){
+   clearInterval(timer);
+   timer=null;
+   $("bottomStatus").textContent="PAUSE";
   }else{
-   const gain=base*multiplier;
-   person.score+=gain;
-   log(person.name+" gagne "+gain+" points.");
+   $("bottomStatus").textContent="JOUE • RÉPONDS • GAGNE";
+   startTimer();
   }
-
-  renderBoard();
  }
-}
-
-function manualVote(){
- submitVote(
-  people[+$("votePlayer").value],
-  +$("voteChoice").value
- );
-}
-
-function simulateCorrect(){
- if(index<0)return toast("Lance d'abord la partie.");
- const p=people[+$("votePlayer").value];
- submitVote(p,current()[4]);
-}
-
-function simulateVoteBatch(){
- if(index<0||answered||!active)
-  return toast("Lance une question avant les votes.");
-
- const available=people.filter(p=>!votedUsers.has(p.name));
-
- for(let i=0;i<Math.min(10,available.length);i++){
-  const p=available[i];
-  const c=Math.random()<.55?
-   current()[4]:Math.floor(Math.random()*4);
-  submitVote(p,c);
- }
-}
-
-function revealAnswer(){
- if(index<0||answered)return;
-
- answered=true;
- active=false;
- clearInterval(timer);
-
- const q=current();
-
- q[3].forEach((a,i)=>{
-  const el=$("ans"+i);
-  if(el)el.classList.add(i===q[4]?"correct":"wrong");
- });
-
- $("bottomStatus").textContent="RÉPONSE RÉVÉLÉE";
-
- sfx("correct");
-
- if(firstCorrectPlayer){
-  notify("🏆","PREMIER À AVOIR TROUVÉ",
-   `Bravo à <strong>${escapeHTML(firstCorrectPlayer)}</strong> !`);
-
-  speak("La bonne réponse était "+q[3][q[4]]+
-   ". Bravo à "+firstCorrectPlayer+" qui a trouvé en premier !");
-
-  log("Premier à trouver : "+firstCorrectPlayer);
- }else{
-  notify("⏱️","FIN DE LA QUESTION",
-   "Personne n'a trouvé cette fois !");
-
-  speak("La bonne réponse était "+q[3][q[4]]+
-   ". Personne n'a trouvé cette fois.");
-
-  log("Personne n'a trouvé la bonne réponse.");
- }
-
- renderBoard();
-
- setTimeout(()=>{
-  if(answered)nextQuestion();
- },3500);
-}
-
-function addLikes(n){
- if(index<0||answered||!active)
-  return toast("Aucune question active.");
-
- const before=likes;
- likes=Math.min(500,likes+n);
-
- if(before<500&&likes>=500){
-  bonusNext=true;
-
-  toast("500 likes atteints ! Prochaine question doublée.");
-
-  notify("❤️","OBJECTIF ATTEINT",
-   "Les <strong>500 likes</strong> sont atteints !");
-
-  speak("Incroyable ! 500 likes atteints ! Les points de la prochaine question seront doublés !");
-
-  log("500 likes atteints : bonus pour la prochaine question.");
- }
-
- renderLikes();
-}
-
-function selectedPlayer(){
- return people[+$("giftPlayer").value];
-}
-
-function addSupport(p){
- supporters.push(p.name);
- renderSupports();
-}
-
-function simulateFollow(){
- const p=selectedPlayer();
- if(!p)return;
-
- p.subNext=true;
- addSupport(p);
-
- notify("⭐","NOUVEL ABONNEMENT",
-  `Merci <strong>${escapeHTML(p.name)}</strong> pour ton abonnement !`);
-
- speak("Merci "+p.name+" pour ton abonnement ! Ton prochain gain sera doublé !");
-
- log(p.name+" reçoit un abonnement : prochain gain x2.");
-}
-
-function simulateRose(){
- const p=selectedPlayer();
- if(!p)return;
-
- p.rose=true;
- addSupport(p);
-
- notify("🌹","CADEAU REÇU",
-  `Merci <strong>${escapeHTML(p.name)}</strong> pour ta rose !`);
-
- speak("Merci "+p.name+" pour ta rose ! Ton prochain gain sera doublé !");
-
- log(p.name+" reçoit une rose : prochain gain x2.");
-}
-
-function simulateIce(){
- const p=selectedPlayer();
- const leader=sorted()[0];
-
- if(!p||!leader)return;
-
- if(index<0)return toast("Lance d'abord une partie.");
-
- leader.frozenUntil=index+2;
- addSupport(p);
-
- notify("🧊","CADEAU SPÉCIAL",
-  `<strong>${escapeHTML(p.name)}</strong> gèle le premier : ${escapeHTML(leader.name)} !`);
-
- speak(p.name+" envoie un cadeau ! "+
-  leader.name+" est temporairement gelé !");
-
- log(p.name+" gèle "+leader.name+".");
-}
-
-function simulateBomb(){
- const p=selectedPlayer();
- const leader=sorted()[0];
-
- if(!p||!leader)return;
-
- if(leader.name===p.name)
-  return toast("Le premier ne peut pas se voler lui-même.");
-
- const stolen=Math.floor(leader.score/2);
-
- leader.score-=stolen;
- p.score+=stolen;
-
- addSupport(p);
- renderBoard();
-
- notify("💣","GROS CADEAU",
-  `<strong>${escapeHTML(p.name)}</strong> récupère ${stolen.toLocaleString("fr-FR")} points à ${escapeHTML(leader.name)} !`);
-
- speak("Quel retournement ! "+p.name+" récupère "+
-  stolen+" points à "+leader.name+" !");
-
- log(p.name+" vole "+stolen+" points à "+leader.name+".");
-}
-
-function showPodium(){
- const list=sorted();
-
- $("podium").innerHTML=list.slice(0,3).map((p,i)=>`
- <div>
- <div style="font-size:25px">${["🥇","🥈","🥉"][i]}</div>
- <strong>${escapeHTML(p.name)}</strong>
- <small>${p.score.toLocaleString("fr-FR")} pts</small>
- </div>`).join("");
-
- $("topSeven").innerHTML="<b>TOP 7</b><br>"+
- list.slice(0,7).map((p,i)=>
- `${i+1}. ${escapeHTML(p.name)} — ${p.score.toLocaleString("fr-FR")} pts`
- ).join("<br>");
-
- $("podiumSubtitle").textContent="Classement général — manche "+round;
- $("podiumModal").classList.add("show");
-
- speak("Voici le classement ! En troisième position, "+
- (list[2]?.name||"personne")+
- ". En deuxième position, "+(list[1]?.name||"personne")+
- ". Et en première position, "+(list[0]?.name||"personne")+" !");
-}
-
-function closePodium(){
- $("podiumModal").classList.remove("show");
-}
-
-function resetGame(){
- clearInterval(timer);
-
- active=false;
- paused=false;
- answered=false;
- index=-1;
- round=1;
- seconds=10;
- likes=0;
- bonusNext=false;
- currentQuestionBonus=false;
-
- votedUsers.clear();
- firstCorrectPlayer=null;
- voiceQueue=[];
-
- if(window.speechSynthesis)speechSynthesis.cancel();
- speaking=false;
-
- people.forEach(p=>{
-  p.score=0;
-  p.subNext=false;
-  p.rose=false;
-  p.frozenUntil=0;
- });
-
- votes=[0,0,0,0];
- voterNames=[];
- supporters=[];
-
- $("questionNumber").textContent="QUESTION 1/20";
- $("theme").textContent="GÉOGRAPHIE";
- $("questionText").textContent="Quelle est la capitale du Japon ?";
- $("answers").innerHTML="";
- $("partNumber").textContent="PARTIE 1/2";
- $("partFill").style.width="0%";
- $("bottomStatus").textContent="JOUE • RÉPONDS • GAGNE";
- $("pauseBtn").textContent="Ⅱ PAUSE";
- $("timerNumber").textContent="10 SECONDES";
- $("timerFill").style.width="100%";
-
- $("podiumModal").classList.remove("show");
-
- renderBoard();
- renderVotes();
- renderLikes();
- renderSupports();
-
- log("Simulation réinitialisée.");
-}
-
-function chooseFrenchVoice(){
- if(!window.speechSynthesis)return null;
-
- const voices=speechSynthesis.getVoices();
- const french=voices.filter(v=>
-  v.lang&&v.lang.toLowerCase().startsWith("fr")
- );
-
- return french.find(v=>
-  /denise|henri|google.*français|france/i.test(v.name)
- )||french[0]||null;
-}
-
-function speak(msg,callback){
- if(!audioEnabled||!window.speechSynthesis){
-  if(callback)callback();
-  return;
- }
-
- voiceQueue.push({text:msg,callback});
-
- if(!speaking)playNext();
-}
-
-function playNext(){
- if(!voiceQueue.length){
-  speaking=false;
-  return;
- }
-
- speaking=true;
-
- const item=voiceQueue.shift();
- const u=new SpeechSynthesisUtterance(item.text);
-
- u.lang="fr-FR";
- u.rate=.94;
- u.pitch=1.04;
- u.volume=1;
-
- const voice=chooseFrenchVoice();
- if(voice)u.voice=voice;
-
- let finished=false;
-
- const finish=()=>{
-  if(finished)return;
-  finished=true;
-  speaking=false;
-
-  if(item.callback)item.callback();
-  playNext();
- };
-
- u.onend=finish;
- u.onerror=finish;
-
- speechSynthesis.speak(u);
-}
-
-function speakSequence(messages,callback){
- if(!audioEnabled){
-  if(callback)callback();
-  return;
- }
-
- messages.forEach((message,i)=>
-  speak(message,i===messages.length-1?callback:null)
- );
-}
-
-function speakQuestion(callback){
- if(!audioEnabled){
-  if(callback)callback();
-  return;
- }
-
- const q=current();
-
- const phrases=[
-  "Attention tout le monde ! Voici la prochaine question.",
-  "Question numéro "+(index+1)+".",
-  q[2],
-  "Voici les quatre propositions."
- ];
-
- q[3].forEach((a,i)=>
-  phrases.push("Réponse "+ "ABCD"[i]+". "+a+".")
- );
-
- phrases.push("Vous avez dix secondes. C'est parti !");
-
- speakSequence(phrases,callback);
-}
-
-function announceTest(){
- speakSequence([
-  "Bonsoir à tous et bienvenue dans FLAG LIVE !",
-  "Préparez-vous, le grand quiz va commencer.",
-  "Soyez rapides, chaque seconde compte !"
- ]);
-}
-
-function ensureAudio(){
- try{
-  audioCtx=audioCtx||new(
-   window.AudioContext||window.webkitAudioContext
-  )();
-
-  if(audioCtx.state==="suspended")audioCtx.resume();
-
-  return true;
- }catch(e){
-  toast("Audio indisponible.");
-  return false;
- }
-}
-
-function enableAudio(){
- audioEnabled=true;
- ensureAudio();
-
- $("audioState").textContent="ACTIVÉ";
-
- toast("Voix activée !");
-
- speakSequence([
-  "Bienvenue dans FLAG LIVE !",
-  "Le quiz va bientôt commencer !"
- ]);
-
- startMusic();
-}
-
-function setMusicVolume(value){
- const v=Number(value);
-
- $("musicVolumeLabel").textContent=v+" %";
-
- if(musicMaster&&audioCtx){
-  musicMaster.gain.setTargetAtTime(
-   (v/100)*.035,
-   audioCtx.currentTime,
-   .08
-  );
- }
-}
-
-function startMusic(){
- if(musicOn||!ensureAudio())return;
-
- musicOn=true;
- $("musicButton").textContent="♫ MUSIQUE : ON";
-
- musicMaster=audioCtx.createGain();
- musicMaster.gain.value=
-  (Number($("musicVolume").value)/100)*.035;
-
- musicMaster.connect(audioCtx.destination);
-
- const chords=[
-  [130.81,164.81,196],
-  [110,146.83,174.61],
-  [98,130.81,164.81],
-  [116.54,146.83,174.61]
- ];
-
- let step=0;
-
- function playSoftChord(){
-  if(!musicOn||!audioCtx)return;
-
-  chords[step%chords.length].forEach((freq,i)=>{
-   const osc=audioCtx.createOscillator();
-   const gain=audioCtx.createGain();
-
-   osc.type="sine";
-   osc.frequency.value=freq;
-
-   gain.gain.setValueAtTime(.0001,audioCtx.currentTime);
-   gain.gain.linearRampToValueAtTime(
-    i===0?.24:.12,
-    audioCtx.currentTime+.7
-   );
-   gain.gain.setTargetAtTime(
-    .0001,
-    audioCtx.currentTime+2.8,
-    .8
-   );
-
-   osc.connect(gain);
-   gain.connect(musicMaster);
-
-   osc.start();
-   osc.stop(audioCtx.currentTime+6);
-  });
-
-  step++;
- }
-
- playSoftChord();
- musicTimer=setInterval(playSoftChord,4200);
-}
-
-function stopMusic(){
- musicOn=false;
- clearInterval(musicTimer);
-
- if(musicMaster&&audioCtx){
-  const old=musicMaster;
-
-  old.gain.setTargetAtTime(
-   .0001,
-   audioCtx.currentTime,
-   .05
-  );
-
-  setTimeout(()=>{
-   try{old.disconnect()}catch(e){}
-  },500);
- }
-
- musicMaster=null;
- $("musicButton").textContent="♫ MUSIQUE : OFF";
-}
-
-function toggleMusic(){
- if(!audioEnabled){
-  audioEnabled=true;
-  ensureAudio();
-  $("audioState").textContent="ACTIVÉ";
- }
-
- if(musicOn){
-  stopMusic();
-  toast("Musique coupée");
- }else{
-  startMusic();
-  toast("Ambiance activée");
- }
-}
-
-function sfx(kind){
- if(!audioCtx||!audioEnabled)return;
-
- const play=(f,d)=>{
-  const o=audioCtx.createOscillator();
-  const g=audioCtx.createGain();
-
-  o.frequency.value=f;
-  o.type="sine";
-  g.gain.value=.025;
-
-  o.connect(g);
-  g.connect(audioCtx.destination);
-  o.start();
-
-  g.gain.exponentialRampToValueAtTime(
-   .001,
-   audioCtx.currentTime+d
-  );
-
-  o.stop(audioCtx.currentTime+d);
- };
-
- if(kind==="correct"){
-  play(523,.15);
-  setTimeout(()=>play(659,.15),150);
-  setTimeout(()=>play(784,.25),300);
- }
-}
-
-updateSelects();
-renderBoard();
-renderVotes();
-renderLikes();
-renderSupports();
+});
 </script>
+
 </body>
 </html>
