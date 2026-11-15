@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -689,7 +688,7 @@ body{
 
  <section class="message-bar">
   <div class="message-text" id="messageText">
-   ⭐ Abonne-toi pour profiter du bonus x2 !
+   ⭐ Abonne-toi pour profiter du bonus x2 permanent !
   </div>
  </section>
 
@@ -697,7 +696,7 @@ body{
   <div class="gift rose">
    <div class="gift-emoji">🌹</div>
    <div class="gift-name">ROSE</div>
-   <div class="gift-description">POINTS DOUBLÉS</div>
+   <div class="gift-description">POINTS DOUBLÉS À LA PROCHAINE MANCHE</div>
   </div>
 
   <div class="gift ice">
@@ -899,6 +898,12 @@ let frozenPlayer=null;
 let frozenUntil=0;
 let players=[];
 
+/* BONUS ET RÉPONSES DE LA MANCHE */
+
+let roundAnswers=[];
+let globalDoubleNext=false;
+let roundValidated=false;
+
 const $=id=>document.getElementById(id);
 
 function getPlayer(name){
@@ -911,9 +916,9 @@ function getPlayer(name){
   player={
    name,
    score:0,
-   multiplier:1,
-   answered:[],
-   subscribed:false
+   subscribed:false,
+   roseNext:false,
+   answered:[]
   };
   players.push(player);
  }
@@ -953,12 +958,12 @@ function escapeHTML(value){
 /* BARRE DE MESSAGES */
 
 const tickerMessages=[
- "⭐ Abonne-toi pour profiter du bonus x2 !",
+ "⭐ Abonne-toi pour profiter du bonus x2 permanent !",
  "🎯 Nous sommes à la partie 1 sur 16 !",
  "💬 Tape A, B, C ou D dans le chat pour répondre !",
  "🏆 Qui va prendre la première place du classement ?",
  "❤️ Pense à liker le live pour atteindre les 500 likes !",
- "🌹 Envoie une rose pour doubler tes points !",
+ "🌹 Envoie une rose pour doubler tes points à la prochaine manche !",
  "🧊 Le glaçon permet de geler le premier du classement !",
  "💣 La bombe permet de voler la moitié des points du premier !"
 ];
@@ -1155,6 +1160,8 @@ function renderQuestion(){
  `).join("");
 
  revealed=false;
+ roundValidated=false;
+ roundAnswers=[];
  seconds=10;
  updateTimer();
 
@@ -1167,6 +1174,8 @@ function renderQuestion(){
  );
 
  updatePart(part);
+
+ /* Le classement n'est pas recalculé ici pendant une manche. */
  renderRanking();
 }
 
@@ -1211,6 +1220,76 @@ function pauseTimer(){
  }
 }
 
+/* VALIDATION DES POINTS À LA FIN DU CHRONO */
+
+function validateRound(){
+ if(roundValidated)return;
+
+ roundValidated=true;
+
+ const correctIndex=questions[questionIndex][3];
+
+ const correctAnswers=roundAnswers.filter(entry=>
+  entry.answerIndex===correctIndex
+ );
+
+ let firstCorrect=null;
+
+ if(correctAnswers.length){
+  firstCorrect=correctAnswers[0].player;
+ }
+
+ const globalMultiplier=globalDoubleNext?2:1;
+
+ correctAnswers.forEach((entry,index)=>{
+  const player=entry.player;
+
+  /* Un joueur gelé ne gagne aucun point pendant le gel. */
+  const isFrozen=
+   frozenPlayer===player.name &&
+   Date.now()<frozenUntil;
+
+  if(isFrozen)return;
+
+  const basePoints=index===0?400:100;
+  const roseMultiplier=player.roseNext?2:1;
+  const subscriptionMultiplier=player.subscribed?2:1;
+
+  const points=
+   basePoints*
+   roseMultiplier*
+   subscriptionMultiplier*
+   globalMultiplier;
+
+  player.score+=points;
+ });
+
+ /* Le bonus rose est consommé à la fin de cette manche,
+    même si le joueur n'a pas trouvé la bonne réponse. */
+ players.forEach(player=>{
+  player.roseNext=false;
+ });
+
+ /* Le bonus global des likes ne s'applique qu'à une manche. */
+ globalDoubleNext=false;
+
+ renderRanking();
+
+ if(firstCorrect){
+  const firstWasFrozen=
+   frozenPlayer===firstCorrect.name &&
+   Date.now()<frozenUntil;
+
+  if(!firstWasFrozen){
+   speak("Bravo "+firstCorrect.name+" ! Tu es le premier à avoir trouvé la bonne réponse !");
+  }
+ }
+
+ $("bottomStatus").textContent=
+  correctAnswers.length+
+  " BONNE(S) RÉPONSE(S) — POINTS ATTRIBUÉS";
+}
+
 function revealAnswer(){
  if(revealed || gameFinished)return;
 
@@ -1218,15 +1297,19 @@ function revealAnswer(){
  clearInterval(timer);
  timer=null;
 
+ /* Attribution des points uniquement maintenant. */
+ validateRound();
+
  const correct=questions[questionIndex][3];
 
  document.querySelectorAll(".answer").forEach((el,i)=>{
   el.classList.add(i===correct?"correct":"wrong");
  });
 
- $("bottomStatus").textContent="RÉPONSE RÉVÉLÉE";
+ $("bottomStatus").textContent=
+  "RÉPONSE RÉVÉLÉE — CLASSEMENT MIS À JOUR";
 
- speak("La bonne réponse était "+questions[questionIndex][2][correct]+".");
+ /* La voix ne donne pas la bonne réponse. */
 
  if(questionIndex===9){
   setTimeout(announceTop7,1800);
@@ -1238,7 +1321,7 @@ function revealAnswer(){
 /* RÉPONSES DES JOUEURS */
 
 function submitAnswer(username,letter){
- if(gameFinished || revealed)return;
+ if(gameFinished || revealed || roundValidated)return;
 
  const player=getPlayer(username);
  if(!player)return;
@@ -1251,26 +1334,16 @@ function submitAnswer(username,letter){
 
  player.answered.push(questionIndex);
 
- const correct=questions[questionIndex][3];
+ roundAnswers.push({
+  player,
+  answerIndex,
+  order:roundAnswers.length
+ });
 
- if(answerIndex===correct){
-  if(frozenPlayer===player.name && Date.now()<frozenUntil){
-   speak(player.name+" a trouvé la bonne réponse, mais ses points sont gelés.");
-   return;
-  }
+ $("bottomStatus").textContent=
+  "RÉPONSE ENREGISTRÉE — "+roundAnswers.length+" PARTICIPANT(S)";
 
-  const points=100*player.multiplier;
-  player.score+=points;
-
-  renderRanking();
-
-  $("bottomStatus").textContent=
-   player.name+" GAGNE "+points+" POINTS !";
-
-  speak("Bravo "+player.name+" ! Bonne réponse ! "+points+" points !");
- }else{
-  speak(player.name+" a donné une mauvaise réponse.");
- }
+ /* Aucun classement ni point n'est modifié ici. */
 }
 
 /* CADEAUX ET ABONNEMENTS */
@@ -1279,13 +1352,18 @@ function giveRose(username){
  const player=getPlayer(username);
  if(!player)return;
 
- player.multiplier*=2;
- renderRanking();
+ player.roseNext=true;
 
  $("bottomStatus").textContent=
-  "🌹 "+player.name+" : POINTS DOUBLÉS !";
+  "🌹 "+player.name+" : POINTS DOUBLÉS À LA PROCHAINE MANCHE !";
 
- speak("Merci pour la rose de "+player.name+". Ses points sont doublés !");
+ showTickerMessage(
+  "🌹 MERCI "+player.name.toUpperCase()+" ! TES POINTS SERONT DOUBLÉS À LA PROCHAINE MANCHE !",
+  "highlight",
+  6000
+ );
+
+ speak("Merci "+player.name+" pour la rose ! Tes points seront doublés à la prochaine manche !");
 }
 
 function subscribePlayer(username){
@@ -1295,20 +1373,17 @@ function subscribePlayer(username){
  if(player.subscribed)return;
 
  player.subscribed=true;
- player.multiplier*=2;
-
- renderRanking();
 
  $("bottomStatus").textContent=
-  "⭐ "+player.name+" : ABONNEMENT ET POINTS DOUBLÉS !";
+  "⭐ "+player.name+" : ABONNEMENT — BONUS X2 PERMANENT !";
 
  showTickerMessage(
-  "⭐ MERCI "+player.name.toUpperCase()+" POUR TON ABONNEMENT !",
+  "⭐ MERCI "+player.name.toUpperCase()+" POUR TON ABONNEMENT ! BONUS X2 PERMANENT !",
   "thanks",
   6000
  );
 
- speak("Merci "+player.name+" pour ton abonnement ! Tes points sont doublés !");
+ speak("Merci "+player.name+" pour ton abonnement ! Tu bénéficies maintenant du doublement permanent de tes points !");
 }
 
 function freezeLeader(username){
@@ -1342,7 +1417,7 @@ function bombLeader(username){
  $("bottomStatus").textContent=
   "💣 "+sender.name+" VOLE "+stolen+" POINTS À "+leader.name+" !";
 
- speak("Bombe ! "+sender.name+" vole "+stolen+" points à "+leader.name+" !");
+ speak("Bombe ! "+sender.name+" vole la moitié des points de "+leader.name+" !");
 }
 
 /* CLASSEMENT ET PODIUM */
@@ -1363,19 +1438,8 @@ function announceTop7(){
 
  $("bottomStatus").textContent="TOP 7 — FIN DE LA PREMIÈRE PHASE";
 
- const firstThree=top.slice(0,3);
- const messages=["Fin de la dixième question. Voici le top sept."];
-
- firstThree.forEach((p,i)=>{
-  messages.push(
-   (i===0?"Première place : ":i===1?"Deuxième place : ":"Troisième place : ")+
-   p.name+", avec "+p.score+" points."
-  );
- });
-
- speakSequence(messages,()=>{
-  setTimeout(nextQuestion,3500);
- });
+ /* Le classement n'est pas lu à voix haute. */
+ setTimeout(nextQuestion,3500);
 }
 
 function showFinalPodium(){
@@ -1400,16 +1464,7 @@ function showFinalPodium(){
 
  $("podium").classList.add("visible");
 
- const messages=["Le quiz est terminé ! Voici le podium final."];
-
- top.forEach((p,i)=>{
-  messages.push(
-   (i===0?"Et le grand gagnant est ":i===1?"En deuxième position, ":"En troisième position, ")+
-   p.name+", avec "+p.score+" points."
-  );
- });
-
- speakSequence(messages);
+ /* Pas d'annonce vocale du podium. */
 }
 
 function nextQuestion(){
@@ -1429,7 +1484,24 @@ function nextQuestion(){
 /* LIKES ET PROGRESSION */
 
 function updateLikes(amount){
- likes=Math.min(500,likes+amount);
+ amount=Math.max(0,Number(amount)||0);
+
+ likes+=amount;
+
+ /* Chaque palier de 500 déclenche le bonus de la prochaine manche.
+    Le compteur conserve le reste après le ou les paliers. */
+ while(likes>=500){
+  likes-=500;
+  globalDoubleNext=true;
+
+  showTickerMessage(
+   "❤️ 500 LIKES ATTEINTS ! LA PROCHAINE MANCHE COMPTE DOUBLE !",
+   "highlight",
+   6000
+  );
+
+  speak("Cinq cents likes atteints ! La prochaine manche compte double !");
+ }
 
  $("likesNumber").textContent=
   likes.toLocaleString("fr-FR")+" / 500";
@@ -1473,12 +1545,12 @@ function testWrongAnswer(){
 
 function testRose(){
  giveRose(testName());
- simStatus("Rose simulée pour "+testName()+".");
+ simStatus("Rose simulée pour "+testName()+". Bonus x2 à la prochaine manche.");
 }
 
 function testSubscribe(){
  subscribePlayer(testName());
- simStatus("Abonnement simulé pour "+testName()+".");
+ simStatus("Abonnement simulé pour "+testName()+". Bonus x2 permanent.");
 }
 
 function testIce(){
@@ -1507,6 +1579,7 @@ function testBomb(){
 
  if(leader.name===sender.name){
   const other=getPlayer("JoueurLeaderTest");
+
   if(other.name===sender.name){
    const another=getPlayer("AutreLeaderTest");
    another.score=1000;
@@ -1534,8 +1607,6 @@ function testVoice(){
  speakSequence([
   "Test de la voix française.",
   "Bienvenue sur Quiz Culture G.",
-  "La réponse A est Kyoto.",
-  "La réponse B est Tokyo.",
   "Merci à tous les participants !"
  ]);
 
@@ -1572,7 +1643,7 @@ function testThanks(){
  const name=testName();
 
  showTickerMessage(
-  "⭐ MERCI "+name.toUpperCase()+" POUR TON ABONNEMENT !",
+  "⭐ MERCI "+name.toUpperCase()+" POUR TON ABONNEMENT ! BONUS X2 PERMANENT !",
   "thanks",
   6000
  );
@@ -1657,6 +1728,10 @@ function resetQuiz(){
  frozenUntil=0;
  players=[];
 
+ roundAnswers=[];
+ roundValidated=false;
+ globalDoubleNext=false;
+
  tickerIndex=0;
  tickerPriority=false;
 
@@ -1679,9 +1754,7 @@ function resetQuiz(){
 /* APERÇU AUTONOME */
 
 function simulateLiveLikes(){
- if(likes<500){
-  updateLikes(Math.floor(Math.random()*8)+2);
- }
+ /* Conservée pour compatibilité, mais aucun like fictif n'est ajouté. */
 }
 
 /*
@@ -1726,7 +1799,7 @@ startTicker();
 
 $("bottomStatus").textContent="ACTIVE LA VOIX POUR COMMENCER";
 
-setInterval(simulateLiveLikes,1800);
+/* Plus de génération automatique de faux likes. */
 
 /* RACCOURCIS CLAVIER */
 
