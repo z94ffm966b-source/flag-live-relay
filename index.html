@@ -117,12 +117,12 @@ body.broadcast-mode .gift-emoji{font-size:18px}
 body.broadcast-mode .ranking{margin-top:7px;padding:6px}
 body.broadcast-mode .ranking-row{padding:2px 0;font-size:9px}
 body.broadcast-mode .ranking-row:nth-child(n+6){display:flex}
-body.broadcast-mode .ranking-title{font-size:9px}
+body.broadcast-mode .ranking-title{font-size:8px;margin-bottom:3px}
 body.broadcast-mode .bottom-status{padding-top:4px}
 body.broadcast-mode .voice-button{margin-top:5px;padding:6px}
 body.broadcast-mode .podium{margin-top:5px;padding:6px}
-body.broadcast-mode .question-card{margin-top:clamp(7px,1vh,11px);padding:clamp(10px,1.4vh,15px) 9px}
-body.broadcast-mode .question-text{font-size:clamp(14px,2.2vh,19px)}
+body.broadcast-mode .question-card{margin-top:clamp(5px,.7vh,8px);padding:clamp(7px,.9vh,10px) 8px}
+body.broadcast-mode .question-text{font-size:clamp(11px,1.65vh,15px);line-height:1.18}
 body.broadcast-mode .double-badge{font-size:7px;padding:3px 5px}
 body.broadcast-mode .likes{margin-top:clamp(6px,.8vh,9px)}
 body.broadcast-mode .answers{gap:clamp(4px,.6vh,7px);margin-top:clamp(6px,.8vh,9px)}
@@ -131,13 +131,13 @@ body.broadcast-mode .answer-letter{width:23px;height:23px}
 body.broadcast-mode .vote-ticker{height:28px;margin-top:5px}
 body.broadcast-mode .chat-instruction{margin-top:5px;font-size:9px}
 body.broadcast-mode .ranking{margin-top:5px;padding:5px}
-body.broadcast-mode #rankingList{max-height:125px;overflow-y:auto}
-body.broadcast-mode .ranking-row{min-height:17px;padding:1px 0;font-size:8px}
-body.broadcast-mode .rank-avatar{width:17px;height:17px;font-size:7px}
+body.broadcast-mode #rankingList{max-height:none;overflow:visible}
+body.broadcast-mode .ranking-row{min-height:15px;padding:0;font-size:7px}
+body.broadcast-mode .rank-avatar{width:15px;height:15px;font-size:6px}
 body.broadcast-mode .rank-number{width:14px;font-size:8px}
 body.broadcast-mode .rank-score{font-size:8px}
 body.broadcast-mode .ranking-row:nth-child(n+6){display:flex}
-body.broadcast-mode .ranking-title{font-size:9px}
+body.broadcast-mode .ranking-title{font-size:8px;margin-bottom:3px}
 body.broadcast-mode .bottom-status{padding-top:4px}
 body.broadcast-mode .voice-button{margin-top:5px;padding:6px}
 body.broadcast-mode .podium{margin-top:5px;padding:6px}
@@ -1709,7 +1709,7 @@ function escapeHTML(value){
 }
 
 function renderRanking(){
- const top=sortedPlayers().slice(0,7);
+ const top=sortedPlayers().slice(0,5);
 
  $("rankingList").innerHTML=top.length?top.map((p,i)=>`
   <div class="ranking-row">
@@ -1726,7 +1726,7 @@ function renderRanking(){
   </div>
  `;
 
- $("rankingLabel").textContent="TOP 7";
+ $("rankingLabel").textContent="TOP 5";
 }
 
 /* =========================================================
@@ -1874,6 +1874,7 @@ const liveThanksQueue=[];
 let liveThanksSpeaking=false;
 let liveThanksUtterance=null;
 let liveThanksOverflow=false;
+let revealPendingForThanks=false;
 
 function stopLiveThanksForQuiz(){
  if(!liveThanksSpeaking)return;
@@ -1899,6 +1900,7 @@ function playNextLiveThanks(){
   liveThanksSpeaking=false;
   if(completed&&liveThanksQueue[0]===message)liveThanksQueue.shift();
   if(!liveThanksQueue.length)liveThanksOverflow=false;
+  if(revealPendingForThanks){revealPendingForThanks=false;revealAnswer();return;}
   if(timer&&!revealed&&!gameFinished&&seconds>=2&&liveThanksQueue.length)playNextLiveThanks();
  };
  utterance.onend=()=>finish(true);
@@ -2038,7 +2040,8 @@ function startTimer(){
   if(seconds<=0){
    clearInterval(timer);
    timer=null;
-   revealAnswer();
+   if(liveThanksSpeaking){revealPendingForThanks=true;}
+   else revealAnswer();
   }
  },1000);
 }
