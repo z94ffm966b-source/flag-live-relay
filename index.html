@@ -1041,17 +1041,22 @@ body.broadcast-mode .voice-button{display:none!important}
  </div>
 
  <div class="sim-section">
-  <div class="sim-section-title">🎵 APPLE MUSIC — HITS RAP</div>
-  <div class="sim-note">Connecte-toi à ton compte Apple Music dans le lecteur ci-dessous, puis appuie sur Lecture. L'intégration utilise le lecteur web officiel Apple.</div>
-  <iframe
-   title="Apple Music — Hits Rap"
-   allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write"
-   height="450"
-   style="width:100%;max-width:660px;overflow:hidden;border:0;border-radius:12px;background:#111"
-   sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation"
-   src="https://embed.music.apple.com/fr/playlist/hits-rap/pl.4d2a54110afa4782a4aeaf039e401550">
-  </iframe>
-  <div class="sim-note">Dans TikTok LIVE Studio, lance la playlist avec le bouton Lecture du lecteur. Vérifie que le son de la source web est activé dans LIVE Studio. La lecture doit être démarrée manuellement.</div>
+  <div class="sim-section-title">🎵 MUSIQUE DE FOND — VOLUME AUTOMATIQUE</div>
+  <div class="sim-note">Ajoute un fichier audio depuis ton ordinateur ou colle un lien direct vers un fichier/flux audio autorisé. La musique baisse automatiquement quand la voix du quiz parle, puis remonte à la fin.</div>
+  <label for="freeMusicFile" class="sim-note" style="display:block;margin-top:10px">Choisir un fichier audio (MP3, WAV, M4A…)</label>
+  <input class="sim-input" id="freeMusicFile" type="file" accept="audio/*">
+  <label for="freeMusicUrl" class="sim-note" style="display:block;margin-top:10px">Ou lien direct vers un flux/fichier audio</label>
+  <input class="sim-input" id="freeMusicUrl" type="url" placeholder="https://exemple.com/musique.mp3">
+  <div class="sim-grid" style="margin-top:8px">
+   <button class="sim-button green" type="button" onclick="playFreeMusic()">▶ LANCER LA MUSIQUE</button>
+   <button class="sim-button yellow" type="button" onclick="pauseFreeMusic()">⏸ PAUSE</button>
+   <button class="sim-button red" type="button" onclick="stopFreeMusic()">⏹ ARRÊTER</button>
+  </div>
+  <label for="freeMusicVolume" class="sim-note" style="display:block;margin-top:12px">Volume de base : <span id="freeMusicVolumeValue">15 %</span></label>
+  <input id="freeMusicVolume" type="range" min="0" max="40" value="15" style="width:100%" oninput="setFreeMusicVolume(this.value);document.getElementById('freeMusicVolumeValue').textContent=this.value+' %'">
+  <audio id="freeMusicAudio" preload="none"></audio>
+  <div class="sim-status" id="freeMusicStatus">Aucune musique chargée. Choisis un fichier audio ou colle un lien direct.</div>
+  <div class="sim-note">Important : un lien de playlist Apple Music ne fonctionne pas ici. Il faut un fichier audio que tu peux utiliser ou un flux direct autorisé. Dans TikTok LIVE Studio, vérifie que le son de la source web est bien capturé. Le fichier choisi devra être rechargé si tu actualises la page.</div>
  </div>
 
  <div class="sim-section">
@@ -2690,6 +2695,7 @@ function stopVoice(){
  voiceQueue=[];
  speaking=false;
  voiceSequenceCallback=null;
+ setAppleMusicDucking(false);
 
  simStatus("Lecture vocale arrêtée.");
 }
@@ -2886,6 +2892,7 @@ function resetQuiz(){
  voiceQueue=[];
  speaking=false;
  voiceSequenceCallback=null;
+ setAppleMusicDucking(false);
  liveThanksQueue.length=0;
  liveThanksSpeaking=false;
 
