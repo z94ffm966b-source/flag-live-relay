@@ -706,6 +706,20 @@ body{
 .sim-button.red{background:#ff536825;border-color:#ff536888}
 .sim-button.yellow{background:#ffbd3520;border-color:#ffbd3588}
 
+ .auto-sim-feed{
+ margin-top:10px;
+ padding:9px;
+ max-height:170px;
+ overflow:auto;
+ border:1px solid #ffffff18;
+ border-radius:10px;
+ background:#080d1e;
+}
+.auto-sim-feed-title{font-size:9px;font-weight:900;color:#8fa8d8;letter-spacing:.8px;margin-bottom:7px}
+.auto-sim-comment{padding:5px 0;border-bottom:1px solid #ffffff0d;font-size:9px;line-height:1.4;color:#dce6ff}
+.auto-sim-comment:last-child{border-bottom:0}
+.viewer-count{display:none;color:#8df0bd;font-weight:900;font-size:9px;white-space:nowrap}
+.viewer-count.visible{display:inline-block}
 .sim-status{
  margin-top:12px;
  padding:10px;
@@ -760,6 +774,7 @@ body{
  <div class="creator">
   <span class="creator-name">Par Quizzzz123_</span>
   <span class="live-indicator">● LIVE</span>
+  <span class="viewer-count" id="viewerCount">● 50 spectateurs</span>
  </div>
 
  <section class="likes">
@@ -897,6 +912,20 @@ body{
   </div>
   <input id="questionBankFile" type="file" accept=".json,application/json" style="display:none" onchange="importQuestionBank(event)">
   <div class="sim-note">Le fichier exporté contient les 320 questions, leurs quatre propositions et l'index de la bonne réponse. L'import remplace la banque actuelle après vérification.</div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">🎬 SIMULATION AUTOMATIQUE — 50 SPECTATEURS</div>
+  <div class="sim-note">Lance un faux live : 50 pseudos arrivent, discutent, répondent aux questions, s'abonnent et envoient des likes et des cadeaux. La simulation utilise le vrai classement et le vrai déroulement du quiz, sans connexion TikTok.</div>
+  <div class="sim-grid" style="margin-top:9px">
+   <button class="sim-button green" id="autoSimStart" type="button" onclick="startAutoLiveSimulation()">▶ LANCER LA SIMULATION LIVE</button>
+   <button class="sim-button red" id="autoSimStop" type="button" onclick="stopAutoLiveSimulation()" disabled>■ ARRÊTER</button>
+  </div>
+  <div class="sim-status" id="autoSimStatus">Simulation arrêtée. Appuie sur « Lancer » pour voir un live avec 50 spectateurs.</div>
+  <div class="auto-sim-feed">
+   <div class="auto-sim-feed-title">💬 COMMENTAIRES DU LIVE EN DIRECT</div>
+   <div id="autoSimFeed"><div class="auto-sim-comment">Les commentaires simulés apparaîtront ici.</div></div>
+  </div>
  </div>
 
  <div class="sim-section">
@@ -1411,6 +1440,10 @@ let tickerIndex=0;
 let tickerInterval=null;
 let tickerMessageTimeout=null;
 let tickerPriority=false;
+let autoSimInterval=null;
+let autoSimActive=false;
+let autoSimNames=[];
+let autoSimCommentCount=0;
 
 const $=id=>document.getElementById(id);
 
@@ -2316,6 +2349,7 @@ function showFinalPodium(testMode=false){
  messages.push("Félicitations à tous les participants !");
 
  speakSequence(messages);
+ if(!testMode&&autoSimActive)stopAutoLiveSimulation(false);
 }
 
 function closePodiumTest(){
@@ -2524,10 +2558,126 @@ function testTop7(){
 }
 
 /* =========================================================
+   SIMULATION AUTOMATIQUE D'UN LIVE AVEC 50 SPECTATEURS
+========================================================= */
+
+const autoSimFirstNames=["Luna","Max","Nina","Atlas","Theo","Emma","Noah","Mila","Enzo","Jade","Leo","Ines","Hugo","Chloe","Adam","Lina","Tom","Sarah","Ethan","Lou"];
+const autoSimLastNames=["59","Live","Quiz","Off","Gaming","FR","DuNord","_x","2026","Pro","Tik","Fan","Team","59_","Player"];
+const autoSimComments=[
+ "Je tente la B !","C'est quoi la réponse ?","Présent dans le live 🔥","Allez tout le monde répond !",
+ "Je viens d'arriver !","Trop bien ce quiz","La réponse est facile 😭","Je tente C",
+ "Go le top 1 !","Merci pour le live ❤️","Qui a trouvé ?","Je suis sûr de moi !",
+ "On veut la prochaine question","Bien joué !","Je participe 🙋","Le niveau monte !",
+ "J'adore ce concept","Vas-y A !","J'ai répondu !","50 personnes bientôt 100 🔥"
+];
+
+function autoSimRandomName(){
+ return autoSimFirstNames[Math.floor(Math.random()*autoSimFirstNames.length)]+
+  autoSimLastNames[Math.floor(Math.random()*autoSimLastNames.length)]+
+  Math.floor(10+Math.random()*89);
+}
+
+function autoSimAddComment(name,message){
+ const feed=$("autoSimFeed");
+ if(!feed)return;
+ if(autoSimCommentCount===0)feed.innerHTML="";
+ autoSimCommentCount++;
+ const line=document.createElement("div");
+ line.className="auto-sim-comment";
+ line.textContent=name+" : "+message;
+ feed.appendChild(line);
+ while(feed.children.length>9)feed.removeChild(feed.firstChild);
+ feed.scrollTop=feed.scrollHeight;
+}
+
+function startAutoLiveSimulation(){
+ if(autoSimActive)return;
+ resetQuiz();
+ autoSimActive=true;
+ autoSimCommentCount=0;
+ autoSimNames=[];
+ for(let i=0;i<50;i++){
+  let name=autoSimRandomName();
+  while(autoSimNames.includes(name))name=autoSimRandomName();
+  autoSimNames.push(name);
+  getPlayer(name);
+ }
+ renderRanking();
+ $("viewerCount").textContent="● 50 spectateurs";
+ $("viewerCount").classList.add("visible");
+ $("autoSimFeed").innerHTML="";
+ $("autoSimStatus").textContent="LIVE SIMULÉ EN COURS — 50 spectateurs connectés, commentaires et réponses automatiques.";
+ $("autoSimStart").disabled=true;
+ $("autoSimStop").disabled=false;
+ showTickerMessage("🔴 LIVE SIMULÉ : 50 SPECTATEURS SONT CONNECTÉS !","highlight",7000);
+ autoSimAddComment("Systeme","50 spectateurs viennent de rejoindre le live !");
+ if(voiceEnabled)announceCurrentQuestion();
+ else startTimer();
+
+ autoSimInterval=setInterval(()=>{
+  if(!autoSimActive)return;
+  if(gameFinished){
+   stopAutoLiveSimulation();
+   return;
+  }
+  if(revealed)return;
+
+  const name=autoSimNames[Math.floor(Math.random()*autoSimNames.length)];
+  const comment=autoSimComments[Math.floor(Math.random()*autoSimComments.length)];
+  autoSimAddComment(name,comment);
+
+  const answersPerTick=1+(Math.random()<.38?1:0);
+  for(let i=0;i<answersPerTick;i++){
+   const playerName=autoSimNames[Math.floor(Math.random()*autoSimNames.length)];
+   const correct=questions[questionIndex][3];
+   const isCorrect=Math.random()<.32;
+   const answerIndex=isCorrect?correct:Math.floor(Math.random()*4);
+   submitAnswer(playerName,"ABCD"[answerIndex]);
+  }
+
+  updateLikes(1+Math.floor(Math.random()*5));
+
+  const eventRoll=Math.random();
+  if(eventRoll<.045){
+   const subscriber=autoSimNames[Math.floor(Math.random()*autoSimNames.length)];
+   subscribePlayer(subscriber);
+   autoSimAddComment(subscriber,"vient de s'abonner ⭐");
+  }else if(eventRoll<.105){
+   const gifter=autoSimNames[Math.floor(Math.random()*autoSimNames.length)];
+   giveRose(gifter);
+   autoSimAddComment(gifter,"envoie une rose 🌹");
+  }else if(eventRoll<.12){
+   const gifter=autoSimNames[Math.floor(Math.random()*autoSimNames.length)];
+   freezeLeader(gifter);
+   autoSimAddComment(gifter,"envoie un glaçon 🧊");
+  }else if(eventRoll<.13){
+   const gifter=autoSimNames[Math.floor(Math.random()*autoSimNames.length)];
+   bombLeader(gifter);
+   autoSimAddComment(gifter,"envoie une bombe 💣");
+  }
+ },850);
+}
+
+function stopAutoLiveSimulation(updateStatus=true){
+ if(autoSimInterval){clearInterval(autoSimInterval);autoSimInterval=null;}
+ const wasActive=autoSimActive;
+ autoSimActive=false;
+ const viewer=$("viewerCount");
+ if(viewer)viewer.classList.remove("visible");
+ if($("autoSimStart"))$("autoSimStart").disabled=false;
+ if($("autoSimStop"))$("autoSimStop").disabled=true;
+ if(updateStatus&&wasActive){
+  $("autoSimStatus").textContent="Simulation arrêtée. Les joueurs et leurs scores simulés restent affichés pour que tu puisses examiner le classement.";
+  showTickerMessage("⏹ SIMULATION DU LIVE ARRÊTÉE","normal");
+ }
+}
+
+/* =========================================================
    RÉINITIALISATION GÉNÉRALE
 ========================================================= */
 
 function resetQuiz(){
+ stopAutoLiveSimulation(false);
  clearInterval(timer);
  timer=null;
 
