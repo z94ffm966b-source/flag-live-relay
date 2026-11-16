@@ -102,6 +102,8 @@ body.broadcast-mode .likes{margin-top:clamp(6px,.8vh,9px)}
 body.broadcast-mode .answers{gap:clamp(4px,.6vh,7px);margin-top:clamp(6px,.8vh,9px)}
 body.broadcast-mode .answer{min-height:clamp(38px,5vh,50px);padding:6px;font-size:clamp(8px,1vh,10px)}
 body.broadcast-mode .answer-letter{width:23px;height:23px}
+body.broadcast-mode .vote-ticker{height:28px;margin-top:5px}
+body.broadcast-mode .chat-instruction{margin-top:5px;font-size:9px}
 body.broadcast-mode .ranking{margin-top:clamp(5px,.7vh,8px);padding:6px}
 body.broadcast-mode .ranking-row{padding:2px 0;font-size:9px}
 body.broadcast-mode .ranking-row:nth-child(n+6){display:flex}
@@ -311,36 +313,12 @@ body.broadcast-mode .simulator{
  letter-spacing:.7px;
 }
 
-.chat-instruction{
- text-align:center;
- margin-top:10px;
- font-size:11px;
- font-weight:900;
- letter-spacing:.2px;
- color:#fff;
-}
-
-.chat-letters{
- display:flex;
- justify-content:center;
- gap:13px;
- margin-top:7px;
-}
-
-.chat-letter{
- width:25px;
- height:25px;
- border-radius:7px;
- display:grid;
- place-items:center;
- font-size:11px;
- font-weight:900;
-}
-
-.chat-letter.a{background:#2775ed}
-.chat-letter.b{background:#20b979}
-.chat-letter.c{background:#e59b23}
-.chat-letter.d{background:#a05be9}
+.chat-instruction{text-align:center;margin-top:8px;font-size:10px;font-weight:900;letter-spacing:.25px;color:#fff}
+.vote-ticker{width:100%;height:31px;margin-top:7px;padding:4px 5px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;display:flex;align-items:center;gap:6px;border:1px solid #ffffff18;border-radius:9px;background:#080f21;scrollbar-width:none;scroll-behavior:smooth}
+.vote-ticker::-webkit-scrollbar{display:none}
+.vote-pill{display:inline-flex;flex:0 0 auto;align-items:center;gap:4px;padding:4px 8px;border-radius:20px;background:linear-gradient(90deg,#183d70,#27315c);border:1px solid #5daeff55;color:#eaf4ff;font-size:8px;line-height:1;font-weight:900;animation:votePillIn .22s ease-out}
+.vote-pill .vote-pill-letter{color:#7ce7ff}
+@keyframes votePillIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
 
 .message-bar{
  width:100%;
@@ -872,14 +850,8 @@ body.broadcast-mode .simulator{
 
  <div class="vote-count" id="voteCount">0 JOUEUR A VOTÉ</div>
 
- <div class="chat-instruction">TAPEZ VOTRE RÉPONSE DANS LE CHAT !</div>
-
- <div class="chat-letters">
-  <div class="chat-letter a">A</div>
-  <div class="chat-letter b">B</div>
-  <div class="chat-letter c">C</div>
-  <div class="chat-letter d">D</div>
- </div>
+ <div class="chat-instruction">TAPE A, B, C OU D DANS LE CHAT</div>
+ <div class="vote-ticker" id="voteTicker" aria-label="Réponses des joueurs en direct"><span class="vote-pill">En attente des réponses…</span></div>
 
  <section class="message-bar">
   <div class="message-text" id="messageText">
@@ -1873,7 +1845,7 @@ function speak(message){if(!voiceEnabled)return;speakSequence([message]);}
 function activateVoice(){
  voiceEnabled=true;
 
- $("voiceButton").textContent="🔊 VOIX ACTIVÉE";
+ $("voiceButton").textContent="🔊 VOIX AUTOMATIQUE";
  $("voiceButton").classList.add("active");
 
  speakSequence([
@@ -1939,6 +1911,7 @@ function renderQuestion(){
  seconds=ROUND_SECONDS;
 
  $("voteCount").textContent="0 JOUEUR A VOTÉ";
+ $("voteTicker").innerHTML='<span class="vote-pill">En attente des réponses…</span>';
  $("bottomStatus").textContent="JOUE • RÉPONDS • GAGNE";
  $("podium").classList.remove("visible");
 
@@ -2006,6 +1979,16 @@ function pauseTimer(){
    RÉPONSES ET COMPTEUR DE VOTES
 ========================================================= */
 
+function addVoteTickerEntry(username,letter){
+ const ticker=$("voteTicker");if(!ticker)return;
+ const empty=ticker.querySelector(".vote-pill");
+ if(empty&&empty.textContent.includes("En attente"))empty.remove();
+ const pill=document.createElement("span");pill.className="vote-pill";
+ pill.innerHTML='<span>'+escapeHTML(String(username).slice(0,24))+'</span><span class="vote-pill-letter">· '+letter+'</span>';
+ ticker.appendChild(pill);
+ while(ticker.children.length>70)ticker.removeChild(ticker.firstChild);
+ ticker.scrollTo({left:ticker.scrollWidth,behavior:"smooth"});
+}
 function submitAnswer(username,letter){
  if(gameFinished || revealed || roundValidated)return;
 
@@ -2020,6 +2003,7 @@ function submitAnswer(username,letter){
 
  player.answered.push(questionIndex);
  renderRanking();
+ addVoteTickerEntry(player.name,letter);
 
  roundAnswers.push({
   player,
@@ -2225,6 +2209,7 @@ function bombLeader(username){
 ========================================================= */
 
 function showMidGameRecap(testMode=false){
+ clearInterval(specialCountdownInterval);
  clearInterval(timer);
  timer=null;
  clearTimeout(recapTimeout);
@@ -2255,9 +2240,7 @@ function showMidGameRecap(testMode=false){
    CLASSEMENT INTERMÉDIAIRE : TOP 7
   </div>
   <div class="special-ranking">${rows}</div>
-  <button class="special-button" onclick="continueAfterRecap()">
-   ▶ REPRENDRE LA PARTIE
-  </button>
+  <div class="special-countdown" id="specialCountdown">La partie reprend automatiquement dans 5 secondes…</div>
  `;
 
  $("liveScreen").classList.add("is-special");
@@ -2272,16 +2255,28 @@ function showMidGameRecap(testMode=false){
  });
 
  if(!testMode){
-  messages.push("Nous allons maintenant passer à la deuxième moitié de cette partie.");
+  messages.push("La deuxième moitié de la partie commencera dans cinq secondes.");
  }
 
  speakSequence(messages,()=>{
-  if(!recapTestMode){
-   recapTimeout=setTimeout(continueAfterRecap,5000);
-  }
+  if(!recapTestMode)startSpecialCountdown("La partie reprend dans",5,continueAfterRecap);
+  else $("specialCountdown")?.remove();
  });
 }
 
+let specialCountdownInterval=null;
+function startSpecialCountdown(label,seconds,callback){
+ clearInterval(specialCountdownInterval);clearTimeout(recapTimeout);
+ let remaining=seconds;
+ const target=$("specialCountdown");
+ if(target)target.textContent=label+" "+remaining+" secondes…";
+ specialCountdownInterval=setInterval(()=>{
+  remaining--;
+  const current=$("specialCountdown");
+  if(current)current.textContent=remaining>0?label+" "+remaining+" seconde"+(remaining>1?"s":"")+"…":"C'est reparti !";
+  if(remaining<=0){clearInterval(specialCountdownInterval);specialCountdownInterval=null;recapTimeout=setTimeout(callback,350);}
+ },1000);
+}
 function continueAfterRecap(){
  clearTimeout(recapTimeout);
  $("liveScreen").classList.remove("is-special");
@@ -2309,6 +2304,7 @@ function announceTop7(){
    PODIUM DE FIN DE CHAQUE PARTIE (TOUTES LES 20 QUESTIONS)
 ========================================================= */
 function showPartPodium(){
+ clearInterval(specialCountdownInterval);
  clearInterval(timer);timer=null;clearTimeout(recapTimeout);
  const top=sortedPlayers().slice(0,3),part=currentPart();
  const rows=top.length?top.map((p,i)=>`
@@ -2319,14 +2315,17 @@ function showPartPodium(){
   <div class="special-subheading">20 QUESTIONS TERMINÉES — PODIUM DE LA PARTIE</div>
   <div class="special-ranking">${rows}</div>
   <div class="special-subheading">LES SCORES REPARTIRONT À ZÉRO POUR LA PROCHAINE PARTIE.</div>
-  <button class="special-button" onclick="continueAfterPartPodium()">▶ PASSER À LA PARTIE SUIVANTE</button>`;
+  <div class="special-countdown" id="specialCountdown">La partie suivante commence dans 5 secondes…</div>`;
  $("liveScreen").classList.add("is-special");
  const messages=["Fin de la partie "+part+". Les vingt questions sont terminées."];
  if(top[0])messages.push("À la première place : "+top[0].name+".");
  if(top[1])messages.push("À la deuxième place : "+top[1].name+".");
  if(top[2])messages.push("À la troisième place : "+top[2].name+".");
  messages.push("Bravo à tous. Les points seront remis à zéro pour la prochaine partie.");
- speakSequence(messages,()=>{if(part<TOTAL_PARTS)recapTimeout=setTimeout(continueAfterPartPodium,7000);else recapTimeout=setTimeout(showFinalPodium,7000);});
+ speakSequence(messages,()=>{
+  if(part<TOTAL_PARTS)startSpecialCountdown("La partie suivante commence dans",5,continueAfterPartPodium);
+  else startSpecialCountdown("Le podium final arrive dans",5,showFinalPodium);
+ });
 }
 function continueAfterPartPodium(){
  clearTimeout(recapTimeout);$("liveScreen").classList.remove("is-special");
@@ -2422,9 +2421,6 @@ function showFinalPodium(testMode=false){
   <div class="special-subheading">
    BRAVO À TOUS LES PARTICIPANTS !
   </div>
-  ${testMode?`
-   <button class="special-button" onclick="closePodiumTest()">FERMER LE TEST</button>
-  `:""}
  `;
 
  $("liveScreen").classList.add("is-special");
@@ -2822,7 +2818,7 @@ function resetQuiz(){
  updateTimer();
  startTicker();
 
- $("bottomStatus").textContent="ACTIVE LA VOIX POUR COMMENCER";
+ $("bottomStatus").textContent="VOIX AUTOMATIQUE — QUIZ PRÊT";
  simStatus("Quiz entièrement réinitialisé.");
 }
 
@@ -2871,7 +2867,14 @@ updatePart(1);
 startTicker();
 connectorStatus("Connecteur non configuré. Renseigne l'adresse fournie par ton logiciel TikTok Live Connector.");
 
-$("bottomStatus").textContent="ACTIVE LA VOIX POUR COMMENCER";
+/* La voix démarre automatiquement à l'ouverture du quiz. */
+activateVoice();
+/* Le premier clic/tap débloque la synthèse vocale si le navigateur bloque l'audio automatique. */
+document.addEventListener("pointerdown",()=>{
+ if(voiceEnabled&&"speechSynthesis" in window){speechSynthesis.resume();if(!speaking&&voiceQueue.length)processVoiceQueue(voiceRunId);}
+},{once:true});
+
+$("bottomStatus").textContent="VOIX AUTOMATIQUE — QUIZ PRÊT";
 
 /* RACCOURCIS CLAVIER */
 
