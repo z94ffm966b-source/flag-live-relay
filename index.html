@@ -1041,22 +1041,22 @@ body.broadcast-mode .voice-button{display:none!important}
  </div>
 
  <div class="sim-section">
-  <div class="sim-section-title">🎵 MUSIQUE DE FOND — APPLE MUSIC</div>
-  <div class="sim-note">La musique est intégrée à la sortie audio de cette page pour les spectateurs. Connecte Apple Music puis lance ta playlist. La clé privée Apple ne doit jamais être placée ici.</div>
-  <label for="appleMusicTokenUrl" class="sim-note">Adresse sécurisée du serveur qui fournit le jeton développeur Apple</label>
-  <input class="sim-input" id="appleMusicTokenUrl" type="url" placeholder="https://ton-serveur.fr/api/apple-music-token">
-  <label for="appleMusicPlaylist" class="sim-note" style="display:block;margin-top:10px">Lien de ta playlist Apple Music</label>
-  <input class="sim-input" id="appleMusicPlaylist" type="url" placeholder="https://music.apple.com/fr/playlist/...">
+  <div class="sim-section-title">🎵 MUSIQUE DE FOND — MODE GRATUIT</div>
+  <div class="sim-note">Sans abonnement développeur Apple : utilise un fichier audio à toi ou une URL directe vers un flux MP3/Radio autorisé. Le lien d'une page Apple Music ne peut pas être lu directement ici.</div>
+  <label for="freeMusicUrl" class="sim-note">Lien direct du flux audio (facultatif)</label>
+  <input class="sim-input" id="freeMusicUrl" type="url" placeholder="https://exemple.fr/stream.mp3">
+  <label for="freeMusicFile" class="sim-note" style="display:block;margin-top:10px">Ou choisis un fichier audio depuis ton PC</label>
+  <input class="sim-input" id="freeMusicFile" type="file" accept="audio/*">
   <div class="sim-grid" style="margin-top:9px">
-   <button class="sim-button pink" type="button" onclick="connectAppleMusic()"> CONNECTER ET LANCER</button>
-   <button class="sim-button blue" type="button" onclick="pauseAppleMusic()">⏸ PAUSE</button>
-   <button class="sim-button green" type="button" onclick="resumeAppleMusic()">▶ REPRENDRE</button>
-   <button class="sim-button red" type="button" onclick="stopAppleMusic()">■ ARRÊTER</button>
+   <button class="sim-button pink" type="button" onclick="playFreeMusic()">▶ LANCER LA MUSIQUE</button>
+   <button class="sim-button blue" type="button" onclick="pauseFreeMusic()">⏸ PAUSE</button>
+   <button class="sim-button red" type="button" onclick="stopFreeMusic()">■ ARRÊTER</button>
   </div>
-  <label for="appleMusicVolume" class="sim-note" style="display:block;margin-top:10px">Volume musique (la voix reste prioritaire)</label>
-  <input id="appleMusicVolume" type="range" min="0" max="40" value="15" style="width:100%;accent-color:#fa3458" oninput="setAppleMusicVolume(this.value)">
-  <div class="sim-status" id="appleMusicStatus">Apple Music non connecté. La connexion nécessite un jeton développeur fourni par un serveur sécurisé.</div>
-  <div class="sim-note">Pendant les annonces vocales, le volume de la musique baisse automatiquement, puis remonte à la fin. Dans OBS, capture l'audio de cette source navigateur et désactive son monitoring si tu ne veux pas entendre la musique dans ton casque.</div>
+  <label for="freeMusicVolume" class="sim-note" style="display:block;margin-top:10px">Volume musique (la voix reste prioritaire)</label>
+  <input id="freeMusicVolume" type="range" min="0" max="40" value="15" style="width:100%;accent-color:#fa3458" oninput="setFreeMusicVolume(this.value)">
+  <audio id="freeMusicAudio" preload="none" playsinline></audio>
+  <div class="sim-status" id="freeMusicStatus">Prêt. Choisis un fichier audio ou colle un lien direct vers un flux autorisé.</div>
+  <div class="sim-note">Clique sur « LANCER » après avoir ouvert le quiz dans LIVE Studio. Le volume baisse automatiquement pendant les annonces vocales. Pour la diffusion, LIVE Studio doit capturer l'audio de cette source web.</div>
  </div>
 
  <div class="sim-section">
@@ -1152,7 +1152,6 @@ body.broadcast-mode .voice-button{display:none!important}
 </section>
 
 <!-- LA PARTIE 2 COMMENCE ICI : COLLE LE SCRIPT JAVASCRIPT À LA SUITE -->
-<script src="https://js-cdn.music.apple.com/musickit/v3/musickit.js" async></script>
 <script>
 /* =========================================================
    BANQUE DE QUESTIONS — 16 PARTIES DE 20 QUESTIONS
@@ -2932,64 +2931,58 @@ function resetQuiz(){
 }
 
 /* =========================================================
-   APPLE MUSIC — MUSIQUE DE FOND POUR LA DIFFUSION
-   Le jeton développeur est fourni par un endpoint sécurisé.
+   MUSIQUE DE FOND GRATUITE — FICHIER LOCAL OU FLUX DIRECT
 ========================================================= */
-let appleMusic=null;
-let appleMusicConfigured=false;
-let appleMusicBaseVolume=0.15;
-let appleMusicDuckActive=false;
-let appleMusicLoadPromise=null;
-function appleMusicStatus(message){const el=$("appleMusicStatus");if(el)el.textContent=message;}
-function setAppleMusicVolume(value){
- appleMusicBaseVolume=Math.max(0,Math.min(.4,Number(value)/100));
- if(appleMusic&&!appleMusicDuckActive)appleMusic.volume=appleMusicBaseVolume;
+let freeMusicBaseVolume=0.15;
+let freeMusicObjectUrl=null;
+function freeMusicStatus(message){const el=$("freeMusicStatus");if(el)el.textContent=message;}
+function setFreeMusicVolume(value){
+ freeMusicBaseVolume=Math.max(0,Math.min(.4,Number(value)/100));
+ const audio=$("freeMusicAudio");
+ if(audio)audio.volume=appleMusicDuckActive?Math.min(.06,freeMusicBaseVolume*.35):freeMusicBaseVolume;
 }
 function setAppleMusicDucking(active){
  appleMusicDuckActive=!!active;
- if(appleMusic&&appleMusicConfigured)appleMusic.volume=appleMusicDuckActive?Math.min(.06,appleMusicBaseVolume*.35):appleMusicBaseVolume;
+ const audio=$("freeMusicAudio");
+ if(audio)audio.volume=appleMusicDuckActive?Math.min(.06,freeMusicBaseVolume*.35):freeMusicBaseVolume;
 }
-function waitForMusicKit(){
- if(window.MusicKit)return Promise.resolve();
- if(appleMusicLoadPromise)return appleMusicLoadPromise;
- appleMusicLoadPromise=new Promise((resolve,reject)=>{
-  const timeout=setTimeout(()=>reject(new Error("MusicKit ne s'est pas chargé. Vérifie ta connexion internet.")),15000);
-  document.addEventListener("musickitloaded",()=>{clearTimeout(timeout);resolve();},{once:true});
- });
- return appleMusicLoadPromise;
-}
-async function connectAppleMusic(){
- const tokenUrl=$("appleMusicTokenUrl").value.trim();
- const playlistUrl=$("appleMusicPlaylist").value.trim();
- if(!tokenUrl||!playlistUrl){appleMusicStatus("Renseigne l'adresse du serveur de jeton et le lien de ta playlist.");return;}
+async function playFreeMusic(){
+ const audio=$("freeMusicAudio");
+ const file=$("freeMusicFile").files&&$("freeMusicFile").files[0];
+ const url=$("freeMusicUrl").value.trim();
+ if(file){
+  if(freeMusicObjectUrl)URL.revokeObjectURL(freeMusicObjectUrl);
+  freeMusicObjectUrl=URL.createObjectURL(file);
+  audio.src=freeMusicObjectUrl;
+ }else if(url){
+  audio.src=url;
+ }else{
+  freeMusicStatus("Choisis un fichier audio ou colle un lien direct vers un flux MP3.");
+  return;
+ }
+ audio.volume=appleMusicDuckActive?Math.min(.06,freeMusicBaseVolume*.35):freeMusicBaseVolume;
  try{
-  appleMusicStatus("Connexion à Apple Music…");
-  await waitForMusicKit();
-  const response=await fetch(tokenUrl,{method:"GET",cache:"no-store",headers:{Accept:"application/json"}});
-  if(!response.ok)throw new Error("Le serveur de jeton a répondu HTTP "+response.status+".");
-  const payload=await response.json();
-  const developerToken=payload.developerToken||payload.token;
-  if(!developerToken)throw new Error("Le serveur doit renvoyer un JSON contenant developerToken.");
-  if(!appleMusicConfigured){
-   await MusicKit.configure({developerToken,app:{name:"QUIZ CULTURE G — LIVE",build:"1.0.0"}});
-   appleMusic=MusicKit.getInstance();appleMusicConfigured=true;
-  }
-  appleMusicStatus("Autorisation Apple : confirme la connexion dans la fenêtre qui s'ouvre…");
-  await appleMusic.authorize();
-  appleMusic.volume=appleMusicBaseVolume;
-  await appleMusic.setQueue({url:playlistUrl});
-  await appleMusic.play();
-  appleMusicStatus("Apple Music connecté — playlist en lecture pour la diffusion.");
- }catch(error){appleMusicStatus("Connexion impossible : "+(error&&error.message?error.message:String(error)));}
+  await audio.play();
+  freeMusicStatus("Musique en lecture. Vérifie que LIVE Studio reçoit l'audio de cette source web.");
+ }catch(error){
+  freeMusicStatus("Lecture bloquée ou lien incompatible : "+(error&&error.message?error.message:"vérifie le fichier ou le flux."));
+ }
 }
-function pauseAppleMusic(){if(!appleMusic){appleMusicStatus("Connecte d'abord Apple Music.");return;}appleMusic.pause();appleMusicStatus("Musique en pause.");}
-async function resumeAppleMusic(){
- if(!appleMusic){appleMusicStatus("Connecte d'abord Apple Music.");return;}
- try{await appleMusic.play();appleMusicStatus("Musique en lecture.");}
- catch(error){appleMusicStatus("Lecture impossible : "+(error.message||error));}
+function pauseFreeMusic(){
+ const audio=$("freeMusicAudio");
+ if(!audio||!audio.src){freeMusicStatus("Aucune musique chargée.");return;}
+ audio.pause();freeMusicStatus("Musique en pause.");
 }
-function stopAppleMusic(){if(!appleMusic){appleMusicStatus("Apple Music n'est pas connecté.");return;}appleMusic.stop();appleMusicStatus("Musique arrêtée.");}
-
+function stopFreeMusic(){
+ const audio=$("freeMusicAudio");
+ if(audio){audio.pause();audio.currentTime=0;}
+ freeMusicStatus("Musique arrêtée.");
+}
+const freeMusicFileInput=$("freeMusicFile");
+if(freeMusicFileInput)freeMusicFileInput.addEventListener("change",()=>{
+ const file=freeMusicFileInput.files&&freeMusicFileInput.files[0];
+ if(file)freeMusicStatus("Fichier sélectionné : "+file.name+". Clique sur LANCER LA MUSIQUE.");
+});
 /* =========================================================
    RACCORD TIKTOK LIVE CONNECTOR
 =========================================================
