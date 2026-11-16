@@ -72,37 +72,49 @@ body{
 .live-screen::-webkit-scrollbar{display:none}
 body.broadcast-mode{
  width:100%;
- height:100vh;
  min-height:100vh;
- padding:0;
+ height:auto;
+ padding:10px;
  margin:0;
- gap:0;
- justify-content:center;
- overflow:hidden;
+ gap:12px;
+ justify-content:flex-start;
+ align-items:center;
+ overflow-x:hidden;
+ overflow-y:auto;
  background:#050813;
 }
-body.broadcast-mode .simulator{display:none}
 body.broadcast-mode .live-screen{
- width:min(100vw,calc((100vh - 12px)*0.5625));
- height:min(100vh - 12px,177.78vw);
+ width:min(100%,405px);
+ height:auto;
  min-height:0;
- max-height:100vh;
+ max-height:none;
  aspect-ratio:9/16;
- border-radius:0;
- border:0;
- box-shadow:none;
- padding:clamp(9px,1.4vh,15px);
+ overflow:hidden;
+ border-radius:18px;
+ border:1px solid #ffffff20;
+ box-shadow:0 12px 42px #0008;
+ padding:clamp(8px,1.1vh,12px);
+ flex-shrink:0;
 }
-body.broadcast-mode .question-card{margin-top:clamp(8px,1.3vh,14px);padding:clamp(12px,1.8vh,18px) 10px}
-body.broadcast-mode .likes{margin-top:clamp(7px,1vh,12px)}
-body.broadcast-mode .answers{gap:clamp(5px,.8vh,9px);margin-top:clamp(7px,1.1vh,13px)}
-body.broadcast-mode .answer{min-height:clamp(44px,6.2vh,62px);padding:7px;font-size:clamp(9px,1.2vh,11px)}
-body.broadcast-mode .ranking{margin-top:clamp(6px,1vh,10px);padding:7px}
-body.broadcast-mode .ranking-row{padding:3px 0}
-body.broadcast-mode .ranking-row:nth-child(n+6){display:none}
-body.broadcast-mode .bottom-status{padding-top:5px}
-body.broadcast-mode .voice-button{margin-top:6px;padding:7px}
-body.broadcast-mode .podium{margin-top:6px;padding:8px}
+body.broadcast-mode .question-card{margin-top:clamp(7px,1vh,11px);padding:clamp(10px,1.4vh,15px) 9px}
+body.broadcast-mode .question-text{font-size:clamp(14px,2.2vh,19px)}
+body.broadcast-mode .likes{margin-top:clamp(6px,.8vh,9px)}
+body.broadcast-mode .answers{gap:clamp(4px,.6vh,7px);margin-top:clamp(6px,.8vh,9px)}
+body.broadcast-mode .answer{min-height:clamp(38px,5vh,50px);padding:6px;font-size:clamp(8px,1vh,10px)}
+body.broadcast-mode .answer-letter{width:23px;height:23px}
+body.broadcast-mode .ranking{margin-top:clamp(5px,.7vh,8px);padding:6px}
+body.broadcast-mode .ranking-row{padding:2px 0;font-size:9px}
+body.broadcast-mode .ranking-row:nth-child(n+6){display:flex}
+body.broadcast-mode .ranking-title{font-size:9px}
+body.broadcast-mode .bottom-status{padding-top:4px}
+body.broadcast-mode .voice-button{margin-top:5px;padding:6px}
+body.broadcast-mode .podium{margin-top:5px;padding:6px}
+body.broadcast-mode .simulator{
+ display:block;
+ width:min(100%,760px);
+ margin:0 auto;
+ flex-shrink:0;
+}
 
 .header{
  display:flex;
@@ -962,7 +974,7 @@ body.broadcast-mode .podium{margin-top:6px;padding:8px}
  <div class="sim-section">
   <div class="sim-section-title">🖥️ AFFICHAGE POUR LE LIVE</div>
   <button class="sim-button blue" type="button" style="width:100%" onclick="toggleBroadcastMode()">⛶ ACTIVER LE MODE DIFFUSION</button>
-  <div class="sim-note">Masque le simulateur et centre le quiz au format vertical 9:16, sans barre de défilement. Appuie sur Échap pour quitter ce mode.</div>
+  <div class="sim-note">Resserre le quiz au format vertical 9:16. Le classement, le bouton de voix, le simulateur et toutes les commandes restent présents. Appuie sur Échap pour quitter ce mode.</div>
  </div>
 
  <div class="sim-section">
