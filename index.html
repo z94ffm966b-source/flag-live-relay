@@ -1898,6 +1898,7 @@ function playNextLiveThanks(){
   liveThanksUtterance=null;
   liveThanksSpeaking=false;
   if(completed&&liveThanksQueue[0]===message)liveThanksQueue.shift();
+  if(!liveThanksQueue.length)liveThanksOverflow=false;
   if(timer&&!revealed&&!gameFinished&&seconds>=2&&liveThanksQueue.length)playNextLiveThanks();
  };
  utterance.onend=()=>finish(true);
