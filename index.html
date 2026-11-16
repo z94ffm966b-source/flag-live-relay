@@ -1041,22 +1041,17 @@ body.broadcast-mode .voice-button{display:none!important}
  </div>
 
  <div class="sim-section">
-  <div class="sim-section-title">🎵 MUSIQUE DE FOND — MODE GRATUIT</div>
-  <div class="sim-note">Sans abonnement développeur Apple : utilise un fichier audio à toi ou une URL directe vers un flux MP3/Radio autorisé. Le lien d'une page Apple Music ne peut pas être lu directement ici.</div>
-  <label for="freeMusicUrl" class="sim-note">Lien direct du flux audio (facultatif)</label>
-  <input class="sim-input" id="freeMusicUrl" type="url" placeholder="https://exemple.fr/stream.mp3">
-  <label for="freeMusicFile" class="sim-note" style="display:block;margin-top:10px">Ou choisis un fichier audio depuis ton PC</label>
-  <input class="sim-input" id="freeMusicFile" type="file" accept="audio/*">
-  <div class="sim-grid" style="margin-top:9px">
-   <button class="sim-button pink" type="button" onclick="playFreeMusic()">▶ LANCER LA MUSIQUE</button>
-   <button class="sim-button blue" type="button" onclick="pauseFreeMusic()">⏸ PAUSE</button>
-   <button class="sim-button red" type="button" onclick="stopFreeMusic()">■ ARRÊTER</button>
-  </div>
-  <label for="freeMusicVolume" class="sim-note" style="display:block;margin-top:10px">Volume musique (la voix reste prioritaire)</label>
-  <input id="freeMusicVolume" type="range" min="0" max="40" value="15" style="width:100%;accent-color:#fa3458" oninput="setFreeMusicVolume(this.value)">
-  <audio id="freeMusicAudio" preload="none" playsinline></audio>
-  <div class="sim-status" id="freeMusicStatus">Prêt. Choisis un fichier audio ou colle un lien direct vers un flux autorisé.</div>
-  <div class="sim-note">Clique sur « LANCER » après avoir ouvert le quiz dans LIVE Studio. Le volume baisse automatiquement pendant les annonces vocales. Pour la diffusion, LIVE Studio doit capturer l'audio de cette source web.</div>
+  <div class="sim-section-title">🎵 APPLE MUSIC — HITS RAP</div>
+  <div class="sim-note">Connecte-toi à ton compte Apple Music dans le lecteur ci-dessous, puis appuie sur Lecture. L'intégration utilise le lecteur web officiel Apple.</div>
+  <iframe
+   title="Apple Music — Hits Rap"
+   allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write"
+   height="450"
+   style="width:100%;max-width:660px;overflow:hidden;border:0;border-radius:12px;background:#111"
+   sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation"
+   src="https://embed.music.apple.com/fr/playlist/hits-rap/pl.4d2a54110afa4782a4aeaf039e401550">
+  </iframe>
+  <div class="sim-note">Dans TikTok LIVE Studio, lance la playlist avec le bouton Lecture du lecteur. Vérifie que le son de la source web est activé dans LIVE Studio. La lecture doit être démarrée manuellement.</div>
  </div>
 
  <div class="sim-section">
