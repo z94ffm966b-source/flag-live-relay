@@ -1041,6 +1041,25 @@ body.broadcast-mode .voice-button{display:none!important}
  </div>
 
  <div class="sim-section">
+  <div class="sim-section-title">🎵 MUSIQUE DE FOND — APPLE MUSIC</div>
+  <div class="sim-note">La musique est intégrée à la sortie audio de cette page pour les spectateurs. Connecte Apple Music puis lance ta playlist. La clé privée Apple ne doit jamais être placée ici.</div>
+  <label for="appleMusicTokenUrl" class="sim-note">Adresse sécurisée du serveur qui fournit le jeton développeur Apple</label>
+  <input class="sim-input" id="appleMusicTokenUrl" type="url" placeholder="https://ton-serveur.fr/api/apple-music-token">
+  <label for="appleMusicPlaylist" class="sim-note" style="display:block;margin-top:10px">Lien de ta playlist Apple Music</label>
+  <input class="sim-input" id="appleMusicPlaylist" type="url" placeholder="https://music.apple.com/fr/playlist/...">
+  <div class="sim-grid" style="margin-top:9px">
+   <button class="sim-button pink" type="button" onclick="connectAppleMusic()"> CONNECTER ET LANCER</button>
+   <button class="sim-button blue" type="button" onclick="pauseAppleMusic()">⏸ PAUSE</button>
+   <button class="sim-button green" type="button" onclick="resumeAppleMusic()">▶ REPRENDRE</button>
+   <button class="sim-button red" type="button" onclick="stopAppleMusic()">■ ARRÊTER</button>
+  </div>
+  <label for="appleMusicVolume" class="sim-note" style="display:block;margin-top:10px">Volume musique (la voix reste prioritaire)</label>
+  <input id="appleMusicVolume" type="range" min="0" max="40" value="15" style="width:100%;accent-color:#fa3458" oninput="setAppleMusicVolume(this.value)">
+  <div class="sim-status" id="appleMusicStatus">Apple Music non connecté. La connexion nécessite un jeton développeur fourni par un serveur sécurisé.</div>
+  <div class="sim-note">Pendant les annonces vocales, le volume de la musique baisse automatiquement, puis remonte à la fin. Dans OBS, capture l'audio de cette source navigateur et désactive son monitoring si tu ne veux pas entendre la musique dans ton casque.</div>
+ </div>
+
+ <div class="sim-section">
   <div class="sim-section-title">👤 JOUEUR À SIMULER</div>
   <input class="sim-input" id="testUsername" value="JoueurTest" maxlength="30" placeholder="Pseudo du joueur">
  </div>
@@ -1133,6 +1152,7 @@ body.broadcast-mode .voice-button{display:none!important}
 </section>
 
 <!-- LA PARTIE 2 COMMENCE ICI : COLLE LE SCRIPT JAVASCRIPT À LA SUITE -->
+<script src="https://js-cdn.music.apple.com/musickit/v3/musickit.js" async></script>
 <script>
 /* =========================================================
    BANQUE DE QUESTIONS — 16 PARTIES DE 20 QUESTIONS
@@ -1838,16 +1858,19 @@ function processVoiceQueue(runId=voiceRunId){
  utterance.volume=1;
 
  speaking=true;
+ setAppleMusicDucking(true);
 
  utterance.onend=()=>{
   if(runId!==voiceRunId)return;
   speaking=false;
+  if(!voiceQueue.length)setAppleMusicDucking(false);
   processVoiceQueue(runId);
  };
 
  utterance.onerror=()=>{
   if(runId!==voiceRunId)return;
   speaking=false;
+  if(!voiceQueue.length)setAppleMusicDucking(false);
   processVoiceQueue(runId);
  };
 
@@ -1891,6 +1914,7 @@ function playNextLiveThanks(){
  if(!voiceEnabled||liveThanksSpeaking||!liveThanksQueue.length||!("speechSynthesis" in window))return;
  if(!timer||revealed||gameFinished||seconds<2)return;
  liveThanksSpeaking=true;
+ setAppleMusicDucking(true);
  const message=liveThanksQueue[0];
  const utterance=new SpeechSynthesisUtterance(message);
  const voice=getFrenchVoice();
@@ -1901,6 +1925,7 @@ function playNextLiveThanks(){
   if(liveThanksUtterance!==utterance)return;
   liveThanksUtterance=null;
   liveThanksSpeaking=false;
+  if(!speaking)setAppleMusicDucking(false);
   if(completed&&liveThanksQueue[0]===message)liveThanksQueue.shift();
   if(!liveThanksQueue.length)liveThanksOverflow=false;
   if(revealPendingForThanks){revealPendingForThanks=false;revealAnswer();return;}
@@ -2905,6 +2930,65 @@ function resetQuiz(){
  $("bottomStatus").textContent="VOIX AUTOMATIQUE — QUIZ PRÊT";
  simStatus("Quiz entièrement réinitialisé.");
 }
+
+/* =========================================================
+   APPLE MUSIC — MUSIQUE DE FOND POUR LA DIFFUSION
+   Le jeton développeur est fourni par un endpoint sécurisé.
+========================================================= */
+let appleMusic=null;
+let appleMusicConfigured=false;
+let appleMusicBaseVolume=0.15;
+let appleMusicDuckActive=false;
+let appleMusicLoadPromise=null;
+function appleMusicStatus(message){const el=$("appleMusicStatus");if(el)el.textContent=message;}
+function setAppleMusicVolume(value){
+ appleMusicBaseVolume=Math.max(0,Math.min(.4,Number(value)/100));
+ if(appleMusic&&!appleMusicDuckActive)appleMusic.volume=appleMusicBaseVolume;
+}
+function setAppleMusicDucking(active){
+ appleMusicDuckActive=!!active;
+ if(appleMusic&&appleMusicConfigured)appleMusic.volume=appleMusicDuckActive?Math.min(.06,appleMusicBaseVolume*.35):appleMusicBaseVolume;
+}
+function waitForMusicKit(){
+ if(window.MusicKit)return Promise.resolve();
+ if(appleMusicLoadPromise)return appleMusicLoadPromise;
+ appleMusicLoadPromise=new Promise((resolve,reject)=>{
+  const timeout=setTimeout(()=>reject(new Error("MusicKit ne s'est pas chargé. Vérifie ta connexion internet.")),15000);
+  document.addEventListener("musickitloaded",()=>{clearTimeout(timeout);resolve();},{once:true});
+ });
+ return appleMusicLoadPromise;
+}
+async function connectAppleMusic(){
+ const tokenUrl=$("appleMusicTokenUrl").value.trim();
+ const playlistUrl=$("appleMusicPlaylist").value.trim();
+ if(!tokenUrl||!playlistUrl){appleMusicStatus("Renseigne l'adresse du serveur de jeton et le lien de ta playlist.");return;}
+ try{
+  appleMusicStatus("Connexion à Apple Music…");
+  await waitForMusicKit();
+  const response=await fetch(tokenUrl,{method:"GET",cache:"no-store",headers:{Accept:"application/json"}});
+  if(!response.ok)throw new Error("Le serveur de jeton a répondu HTTP "+response.status+".");
+  const payload=await response.json();
+  const developerToken=payload.developerToken||payload.token;
+  if(!developerToken)throw new Error("Le serveur doit renvoyer un JSON contenant developerToken.");
+  if(!appleMusicConfigured){
+   await MusicKit.configure({developerToken,app:{name:"QUIZ CULTURE G — LIVE",build:"1.0.0"}});
+   appleMusic=MusicKit.getInstance();appleMusicConfigured=true;
+  }
+  appleMusicStatus("Autorisation Apple : confirme la connexion dans la fenêtre qui s'ouvre…");
+  await appleMusic.authorize();
+  appleMusic.volume=appleMusicBaseVolume;
+  await appleMusic.setQueue({url:playlistUrl});
+  await appleMusic.play();
+  appleMusicStatus("Apple Music connecté — playlist en lecture pour la diffusion.");
+ }catch(error){appleMusicStatus("Connexion impossible : "+(error&&error.message?error.message:String(error)));}
+}
+function pauseAppleMusic(){if(!appleMusic){appleMusicStatus("Connecte d'abord Apple Music.");return;}appleMusic.pause();appleMusicStatus("Musique en pause.");}
+async function resumeAppleMusic(){
+ if(!appleMusic){appleMusicStatus("Connecte d'abord Apple Music.");return;}
+ try{await appleMusic.play();appleMusicStatus("Musique en lecture.");}
+ catch(error){appleMusicStatus("Lecture impossible : "+(error.message||error));}
+}
+function stopAppleMusic(){if(!appleMusic){appleMusicStatus("Apple Music n'est pas connecté.");return;}appleMusic.stop();appleMusicStatus("Musique arrêtée.");}
 
 /* =========================================================
    RACCORD TIKTOK LIVE CONNECTOR
