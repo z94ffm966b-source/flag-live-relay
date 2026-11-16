@@ -50,9 +50,14 @@ body{
  box-shadow:0 25px 90px #0009;
  display:flex;
  flex-direction:column;
- overflow:hidden;
+ overflow-y:auto;
+ overflow-x:hidden;
+ scrollbar-width:thin;
+ scrollbar-color:#52658d transparent;
  flex-shrink:0;
 }
+.live-screen::-webkit-scrollbar{width:4px}
+.live-screen::-webkit-scrollbar-thumb{background:#52658d;border-radius:8px}
 
 .header{
  display:flex;
@@ -102,6 +107,7 @@ body{
 }
 
 .likes-number{color:#ff7192;font-size:12px}
+.likes-goal-note{margin-top:5px;color:#ffb5c5;font-size:8px;line-height:1.35;font-weight:800;letter-spacing:.25px}
 
 .likes-track{
  height:8px;
@@ -549,10 +555,14 @@ body{
  text-align:left;
 }
 
-.special-ranking-row .rank-score{
- color:#5ce6a4;
- font-weight:900;
-}
+.special-ranking-row .rank-score{color:#5ce6a4;font-weight:900}
+.special-ranking-row:nth-child(-n+3) .rank-number{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;font-size:18px;background:#ffda7518;animation:medalPop .65s cubic-bezier(.2,.9,.25,1.3) both}
+.special-ranking-row:nth-child(2) .rank-number{animation-delay:.12s}
+.special-ranking-row:nth-child(3) .rank-number{animation-delay:.24s}
+@keyframes medalPop{from{opacity:0;transform:scale(.45) rotate(-18deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+.special-ranking-row:nth-child(1){border-color:#ffda7570}
+.special-ranking-row:nth-child(2){border-color:#c8d5ee55}
+.special-ranking-row:nth-child(3){border-color:#c58b5a66}
 
 .special-button{
  margin-top:12px;
@@ -744,7 +754,7 @@ body{
 
  <div class="header">
   <div class="brand">QUIZ CULTURE G</div>
-  <div class="question-number" id="questionNumber">QUESTION 1/320</div>
+  <div class="question-number" id="questionNumber">1 / 20</div>
  </div>
 
  <div class="creator">
@@ -760,6 +770,7 @@ body{
   <div class="likes-track">
    <div class="likes-fill" id="likesFill"></div>
   </div>
+  <div class="likes-goal-note">À 500 LIKES : BOOST x2 POUR TOUS À LA PROCHAINE MANCHE</div>
  </section>
 
  <section class="question-card">
@@ -1722,10 +1733,19 @@ function speakSequence(messages,callback){
  processVoiceQueue(runId);
 }
 
-function speak(message){
- if(!voiceEnabled)return;
- speakSequence([message]);
+const liveThanksQueue=[];
+let liveThanksSpeaking=false;
+function playNextLiveThanks(){
+ if(!voiceEnabled||liveThanksSpeaking||!liveThanksQueue.length||!("speechSynthesis" in window))return;
+ liveThanksSpeaking=true;
+ const utterance=new SpeechSynthesisUtterance(liveThanksQueue.shift());
+ const voice=getFrenchVoice();if(voice)utterance.voice=voice;
+ utterance.lang="fr-FR";utterance.rate=.98;utterance.pitch=.9;utterance.volume=1;
+ const finish=()=>{liveThanksSpeaking=false;if(liveThanksQueue.length&&timer&&!revealed&&!gameFinished)playNextLiveThanks();};
+ utterance.onend=finish;utterance.onerror=finish;speechSynthesis.speak(utterance);
 }
+function queueLiveThanks(message){liveThanksQueue.push(message);if(timer&&!revealed&&!gameFinished)playNextLiveThanks();}
+function speak(message){if(!voiceEnabled)return;speakSequence([message]);}
 
 function activateVoice(){
  voiceEnabled=true;
@@ -1756,7 +1776,7 @@ function announceCurrentQuestion(){
  ];
 
  speakSequence(messages,()=>{
-  if(!revealed && !gameFinished)startTimer();
+  if(!revealed&&!gameFinished){startTimer();playNextLiveThanks();}
  });
 }
 
@@ -1778,7 +1798,7 @@ function renderQuestion(){
  const q=questions[questionIndex];
 
  $("questionNumber").textContent=
-  "QUESTION "+(questionIndex+1)+"/"+TOTAL_QUESTIONS;
+  (questionIndex%QUESTIONS_PER_PART+1)+" / "+QUESTIONS_PER_PART;
 
  $("theme").textContent=q[0];
  $("questionText").textContent=q[1];
@@ -1973,8 +1993,8 @@ function revealAnswer(){
  speakSequence(messages,()=>{
   if(questionIndex%QUESTIONS_PER_PART===9){
    showMidGameRecap(false);
-  }else if(questionIndex===TOTAL_QUESTIONS-1){
-   showFinalPodium(false);
+  }else if((questionIndex+1)%QUESTIONS_PER_PART===0){
+   showPartPodium();
   }else{
    setTimeout(nextQuestion,1200);
   }
@@ -2001,7 +2021,7 @@ function giveRose(username){
  $("bottomStatus").textContent=
   "🌹 "+player.name+" : BONUS X2 À LA PROCHAINE MANCHE";
 
- speak("Merci "+player.name+" pour la rose ! Tes points seront doublés à la prochaine manche !");
+ queueLiveThanks("Merci "+player.name+" pour la rose ! Tes points seront doublés à la prochaine manche !");
 }
 
 /* Abonnement : bonus x2 permanent. */
@@ -2020,7 +2040,7 @@ function subscribePlayer(username){
  $("bottomStatus").textContent=
   "⭐ "+player.name+" : BONUS X2 PERMANENT";
 
- speak("Merci "+player.name+" pour ton abonnement ! Tu bénéficies du doublement permanent de tes points !");
+ queueLiveThanks("Merci "+player.name+" pour ton abonnement ! Tu bénéficies du doublement permanent de tes points !");
 }
 
 /* Glaçon : bloque le leader pendant la prochaine question seulement. */
@@ -2041,7 +2061,7 @@ function freezeLeader(username){
  $("bottomStatus").textContent=
   "🧊 "+leader.name+" EST GELÉ POUR LA PROCHAINE MANCHE";
 
- speak(username+" utilise un glaçon ! "+leader.name+" ne pourra pas marquer de points à la prochaine manche !");
+ queueLiveThanks(username+" utilise un glaçon ! "+leader.name+" ne pourra pas marquer de points à la prochaine manche !");
 }
 
 /* Bombe : vole la moitié des points du premier et les transfère. */
@@ -2069,7 +2089,7 @@ function bombLeader(username){
   6000
  );
 
- speak("Bombe ! "+sender.name+" vole la moitié des points de "+leader.name+" !");
+ queueLiveThanks("Bombe ! "+sender.name+" vole la moitié des points de "+leader.name+" !");
 }
 
 /* =========================================================
@@ -2101,10 +2121,10 @@ function showMidGameRecap(testMode=false){
  const part=currentPart();
 
  $("specialScreen").innerHTML=`
-  <div class="special-heading">🏆 PETIT RÉCAPITULATIF</div>
+  <div class="special-heading">🏆 CLASSEMENT À MI-PARTIE</div>
   <div class="special-subheading">
-   PARTIE ${part}/16 — PREMIÈRES 10 QUESTIONS TERMINÉES<br>
-   VOICI LE CLASSEMENT DES 7 PREMIERS
+   PARTIE ${part}/16 — 10 SUR 20 QUESTIONS JOUÉES<br>
+   CLASSEMENT INTERMÉDIAIRE : TOP 7
   </div>
   <div class="special-ranking">${rows}</div>
   <button class="special-button" onclick="continueAfterRecap()">
@@ -2115,7 +2135,7 @@ function showMidGameRecap(testMode=false){
  $("liveScreen").classList.add("is-special");
 
  const messages=[
-  "Petit récapitulatif de la partie. Voici le classement."
+  "Nous sommes à la moitié de la partie "+part+". Voici le classement des sept premiers."
  ];
 
  top3.forEach((p,i)=>{
@@ -2158,9 +2178,37 @@ function announceTop7(){
 }
 
 /* =========================================================
+   PODIUM DE FIN DE CHAQUE PARTIE (TOUTES LES 20 QUESTIONS)
+========================================================= */
+function showPartPodium(){
+ clearInterval(timer);timer=null;clearTimeout(recapTimeout);
+ const top=sortedPlayers().slice(0,3),part=currentPart();
+ const rows=top.length?top.map((p,i)=>`
+  <div class="special-ranking-row"><span class="rank-number">${i===0?"🥇":i===1?"🥈":"🥉"}</span><span class="rank-name">${escapeHTML(p.name)}</span><span class="rank-score">${p.score.toLocaleString("fr-FR")} pts</span></div>
+ `).join(""):`<div class="special-ranking-row"><span class="rank-name">Aucun joueur classé pour cette partie.</span></div>`;
+ $("specialScreen").innerHTML=`
+  <div class="special-heading">🏁 FIN DE LA PARTIE ${part}/16</div>
+  <div class="special-subheading">20 QUESTIONS TERMINÉES — PODIUM DE LA PARTIE</div>
+  <div class="special-ranking">${rows}</div>
+  <div class="special-subheading">LES SCORES REPARTIRONT À ZÉRO POUR LA PROCHAINE PARTIE.</div>
+  <button class="special-button" onclick="continueAfterPartPodium()">▶ PASSER À LA PARTIE SUIVANTE</button>`;
+ $("liveScreen").classList.add("is-special");
+ const messages=["Fin de la partie "+part+". Les vingt questions sont terminées."];
+ if(top[0])messages.push("À la première place : "+top[0].name+".");
+ if(top[1])messages.push("À la deuxième place : "+top[1].name+".");
+ if(top[2])messages.push("À la troisième place : "+top[2].name+".");
+ messages.push("Bravo à tous. Les points seront remis à zéro pour la prochaine partie.");
+ speakSequence(messages,()=>{if(part<TOTAL_PARTS)recapTimeout=setTimeout(continueAfterPartPodium,7000);else recapTimeout=setTimeout(showFinalPodium,7000);});
+}
+function continueAfterPartPodium(){
+ clearTimeout(recapTimeout);$("liveScreen").classList.remove("is-special");
+ if(gameFinished)return;
+ if(currentPart()>=TOTAL_PARTS&&questionIndex===TOTAL_QUESTIONS-1){showFinalPodium(false);return;}
+ resetPartScores();questionIndex++;renderQuestion();announcePart(currentPart());announceCurrentQuestion();
+}
+/* =========================================================
    FIN DE PARTIE ET RÉINITIALISATION DU CLASSEMENT
 ========================================================= */
-
 function resetPartScores(){
  players.forEach(player=>{
   player.score=0;
@@ -2494,6 +2542,8 @@ function resetQuiz(){
  voiceQueue=[];
  speaking=false;
  voiceSequenceCallback=null;
+ liveThanksQueue.length=0;
+ liveThanksSpeaking=false;
 
  questionIndex=0;
  seconds=ROUND_SECONDS;
