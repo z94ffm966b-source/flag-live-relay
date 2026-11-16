@@ -123,14 +123,19 @@ body.broadcast-mode .voice-button{margin-top:5px;padding:6px}
 body.broadcast-mode .podium{margin-top:5px;padding:6px}
 body.broadcast-mode .question-card{margin-top:clamp(7px,1vh,11px);padding:clamp(10px,1.4vh,15px) 9px}
 body.broadcast-mode .question-text{font-size:clamp(14px,2.2vh,19px)}
+body.broadcast-mode .double-badge{font-size:7px;padding:3px 5px}
 body.broadcast-mode .likes{margin-top:clamp(6px,.8vh,9px)}
 body.broadcast-mode .answers{gap:clamp(4px,.6vh,7px);margin-top:clamp(6px,.8vh,9px)}
 body.broadcast-mode .answer{min-height:clamp(38px,5vh,50px);padding:6px;font-size:clamp(8px,1vh,10px)}
 body.broadcast-mode .answer-letter{width:23px;height:23px}
 body.broadcast-mode .vote-ticker{height:28px;margin-top:5px}
 body.broadcast-mode .chat-instruction{margin-top:5px;font-size:9px}
-body.broadcast-mode .ranking{margin-top:clamp(5px,.7vh,8px);padding:6px}
-body.broadcast-mode .ranking-row{padding:2px 0;font-size:9px}
+body.broadcast-mode .ranking{margin-top:5px;padding:5px}
+body.broadcast-mode #rankingList{max-height:125px;overflow-y:auto}
+body.broadcast-mode .ranking-row{min-height:17px;padding:1px 0;font-size:8px}
+body.broadcast-mode .rank-avatar{width:17px;height:17px;font-size:7px}
+body.broadcast-mode .rank-number{width:14px;font-size:8px}
+body.broadcast-mode .rank-score{font-size:8px}
 body.broadcast-mode .ranking-row:nth-child(n+6){display:flex}
 body.broadcast-mode .ranking-title{font-size:9px}
 body.broadcast-mode .bottom-status{padding-top:4px}
@@ -448,12 +453,15 @@ body.broadcast-mode .simulator{
 }
 
 .ranking{
- margin-top:13px;
- padding:10px;
+ margin-top:9px;
+ padding:7px;
  border:1px solid #ffffff20;
  border-radius:13px;
  background:#ffffff0b;
 }
+#rankingList{display:block;max-height:150px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#52658d transparent}
+#rankingList::-webkit-scrollbar{width:3px}
+#rankingList::-webkit-scrollbar-thumb{background:#52658d;border-radius:5px}
 
 .ranking-title{
  display:flex;
@@ -470,10 +478,11 @@ body.broadcast-mode .simulator{
 .ranking-row{
  display:flex;
  align-items:center;
- gap:7px;
- padding:5px 0;
+ gap:6px;
+ min-height:21px;
+ padding:2px 0;
  border-bottom:1px solid #ffffff0c;
- font-size:9px;
+ font-size:8px;
 }
 
 .ranking-row:last-child{border-bottom:0}
@@ -869,7 +878,7 @@ body.broadcast-mode .simulator{
  </section>
 
  <section class="question-card">
-  <div class="double-badge" id="doubleBadge">⚡ MANCHE x2</div>
+  <div class="double-badge" id="doubleBadge">⚡ QUESTION DOUBLÉE</div>
   <div class="theme" id="theme">CULTURE GÉNÉRALE</div>
   <div class="question-text" id="questionText">
    La première question va bientôt commencer.
@@ -1700,7 +1709,7 @@ function escapeHTML(value){
 }
 
 function renderRanking(){
- const top=sortedPlayers().slice(0,5);
+ const top=sortedPlayers().slice(0,7);
 
  $("rankingList").innerHTML=top.length?top.map((p,i)=>`
   <div class="ranking-row">
@@ -1717,7 +1726,7 @@ function renderRanking(){
   </div>
  `;
 
- $("rankingLabel").textContent="TOP 5";
+ $("rankingLabel").textContent="TOP 7";
 }
 
 /* =========================================================
@@ -1843,20 +1852,19 @@ function processVoiceQueue(runId=voiceRunId){
 }
 
 function speakSequence(messages,callback){
+ /* Le quiz est prioritaire : une annonce cadeau en cours est interrompue,
+    mais reste en tête de file pour être reprise pendant un prochain chrono. */
+ stopLiveThanksForQuiz();
  voiceRunId++;
  const runId=voiceRunId;
-
  if("speechSynthesis" in window)speechSynthesis.cancel();
-
  voiceQueue=[];
  speaking=false;
  voiceSequenceCallback=null;
-
  if(!voiceEnabled || !("speechSynthesis" in window)){
   if(callback)callback();
   return;
  }
-
  voiceQueue=messages.slice();
  voiceSequenceCallback=callback||null;
  processVoiceQueue(runId);
@@ -1864,30 +1872,46 @@ function speakSequence(messages,callback){
 
 const liveThanksQueue=[];
 let liveThanksSpeaking=false;
-let pendingRevealAfterThanks=false;
+let liveThanksUtterance=null;
+let liveThanksOverflow=false;
 
-/*
- * Les annonces du live passent par la même file vocale que le quiz.
- * Elles ne remplacent jamais une question ou ses propositions.
- * Elles sont lues pendant le chrono, puis la réponse est révélée.
- */
+function stopLiveThanksForQuiz(){
+ if(!liveThanksSpeaking)return;
+ liveThanksSpeaking=false;
+ liveThanksUtterance=null;
+}
+
+/* Les remerciements utilisent une file séparée : ils ne bloquent jamais
+   le chrono, la révélation ou le lancement de la question suivante. */
 function playNextLiveThanks(){
  if(!voiceEnabled||liveThanksSpeaking||!liveThanksQueue.length||!("speechSynthesis" in window))return;
- if((!timer&&!pendingRevealAfterThanks)||revealed||gameFinished)return;
+ if(!timer||revealed||gameFinished||seconds<2)return;
  liveThanksSpeaking=true;
- const message=liveThanksQueue.shift();
- speakSequence([message],()=>{
+ const message=liveThanksQueue[0];
+ const utterance=new SpeechSynthesisUtterance(message);
+ const voice=getFrenchVoice();
+ if(voice)utterance.voice=voice;
+ utterance.lang="fr-FR";utterance.rate=1.12;utterance.pitch=.9;utterance.volume=1;
+ liveThanksUtterance=utterance;
+ const finish=(completed)=>{
+  if(liveThanksUtterance!==utterance)return;
+  liveThanksUtterance=null;
   liveThanksSpeaking=false;
-  if(liveThanksQueue.length){
-   playNextLiveThanks();
-  }else if(pendingRevealAfterThanks){
-   pendingRevealAfterThanks=false;
-   revealAnswer();
-  }
- });
+  if(completed&&liveThanksQueue[0]===message)liveThanksQueue.shift();
+  if(timer&&!revealed&&!gameFinished&&seconds>=2&&liveThanksQueue.length)playNextLiveThanks();
+ };
+ utterance.onend=()=>finish(true);
+ utterance.onerror=()=>finish(false);
+ speechSynthesis.speak(utterance);
 }
 function queueLiveThanks(message){
- liveThanksQueue.push(message);
+ /* File bornée : si les événements affluent, on les regroupe en un rappel
+    global plutôt que de laisser une file interminable ralentir le quiz. */
+ if(liveThanksQueue.length<8&&!liveThanksOverflow)liveThanksQueue.push(message);
+ else if(!liveThanksOverflow){
+  liveThanksQueue.push("Merci à tous pour vos abonnements et vos cadeaux ! Les effets sont affichés à l'écran.");
+  liveThanksOverflow=true;
+ }
  if(timer&&!revealed&&!gameFinished)playNextLiveThanks();
 }
 function speak(message){if(!voiceEnabled)return;speakSequence([message]);}
@@ -1968,6 +1992,7 @@ function renderQuestion(){
  globalDoubleActive=globalDoublePending;
  globalDoublePending=false;
 
+ $("doubleBadge").textContent="⚡ QUESTION DOUBLÉE";
  $("doubleBadge").classList.toggle("visible",globalDoubleActive);
 
  /* Le glaçon ne s'applique qu'à cette manche. */
@@ -2122,11 +2147,6 @@ function revealAnswer(){
 
  clearInterval(timer);
  timer=null;
- if(voiceEnabled&&(liveThanksSpeaking||liveThanksQueue.length)){
-  pendingRevealAfterThanks=true;
-  playNextLiveThanks();
-  return;
- }
  revealed=true;
 
  const firstCorrect=validateRound();
