@@ -59,6 +59,51 @@ body{
 .live-screen::-webkit-scrollbar{width:4px}
 .live-screen::-webkit-scrollbar-thumb{background:#52658d;border-radius:8px}
 
+/* Présentation verticale propre pour la diffusion TikTok. */
+.live-screen{
+ overflow:hidden;
+ scrollbar-width:none;
+ min-height:0;
+ height:min(calc(100vh - 24px),780px);
+ max-height:calc(100vh - 24px);
+ padding:12px;
+ border-radius:18px;
+}
+.live-screen::-webkit-scrollbar{display:none}
+body.broadcast-mode{
+ width:100%;
+ height:100vh;
+ min-height:100vh;
+ padding:0;
+ margin:0;
+ gap:0;
+ justify-content:center;
+ overflow:hidden;
+ background:#050813;
+}
+body.broadcast-mode .simulator{display:none}
+body.broadcast-mode .live-screen{
+ width:min(100vw,calc((100vh - 12px)*0.5625));
+ height:min(100vh - 12px,177.78vw);
+ min-height:0;
+ max-height:100vh;
+ aspect-ratio:9/16;
+ border-radius:0;
+ border:0;
+ box-shadow:none;
+ padding:clamp(9px,1.4vh,15px);
+}
+body.broadcast-mode .question-card{margin-top:clamp(8px,1.3vh,14px);padding:clamp(12px,1.8vh,18px) 10px}
+body.broadcast-mode .likes{margin-top:clamp(7px,1vh,12px)}
+body.broadcast-mode .answers{gap:clamp(5px,.8vh,9px);margin-top:clamp(7px,1.1vh,13px)}
+body.broadcast-mode .answer{min-height:clamp(44px,6.2vh,62px);padding:7px;font-size:clamp(9px,1.2vh,11px)}
+body.broadcast-mode .ranking{margin-top:clamp(6px,1vh,10px);padding:7px}
+body.broadcast-mode .ranking-row{padding:3px 0}
+body.broadcast-mode .ranking-row:nth-child(n+6){display:none}
+body.broadcast-mode .bottom-status{padding-top:5px}
+body.broadcast-mode .voice-button{margin-top:6px;padding:7px}
+body.broadcast-mode .podium{margin-top:6px;padding:8px}
+
 .header{
  display:flex;
  justify-content:space-between;
@@ -741,7 +786,7 @@ body{
 
 @media(max-height:700px){
  body{padding:8px}
- .live-screen{min-height:0;padding:12px}
+ .live-screen{min-height:0;height:calc(100vh - 16px);max-height:calc(100vh - 16px);padding:9px;overflow:hidden}
  .question-card{margin-top:9px;padding:15px 10px 10px}
  .answer{min-height:49px}
  .gifts{margin-top:9px}
@@ -912,6 +957,12 @@ body{
   </div>
   <input id="questionBankFile" type="file" accept=".json,application/json" style="display:none" onchange="importQuestionBank(event)">
   <div class="sim-note">Le fichier exporté contient les 320 questions, leurs quatre propositions et l'index de la bonne réponse. L'import remplace la banque actuelle après vérification.</div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">🖥️ AFFICHAGE POUR LE LIVE</div>
+  <button class="sim-button blue" type="button" style="width:100%" onclick="toggleBroadcastMode()">⛶ ACTIVER LE MODE DIFFUSION</button>
+  <div class="sim-note">Masque le simulateur et centre le quiz au format vertical 9:16, sans barre de défilement. Appuie sur Échap pour quitter ce mode.</div>
  </div>
 
  <div class="sim-section">
@@ -1447,6 +1498,17 @@ let autoSimCommentCount=0;
 
 const $=id=>document.getElementById(id);
 
+function toggleBroadcastMode(force){
+ const enabled=typeof force==="boolean"?force:!document.body.classList.contains("broadcast-mode");
+ document.body.classList.toggle("broadcast-mode",enabled);
+ const button=document.querySelector('[onclick="toggleBroadcastMode()"]');
+ if(button)button.textContent=enabled?"⛶ QUITTER LE MODE DIFFUSION":"⛶ ACTIVER LE MODE DIFFUSION";
+}
+
+document.addEventListener("keydown",event=>{
+ if(event.key==="Escape"&&document.body.classList.contains("broadcast-mode"))toggleBroadcastMode(false);
+});
+
 /* =========================================================
    IMPORT / EXPORT DE LA BANQUE DE QUESTIONS
 ========================================================= */
@@ -1768,16 +1830,32 @@ function speakSequence(messages,callback){
 
 const liveThanksQueue=[];
 let liveThanksSpeaking=false;
+let pendingRevealAfterThanks=false;
+
+/*
+ * Les annonces du live passent par la même file vocale que le quiz.
+ * Elles ne remplacent jamais une question ou ses propositions.
+ * Elles sont lues pendant le chrono, puis la réponse est révélée.
+ */
 function playNextLiveThanks(){
  if(!voiceEnabled||liveThanksSpeaking||!liveThanksQueue.length||!("speechSynthesis" in window))return;
+ if((!timer&&!pendingRevealAfterThanks)||revealed||gameFinished)return;
  liveThanksSpeaking=true;
- const utterance=new SpeechSynthesisUtterance(liveThanksQueue.shift());
- const voice=getFrenchVoice();if(voice)utterance.voice=voice;
- utterance.lang="fr-FR";utterance.rate=.98;utterance.pitch=.9;utterance.volume=1;
- const finish=()=>{liveThanksSpeaking=false;if(liveThanksQueue.length&&timer&&!revealed&&!gameFinished)playNextLiveThanks();};
- utterance.onend=finish;utterance.onerror=finish;speechSynthesis.speak(utterance);
+ const message=liveThanksQueue.shift();
+ speakSequence([message],()=>{
+  liveThanksSpeaking=false;
+  if(liveThanksQueue.length){
+   playNextLiveThanks();
+  }else if(pendingRevealAfterThanks){
+   pendingRevealAfterThanks=false;
+   revealAnswer();
+  }
+ });
 }
-function queueLiveThanks(message){liveThanksQueue.push(message);if(timer&&!revealed&&!gameFinished)playNextLiveThanks();}
+function queueLiveThanks(message){
+ liveThanksQueue.push(message);
+ if(timer&&!revealed&&!gameFinished)playNextLiveThanks();
+}
 function speak(message){if(!voiceEnabled)return;speakSequence([message]);}
 
 function activateVoice(){
@@ -1997,9 +2075,14 @@ function validateRound(){
 function revealAnswer(){
  if(revealed || gameFinished)return;
 
- revealed=true;
  clearInterval(timer);
  timer=null;
+ if(voiceEnabled&&(liveThanksSpeaking||liveThanksQueue.length)){
+  pendingRevealAfterThanks=true;
+  playNextLiveThanks();
+  return;
+ }
+ revealed=true;
 
  const firstCorrect=validateRound();
  const q=questions[questionIndex];
@@ -2073,7 +2156,7 @@ function subscribePlayer(username){
  $("bottomStatus").textContent=
   "⭐ "+player.name+" : BONUS X2 PERMANENT";
 
- queueLiveThanks("Merci "+player.name+" pour ton abonnement ! Tu bénéficies du doublement permanent de tes points !");
+ queueLiveThanks("Merci "+player.name+" pour ton abonnement ! Tes points sont doublés pour la prochaine manche.");
 }
 
 /* Glaçon : bloque le leader pendant la prochaine question seulement. */
