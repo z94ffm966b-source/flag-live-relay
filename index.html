@@ -85,17 +85,42 @@ body.broadcast-mode{
 }
 body.broadcast-mode .live-screen{
  width:min(100%,405px);
- height:auto;
+ height:min(calc(100vh - 20px),720px);
  min-height:0;
- max-height:none;
+ max-height:calc(100vh - 20px);
  aspect-ratio:9/16;
  overflow:hidden;
  border-radius:18px;
  border:1px solid #ffffff20;
  box-shadow:0 12px 42px #0008;
- padding:clamp(8px,1.1vh,12px);
+ padding:clamp(7px,1vh,11px);
  flex-shrink:0;
 }
+body.broadcast-mode .header{gap:5px}
+body.broadcast-mode .brand{font-size:clamp(12px,1.7vh,15px)}
+body.broadcast-mode .creator{margin-top:4px;font-size:9px}
+body.broadcast-mode .likes{margin-top:7px}
+body.broadcast-mode .question-card{margin-top:8px;padding:clamp(9px,1.2vh,13px) 9px}
+body.broadcast-mode .theme{margin-bottom:5px;font-size:8px}
+body.broadcast-mode .question-text{font-size:clamp(13px,2vh,17px)}
+body.broadcast-mode .timer-area{margin-top:8px}
+body.broadcast-mode .answers{gap:6px;margin-top:8px}
+body.broadcast-mode .answer{min-height:clamp(42px,5.3vh,54px);padding:6px;font-size:clamp(9px,1.15vh,11px)}
+body.broadcast-mode .answer-letter{width:24px;height:24px}
+body.broadcast-mode .chat-instruction{margin-top:6px;font-size:9px}
+body.broadcast-mode .vote-count{margin-top:2px;font-size:8px}
+body.broadcast-mode .vote-ticker{height:27px;margin-top:4px}
+body.broadcast-mode .message-bar{min-height:30px;margin-top:6px;padding:5px}
+body.broadcast-mode .gifts{gap:5px;margin-top:8px}
+body.broadcast-mode .gift{padding:6px 2px}
+body.broadcast-mode .gift-emoji{font-size:18px}
+body.broadcast-mode .ranking{margin-top:7px;padding:6px}
+body.broadcast-mode .ranking-row{padding:2px 0;font-size:9px}
+body.broadcast-mode .ranking-row:nth-child(n+6){display:flex}
+body.broadcast-mode .ranking-title{font-size:9px}
+body.broadcast-mode .bottom-status{padding-top:4px}
+body.broadcast-mode .voice-button{margin-top:5px;padding:6px}
+body.broadcast-mode .podium{margin-top:5px;padding:6px}
 body.broadcast-mode .question-card{margin-top:clamp(7px,1vh,11px);padding:clamp(10px,1.4vh,15px) 9px}
 body.broadcast-mode .question-text{font-size:clamp(14px,2.2vh,19px)}
 body.broadcast-mode .likes{margin-top:clamp(6px,.8vh,9px)}
@@ -313,11 +338,19 @@ body.broadcast-mode .simulator{
  letter-spacing:.7px;
 }
 
-.chat-instruction{text-align:center;margin-top:8px;font-size:10px;font-weight:900;letter-spacing:.25px;color:#fff}
-.vote-ticker{width:100%;height:31px;margin-top:7px;padding:4px 5px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;display:flex;align-items:center;gap:6px;border:1px solid #ffffff18;border-radius:9px;background:#080f21;scrollbar-width:none;scroll-behavior:smooth}
+.chat-instruction{display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;text-align:center;margin-top:8px;font-size:10px;font-weight:900;letter-spacing:.15px;color:#fff}
+.chat-key{width:18px;height:18px;display:inline-grid;place-items:center;border-radius:5px;color:#fff;font-size:10px;font-weight:1000;box-shadow:0 2px 5px #0004}
+.chat-key.key-a{background:#ff526c}.chat-key.key-b{background:#287cf0}.chat-key.key-c{background:#17bd69}.chat-key.key-d{background:#ffb900}
+.vote-count{margin-top:3px;text-align:center;color:#c6d5f3;font-size:8px;font-weight:800;letter-spacing:.2px}
+.vote-ticker{width:100%;height:31px;margin-top:5px;padding:4px 5px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;display:flex;align-items:center;gap:6px;border:1px solid #ffffff18;border-radius:9px;background:#080f21;scrollbar-width:none;scroll-behavior:smooth}
 .vote-ticker::-webkit-scrollbar{display:none}
 .vote-pill{display:inline-flex;flex:0 0 auto;align-items:center;gap:4px;padding:4px 8px;border-radius:20px;background:linear-gradient(90deg,#183d70,#27315c);border:1px solid #5daeff55;color:#eaf4ff;font-size:8px;line-height:1;font-weight:900;animation:votePillIn .22s ease-out}
-.vote-pill .vote-pill-letter{color:#7ce7ff}
+.answer-percent{flex:none;margin-left:auto;padding:4px 6px;border-radius:7px;background:#07132666;color:#fff;font-size:11px;font-weight:1000}
+.answer-letter.letter-a{background:#ff526c;color:#fff}
+.answer-letter.letter-b{background:#287cf0;color:#fff}
+.answer-letter.letter-c{background:#17bd69;color:#fff}
+.answer-letter.letter-d{background:#ffb900;color:#fff}
+@keyframes votePillIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
 @keyframes votePillIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
 
 .message-bar{
@@ -860,10 +893,15 @@ body.broadcast-mode .simulator{
   <div class="answer answer-d"><span class="answer-letter">D</span><span class="answer-text">Réponse D</span></div>
  </section>
 
- <div class="vote-count" id="voteCount">0 JOUEUR A VOTÉ</div>
-
- <div class="chat-instruction">TAPE A, B, C OU D DANS LE CHAT</div>
- <div class="vote-ticker" id="voteTicker" aria-label="Réponses des joueurs en direct"><span class="vote-pill">En attente des réponses…</span></div>
+ <div class="chat-instruction">TAPE
+  <span class="chat-key key-a">A</span>
+  <span class="chat-key key-b">B</span>
+  <span class="chat-key key-c">C</span>
+  <span class="chat-key key-d">D</span>
+  DANS LE CHAT
+ </div>
+ <div class="vote-count" id="voteCount">0 RÉPONSE</div>
+ <div class="vote-ticker" id="voteTicker" aria-label="Pseudos des joueurs ayant voté"><span class="vote-pill">En attente des réponses…</span></div>
 
  <section class="message-bar">
   <div class="message-text" id="messageText">
@@ -1922,7 +1960,7 @@ function renderQuestion(){
  roundAnswers=[];
  seconds=ROUND_SECONDS;
 
- $("voteCount").textContent="0 JOUEUR A VOTÉ";
+ $("voteCount").textContent="0 RÉPONSE";
  $("voteTicker").innerHTML='<span class="vote-pill">En attente des réponses…</span>';
  $("bottomStatus").textContent="JOUE • RÉPONDS • GAGNE";
  $("podium").classList.remove("visible");
@@ -1991,12 +2029,12 @@ function pauseTimer(){
    RÉPONSES ET COMPTEUR DE VOTES
 ========================================================= */
 
-function addVoteTickerEntry(username,letter){
+function addVoteTickerEntry(player){
  const ticker=$("voteTicker");if(!ticker)return;
  const empty=ticker.querySelector(".vote-pill");
  if(empty&&empty.textContent.includes("En attente"))empty.remove();
  const pill=document.createElement("span");pill.className="vote-pill";
- pill.innerHTML='<span>'+escapeHTML(String(username).slice(0,24))+'</span><span class="vote-pill-letter">· '+letter+'</span>';
+ pill.textContent=String(player.name).slice(0,24)+(player.subscribed?" ⭐":"");
  ticker.appendChild(pill);
  while(ticker.children.length>70)ticker.removeChild(ticker.firstChild);
  ticker.scrollTo({left:ticker.scrollWidth,behavior:"smooth"});
@@ -2015,7 +2053,7 @@ function submitAnswer(username,letter){
 
  player.answered.push(questionIndex);
  renderRanking();
- addVoteTickerEntry(player.name,letter);
+ addVoteTickerEntry(player);
 
  roundAnswers.push({
   player,
@@ -2024,8 +2062,7 @@ function submitAnswer(username,letter){
  });
 
  const count=roundAnswers.length;
- $("voteCount").textContent=
-  count+" JOUEUR"+(count>1?"S":"")+" A VOTÉ";
+ $("voteCount").textContent=count+" RÉPONSE"+(count>1?"S":"");
 
  $("bottomStatus").textContent=
   "RÉPONSE ENREGISTRÉE — "+count+" PARTICIPANT"+(count>1?"S":"");
@@ -2096,8 +2133,16 @@ function revealAnswer(){
  const q=questions[questionIndex];
  const correctIndex=q[3];
 
+ const totalVotes=roundAnswers.length;
+ const voteTotals=[0,0,0,0];
+ roundAnswers.forEach(entry=>voteTotals[entry.answerIndex]++);
  document.querySelectorAll(".answer").forEach((el,i)=>{
   el.classList.add(i===correctIndex?"correct":"wrong");
+  const percent=totalVotes?Math.round(voteTotals[i]/totalVotes*100):0;
+  const badge=document.createElement("span");
+  badge.className="answer-percent";
+  badge.textContent=percent+"%";
+  el.appendChild(badge);
  });
 
  $("bottomStatus").textContent=
