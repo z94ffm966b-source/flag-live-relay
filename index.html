@@ -855,6 +855,18 @@ body.broadcast-mode .voice-button{display:none!important}
 .simulator{display:none!important}
 .message-bar,.voice-button,.bottom-status{display:none!important}
 
+/* Affichage garanti des cinq lignes du classement sur l'interface LIVE. */
+.live-screen{overflow-y:auto;overscroll-behavior:contain}
+.ranking{flex:0 0 auto;min-height:0}
+#rankingList{display:flex;flex-direction:column;max-height:none;overflow:visible}
+.ranking-row{display:flex!important;flex:0 0 auto;min-height:22px;visibility:visible}
+.ranking-waiting{opacity:.72}
+.ranking-waiting .rank-avatar{background:#ffffff12;color:#a9b9d8;border:1px dashed #ffffff45}
+body.broadcast-mode .live-screen{overflow-y:auto}
+body.broadcast-mode .ranking{flex:0 0 auto}
+body.broadcast-mode #rankingList{max-height:none;overflow:visible}
+body.broadcast-mode .ranking-row{display:flex!important;flex:0 0 auto;min-height:19px;padding:1px 0;font-size:8px}
+
 </style>
 </head>
 
@@ -961,12 +973,11 @@ body.broadcast-mode .voice-button{display:none!important}
    <span id="rankingLabel">TOP 5</span>
   </div>
   <div id="rankingList">
-   <div class="ranking-row">
-    <span class="rank-number">1.</span>
-    <span class="rank-avatar">?</span>
-    <span class="rank-name">En attente</span>
-    <span class="rank-score">0 pts</span>
-   </div>
+   <div class="ranking-row ranking-waiting"><span class="rank-number">1.</span><span class="rank-avatar">?</span><span class="rank-name">En attente d'un joueur...</span><span class="rank-score">—</span></div>
+   <div class="ranking-row ranking-waiting"><span class="rank-number">2.</span><span class="rank-avatar">?</span><span class="rank-name">En attente d'un joueur...</span><span class="rank-score">—</span></div>
+   <div class="ranking-row ranking-waiting"><span class="rank-number">3.</span><span class="rank-avatar">?</span><span class="rank-name">En attente d'un joueur...</span><span class="rank-score">—</span></div>
+   <div class="ranking-row ranking-waiting"><span class="rank-number">4.</span><span class="rank-avatar">?</span><span class="rank-name">En attente d'un joueur...</span><span class="rank-score">—</span></div>
+   <div class="ranking-row ranking-waiting"><span class="rank-number">5.</span><span class="rank-avatar">?</span><span class="rank-name">En attente d'un joueur...</span><span class="rank-score">—</span></div>
   </div>
  </section>
 
