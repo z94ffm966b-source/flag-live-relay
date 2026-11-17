@@ -1168,6 +1168,55 @@ body.broadcast-mode .phone-preview .answer-letter{
  height:25px!important;
  min-width:25px!important;
 }
+
+/* REMPLISSAGE REEL DE LA ZONE BLEU FONCE : les cartes grandissent,
+   au lieu de laisser le surplus sous le classement. */
+body.broadcast-mode .phone-preview .live-screen{
+  justify-content:flex-start!important;
+  gap:clamp(5px,1.1vh,12px)!important;
+}
+body.broadcast-mode .phone-preview .question-card{
+  flex:1 1 auto!important;
+  min-height:clamp(76px,10vh,112px)!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  gap:clamp(5px,.8vh,9px)!important;
+  padding:clamp(12px,1.5vh,18px) 10px!important;
+}
+body.broadcast-mode .phone-preview .timer-area{
+  flex:0 0 auto!important;
+  margin-top:0!important;
+}
+body.broadcast-mode .phone-preview .answers{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  display:grid!important;
+  grid-template-rows:repeat(4,minmax(0,1fr))!important;
+  gap:clamp(6px,.9vh,10px)!important;
+  margin-top:0!important;
+}
+body.broadcast-mode .phone-preview .answer{
+  min-height:0!important;
+  height:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  padding:clamp(8px,1.2vh,14px)!important;
+}
+body.broadcast-mode .phone-preview .chat-instruction,
+body.broadcast-mode .phone-preview .vote-count,
+body.broadcast-mode .phone-preview .vote-ticker,
+body.broadcast-mode .phone-preview .message-bar,
+body.broadcast-mode .phone-preview .gifts,
+body.broadcast-mode .phone-preview .part,
+body.broadcast-mode .phone-preview .ranking{
+  flex:0 0 auto!important;
+}
+body.broadcast-mode .phone-preview .ranking{
+  margin-top:0!important;
+  padding:clamp(7px,1vh,11px)!important;
+}
+
 </style>
 </head>
 
