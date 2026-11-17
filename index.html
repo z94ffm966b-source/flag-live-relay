@@ -485,7 +485,7 @@ body.broadcast-mode .simulator{
  font-size:8px;
 }
 
-.ranking-row:last-child{border-bottom:0}
+.ranking-row:last-child{border-bottom:0}\n.ranking-waiting{opacity:.58}\n.ranking-waiting .rank-avatar{background:#ffffff12;color:#8fa2c8;border:1px dashed #ffffff35}
 
 .rank-number{
  width:19px;
@@ -1763,22 +1763,26 @@ function escapeHTML(value){
 
 function renderRanking(){
  const top=sortedPlayers().slice(0,5);
-
- $("rankingList").innerHTML=top.length?top.map((p,i)=>`
+ const rows=top.map((p,i)=>`
   <div class="ranking-row">
    <span class="rank-number">${i+1}.</span>
    <span class="rank-avatar">${escapeHTML(p.name.charAt(0).toUpperCase())}</span>
    <span class="rank-name">${escapeHTML(p.name)}</span>
    <span class="rank-score">${p.score.toLocaleString("fr-FR")} pts</span>
   </div>
- `).join(""):`
-  <div class="ranking-row">
-   <span class="rank-number">—</span>
-   <span class="rank-name">En attente des joueurs...</span>
-   <span class="rank-score">0 pts</span>
-  </div>
- `;
-
+ `);
+ while(rows.length<5){
+  const position=rows.length+1;
+  rows.push(`
+   <div class="ranking-row ranking-waiting">
+    <span class="rank-number">${position}.</span>
+    <span class="rank-avatar">?</span>
+    <span class="rank-name">En attente d'un joueur...</span>
+    <span class="rank-score">—</span>
+   </div>
+  `);
+ }
+ $("rankingList").innerHTML=rows.join("");
  $("rankingLabel").textContent="TOP 5";
 }
 
