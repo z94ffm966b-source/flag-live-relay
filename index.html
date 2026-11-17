@@ -909,15 +909,16 @@ body.broadcast-mode{
  overflow:hidden;
 }
 body.broadcast-mode .live-screen{
- zoom:.72;
- width:min(100%,445px);
- height:calc((100svh - 8px)/.72);
- max-height:calc((100svh - 8px)/.72);
+ zoom:1;
+ width:min(405px,calc((100svh - 8px)*9/16));
+ height:min(720px,calc(100svh - 8px));
+ max-height:calc(100svh - 8px);
  min-height:0;
- aspect-ratio:auto;
- overflow:hidden!important;
- padding:5px;
- flex-shrink:0;
+ aspect-ratio:9/16;
+ overflow-y:auto!important;
+ overflow-x:hidden!important;
+ padding:8px;
+ flex:0 0 auto;
  margin-left:auto;
  margin-right:auto;
 }
