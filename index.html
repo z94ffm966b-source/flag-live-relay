@@ -867,6 +867,57 @@ body.broadcast-mode .ranking{flex:0 0 auto}
 body.broadcast-mode #rankingList{max-height:none;overflow:visible}
 body.broadcast-mode .ranking-row{display:flex!important;flex:0 0 auto;min-height:19px;padding:1px 0;font-size:8px}
 
+
+/* Ajustement compact : l'ensemble du quiz et le Top 5 restent dans l'écran. */
+.live-screen{
+ zoom:.84;
+ width:min(119%,520px);
+ height:calc((100svh - 12px)/.84);
+ min-height:0;
+ max-height:calc((100svh - 12px)/.84);
+ overflow-y:auto!important;
+ overflow-x:hidden;
+ padding:8px;
+}
+.live-screen .header{gap:4px}
+.live-screen .creator{margin-top:3px}
+.live-screen .likes{margin-top:5px}
+.live-screen .question-card{margin-top:5px;padding:7px}
+.live-screen .timer-area{margin-top:5px}
+.live-screen .answers{gap:4px;margin-top:5px}
+.live-screen .answer{min-height:34px;padding:4px}
+.live-screen .chat-instruction{margin-top:4px}
+.live-screen .vote-ticker{height:22px;margin-top:3px}
+.live-screen .message-bar{min-height:25px;margin-top:4px;padding:4px}
+.live-screen .gifts{gap:4px;margin-top:5px}
+.live-screen .gift{padding:4px 2px}
+.live-screen .gift-emoji{font-size:16px}
+.live-screen .part{margin-top:5px}
+.live-screen .ranking{margin-top:4px;padding:5px}
+.live-screen .ranking-row{min-height:19px;padding:1px 0;font-size:8px}
+.live-screen .rank-avatar{width:17px;height:17px;font-size:7px}
+.live-screen .rank-number{width:15px;font-size:8px}
+.live-screen .rank-score{font-size:8px}
+.live-screen #rankingList{max-height:none;overflow:visible}
+.live-screen .bottom-status{padding-top:3px}
+.live-screen .voice-button{margin-top:3px;padding:5px}
+body.broadcast-mode .live-screen{
+ zoom:.84;
+ width:min(119%,480px);
+ height:calc((100svh - 12px)/.84);
+ max-height:calc((100svh - 12px)/.84);
+ overflow-y:auto!important;
+ padding:6px;
+}
+#liveMusicToggle{
+ position:fixed;z-index:9999;right:12px;top:12px;
+ border:1px solid #7de7c5aa;border-radius:999px;
+ padding:9px 13px;background:#102b35;color:#eafff8;
+ font:800 11px Inter,Arial,sans-serif;letter-spacing:.2px;
+ box-shadow:0 5px 20px #0008;cursor:pointer;
+}
+#liveMusicToggle:active{transform:scale(.97)}
+
 </style>
 </head>
 
@@ -2982,7 +3033,7 @@ function resetQuiz(){
    AMBIANCE MUSICALE ORIGINALE — CHILL GAME SHOW
 ========================================================= */
 let appleMusicDuckActive=false;
-let freeMusicBaseVolume=0.08;
+let freeMusicBaseVolume=0.12;
 let freeMusicContext=null;
 let freeMusicMaster=null;
 let freeMusicTimer=null;
@@ -3063,6 +3114,16 @@ async function playFreeMusic(){
   freeMusicStatus("Impossible de démarrer l’ambiance audio dans ce navigateur.");
  }
 }
+async function toggleLiveMusic(){
+ const button=$("liveMusicToggle");
+ if(freeMusicTimer===null){
+  await playFreeMusic();
+  if(button)button.textContent="♫ MUSIQUE ACTIVE — PAUSE";
+ }else{
+  await pauseFreeMusic();
+  if(button)button.textContent="♫ RELANCER LA MUSIQUE";
+ }
+}
 async function pauseFreeMusic(){
  if(freeMusicContext&&freeMusicContext.state==="running"){
   if(freeMusicTimer!==null){clearInterval(freeMusicTimer);freeMusicTimer=null;}
@@ -3130,8 +3191,8 @@ connectLiveConnector();
 /* La voix démarre automatiquement à l'ouverture du quiz. */
 activateVoice();
 /* Le premier clic/tap débloque la synthèse vocale si le navigateur bloque l'audio automatique. */
-document.addEventListener("pointerdown",()=>{
- if(freeMusicTimer===null)playFreeMusic();
+document.addEventListener("pointerdown",event=>{
+ if(!event.target.closest("#liveMusicToggle")&&freeMusicTimer===null)playFreeMusic();
  if(voiceEnabled&&"speechSynthesis" in window){speechSynthesis.resume();if(!speaking&&voiceQueue.length)processVoiceQueue(voiceRunId);}
 },{once:true});
 
@@ -3164,5 +3225,6 @@ document.addEventListener("keydown",event=>{
 });
 </script>
 
+<button id="liveMusicToggle" type="button" onclick="toggleLiveMusic()">♫ ACTIVER LA MUSIQUE</button>
 </body>
 </html> 
