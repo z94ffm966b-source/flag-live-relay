@@ -1442,7 +1442,7 @@ body.broadcast-mode .connector-badge{font-size:7px;padding:2px 5px;margin-left:3
 
  <div class="sim-section">
   <div class="sim-section-title">🎵 AMBIANCE MUSICALE — QUIZ CHILL</div>
-  <div class="sim-note">Fond sonore original, doux et discret : ambiance de jeu télévisé moderne, avec accords calmes et petites notes légères. Il tourne en boucle et baisse automatiquement pendant les annonces vocales.</div>
+  <div class="sim-note">Musique ambient originale très légère : nappes chaudes, accords lents, sans paroles, sans batterie ni sons répétitifs. Elle tourne en continu et baisse doucement pendant les annonces vocales.</div>
   <div class="sim-grid" style="margin-top:10px">
    <button class="sim-button green" type="button" onclick="playFreeMusic()">▶ LANCER L’AMBIANCE</button>
    <button class="sim-button yellow" type="button" onclick="pauseFreeMusic()">⏸ PAUSE</button>
@@ -1450,7 +1450,7 @@ body.broadcast-mode .connector-badge{font-size:7px;padding:2px 5px;margin-left:3
   </div>
   <label for="freeMusicVolume" class="sim-note" style="display:block;margin-top:12px">Volume de fond : <span id="freeMusicVolumeValue">10 %</span></label>
   <input id="freeMusicVolume" type="range" min="0" max="30" step="1" value="10" style="width:100%" oninput="setFreeMusicVolume(this.value);document.getElementById('freeMusicVolumeValue').textContent=this.value+' %'">
-  <div class="sim-status" id="freeMusicStatus">Ambiance prête. Clique sur « LANCER L’AMBIANCE » pour démarrer.</div>
+  <div class="sim-status" id="freeMusicStatus">Ambiance chill prête. Clique sur « LANCER L’AMBIANCE » pour démarrer.</div>
   <div class="sim-note">Musique synthétisée directement par le site : aucun fichier à télécharger, aucun compte ni abonnement. Dans TikTok LIVE Studio, vérifie que le son de la source web est bien capturé.</div>
  </div>
 
@@ -3440,7 +3440,7 @@ async function playFreeMusic(){
   if(!freeMusicContext){
    freeMusicContext=new AudioCtx();
    freeMusicMaster=freeMusicContext.createGain();
-   freeMusicMaster.gain.value=freeMusicBaseVolume*(appleMusicDuckActive?.35:1);
+   freeMusicMaster.gain.value=freeMusicBaseVolume*(appleMusicDuckActive ? .35 : 1);
    freeMusicFilter=freeMusicContext.createBiquadFilter();
    freeMusicFilter.type="lowpass";
    freeMusicFilter.frequency.value=850;
