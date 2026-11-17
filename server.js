@@ -77,7 +77,13 @@ async function connectTikTok() {
     });
 
     live.on(ControlEvent.ERROR, error => {
-      console.error("[TikTok] Erreur:", error?.info || error?.message || error);
+      console.error("[TikTok] Erreur détaillée:", {
+        name: error?.name,
+        message: error?.message,
+        info: error?.info,
+        exception: error?.exception?.message,
+        stack: error?.stack?.split("\n").slice(0, 5).join("\n")
+      });
     });
 
     live.on(WebcastEvent.CHAT, data => {
@@ -114,7 +120,13 @@ async function connectTikTok() {
 
     await live.connect();
   } catch (error) {
-    console.error("[TikTok] Connexion impossible:", error?.message || error);
+    console.error("[TikTok] Connexion impossible — diagnostic:", {
+      name: error?.name,
+      message: error?.message,
+      info: error?.info,
+      exception: error?.exception?.message,
+      stack: error?.stack?.split("\n").slice(0, 7).join("\n")
+    });
     connection = null;
     tiktokConnected = false;
     broadcast({ type: "relay_status", status: "waiting" });
