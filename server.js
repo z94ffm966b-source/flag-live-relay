@@ -12,7 +12,8 @@ let connecting = false;
 let shuttingDown = false;
 
 const server = http.createServer((req, res) => {
-  if (req.url === "/health") {
+  const pathname = new URL(req.url, "http://localhost").pathname.replace(/\/+$/, "");
+  if (pathname === "/health") {
     res.writeHead(200, { "content-type": "application/json; charset=utf-8" });
     res.end(JSON.stringify({
       ok: true,
