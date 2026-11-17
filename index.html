@@ -1042,6 +1042,49 @@ body:not(.broadcast-mode) .phone-preview .voice-button{display:none}
 body:not(.broadcast-mode) .phone-preview .bottom-status{padding-top:3px;font-size:6px;line-height:1;flex:0 0 auto}
 body:not(.broadcast-mode) .phone-preview .special-screen{max-height:100%;overflow:hidden}
 
+
+/* FORMAT LIVE STUDIO : interface agrandie de 568px à 851px (+283px),
+   avec les proportions et les éléments du quiz réadaptés ensemble. */
+body.broadcast-mode .phone-preview{
+ width:min(479px,calc((100svh - 40px)*9/16));
+ height:min(851px,calc(100svh - 40px));
+ aspect-ratio:9/16;
+}
+body.broadcast-mode .phone-preview .live-screen{
+ /* Mise à l'échelle du contenu 320x568 vers environ 480x853 */
+ zoom:1.5;
+ width:66.6667%;
+ height:66.6667%;
+ min-height:0;
+ max-height:none;
+ aspect-ratio:9/16;
+ overflow:hidden!important;
+ padding:7px;
+ flex:0 0 auto;
+ margin:0;
+}
+body.broadcast-mode .phone-preview .question-card{
+ min-height:0;
+}
+body.broadcast-mode .phone-preview .question-text{
+ display:-webkit-box;
+ -webkit-box-orient:vertical;
+ -webkit-line-clamp:3;
+ overflow:hidden;
+ overflow-wrap:anywhere;
+}
+body.broadcast-mode .phone-preview .answer-text{
+ display:-webkit-box;
+ -webkit-box-orient:vertical;
+ -webkit-line-clamp:2;
+ overflow:hidden;
+ overflow-wrap:anywhere;
+}
+body.broadcast-mode .phone-preview #rankingList{
+ max-height:none;
+ overflow:hidden;
+}
+
 </style>
 </head>
 
