@@ -13,7 +13,7 @@ let shuttingDown = false;
 
 const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(req.url, "http://localhost");
-  const pathname = requestUrl.pathname.replace(/\\/+$/, "");
+  const pathname = requestUrl.pathname.replace(/\/+$/, "");
   if (pathname === "/test-event") {
     if (process.env.ENABLE_TEST_EVENTS !== "true") {
       res.writeHead(404, { "content-type": "application/json; charset=utf-8" });
@@ -66,7 +66,9 @@ const server = http.createServer(async (req, res) => {
       ok: true,
       service: "quiz-culture-tiktok-relay",
       tiktokUsernameConfigured: Boolean(username),
-      tiktokConnected
+      tiktokConnected,
+      websocketClients: clients.size,
+      testEventsEnabled: process.env.ENABLE_TEST_EVENTS === "true"
     }));
     return;
   }
