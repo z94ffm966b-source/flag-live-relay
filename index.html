@@ -1352,16 +1352,6 @@ body.broadcast-mode .connector-badge{font-size:7px;padding:2px 5px;margin-left:3
   </div>
  </section>
 
- <section class="part">
-  <div class="part-label">
-   <span>PROGRESSION DE LA PARTIE</span>
-   <span id="partNumber">PARTIE 1/16</span>
-  </div>
-  <div class="part-track">
-   <div class="part-fill" id="partFill"></div>
-  </div>
- </section>
-
  <section class="ranking">
   <div class="ranking-title">
    <span>🏆 CLASSEMENT DU LIVE</span>
@@ -2214,11 +2204,14 @@ function renderRanking(){
 ========================================================= */
 
 const tickerMessages=[
- "⭐ Abonne-toi pour profiter du bonus x2 permanent !",
+ "🎯 Nous sommes à la partie 1 sur 16 !",
+ "⭐ Abonne-toi pour doubler tes points à chaque manche !",
  "💬 Tape A, B, C ou D dans le chat pour répondre !",
  "🏆 Qui va prendre la première place du classement ?",
  "❤️ Pense à liker le live pour atteindre les 500 likes !",
  "🌹 Envoie une rose pour doubler tes points à la prochaine manche !",
+ "⭐ Abonne-toi pour doubler tes points et rester dans le classement !",
+ "💬 Bienvenue aux nouveaux joueurs ! Tape A, B, C ou D pour répondre !",
  "🧊 Le glaçon bloque le premier pendant la prochaine manche !",
  "💣 La bombe permet de voler la moitié des points du premier !"
 ];
@@ -2446,9 +2439,8 @@ function currentPart(){
 }
 
 function updatePart(part){
- part=Math.max(1,Math.min(TOTAL_PARTS,part));
- $("partNumber").textContent="PARTIE "+part+"/"+TOTAL_PARTS;
- $("partFill").style.width=(part/TOTAL_PARTS*100)+"%";
+ // La progression est annoncée dans le bandeau d'informations animé.
+ // Aucun indicateur de progression fixe n'est affiché sur le LIVE.
 }
 
 function renderQuestion(){
