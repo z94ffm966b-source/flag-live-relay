@@ -1106,6 +1106,25 @@ body.broadcast-mode .phone-preview #rankingList{
 }
 .phone-speaker{display:none!important}
 
+
+/* Agrandissement léger des cartes pour remplir la hauteur ajoutée */
+body.broadcast-mode .phone-preview .question-card{
+ padding-top:clamp(10px,1.15vh,13px)!important;
+ padding-bottom:clamp(10px,1.15vh,13px)!important;
+}
+body.broadcast-mode .phone-preview .answers{
+ gap:clamp(6px,.8vh,9px)!important;
+ margin-top:clamp(8px,1vh,11px)!important;
+}
+body.broadcast-mode .phone-preview .answer{
+ min-height:clamp(44px,5.7vh,57px)!important;
+ padding:8px 7px!important;
+}
+body.broadcast-mode .phone-preview .answer-letter{
+ width:25px!important;
+ height:25px!important;
+ min-width:25px!important;
+}
 </style>
 </head>
 
