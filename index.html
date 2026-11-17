@@ -1037,7 +1037,7 @@ body.broadcast-mode .voice-button{display:none!important}
   <input class="sim-input" id="connectorInterfaceUrl" type="url" placeholder="https://...">
   <button class="sim-button blue" type="button" style="width:100%;margin-top:8px" onclick="openLiveConnectorInterface()">🌐 Ouvrir l'interface du connecteur</button>
   <div class="sim-status" id="connectorStatus">Connecteur non configuré. Renseigne l'adresse fournie par ton logiciel TikTok Live Connector.</div>
-  <div class="sim-note">Le connecteur doit envoyer des événements JSON de type chat/comment, gift, subscribe ou like. L'adresse exacte et le format des événements dépendent du logiciel de connexion utilisé.</div>
+  <div class="sim-note">Ce champ reçoit le serveur TikTok LIVE Relay hébergé séparément sur Render. Adresse attendue : wss://TON-SERVEUR.onrender.com/ws. Le serveur relaie les commentaires, likes, abonnements et cadeaux pris en charge.</div>
  </div>
 
  <div class="sim-section">
@@ -1664,22 +1664,29 @@ function connectLiveConnector(){
 function handleConnectorEvent(data){
  if(!data || typeof data!=="object")return;
  const type=String(data.type||data.event||data.action||"").toLowerCase();
- const username=String(data.username||data.user||data.nickname||data.uniqueId||data.sender||"").trim();
+ const userData=(data.user&&typeof data.user==="object")?data.user:{};
+ const username=String(data.username||userData.uniqueId||userData.displayId||userData.nickname||data.nickname||data.uniqueId||data.sender||(typeof data.user==="string"?data.user:"")).trim();
  const message=String(data.comment||data.message||data.text||"").trim();
  if(["chat","comment","message"].includes(type)){
   const match=message.toUpperCase().match(/\b([ABCD])\b/);
   if(username && match)submitAnswer(username,match[1]);
   return;
  }
- if(["subscribe","subscription","follow","member"].includes(type)){if(username)subscribePlayer(username);return;}
- if(["like","likes"].includes(type)){updateLikes(Number(data.count||data.likeCount||data.amount||1));return;}
+ if(["subscribe","subscription","subnotify","sub_notify"].includes(type)){
+  if(username)subscribePlayer(username);
+  return;
+ }
+ if(["like","likes"].includes(type)){
+  updateLikes(Number(data.count||data.likeCount||data.amount||1));
+  return;
+ }
  if(["gift","gift_received"].includes(type)){
-  const gift=String(data.giftName||data.gift||data.giftType||"").toLowerCase();
-  const amount=Number(data.diamondCount||data.coins||data.amount||0);
+  const giftObject=(data.gift&&typeof data.gift==="object")?data.gift:{};
+  const gift=String(data.giftName||giftObject.name||data.gift||data.giftType||"").toLowerCase();
   if(!username)return;
   if(gift.includes("rose")||gift.includes("🌹"))giveRose(username);
   else if(gift.includes("ice")||gift.includes("glaçon")||gift.includes("glacon"))freezeLeader(username);
-  else if(gift.includes("bomb")||gift.includes("bombe")||amount>=99)bombLeader(username);
+  else if(gift.includes("bomb")||gift.includes("bombe"))bombLeader(username);
  }
 }
 
