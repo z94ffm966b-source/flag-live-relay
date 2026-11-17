@@ -851,6 +851,10 @@ body.broadcast-mode .simulator{
 
 /* Le contrôle vocal reste disponible dans le simulateur, mais n'apparaît pas dans l'image diffusée. */
 body.broadcast-mode .voice-button{display:none!important}
+/* Affichage public : uniquement l'interface du LIVE, sans panneau technique ni messages parasites. */
+.simulator{display:none!important}
+.message-bar,.voice-button,.bottom-status{display:none!important}
+
 </style>
 </head>
 
@@ -1626,8 +1630,19 @@ async function importQuestionBank(event){
    CONNEXION TIKTOK LIVE CONNECTOR — WEBSOCKET CONFIGURABLE
 ========================================================= */
 
+const LIVE_RELAY_URL="wss://quiz-culture-relay.onrender.com/ws";
+const LIVE_RECONNECT_DELAY=15000;
 let liveConnectorSocket=null;
+let liveConnectorRetryTimer=null;
+let liveConnectorManuallyClosed=false;
 function connectorStatus(message){const el=$("connectorStatus");if(el)el.textContent=message;}
+function scheduleLiveConnectorRetry(){
+ if(liveConnectorManuallyClosed||liveConnectorRetryTimer)return;
+ liveConnectorRetryTimer=setTimeout(()=>{
+  liveConnectorRetryTimer=null;
+  connectLiveConnector();
+ },LIVE_RECONNECT_DELAY);
+}
 
 function openLiveConnectorInterface(){
  const value=$("connectorInterfaceUrl").value.trim();
@@ -1637,33 +1652,47 @@ function openLiveConnectorInterface(){
 }
 
 function disconnectLiveConnector(){
+ liveConnectorManuallyClosed=true;
+ if(liveConnectorRetryTimer){clearTimeout(liveConnectorRetryTimer);liveConnectorRetryTimer=null;}
  if(liveConnectorSocket){liveConnectorSocket.onclose=null;liveConnectorSocket.close();liveConnectorSocket=null;}
- connectorStatus("Connecteur déconnecté.");
+ connectorStatus("Connecteur déconnecté manuellement.");
 }
 
 function connectLiveConnector(){
- const value=$("connectorSocketUrl").value.trim();
- if(!value){connectorStatus("Renseigne l'adresse WebSocket fournie par ton connecteur.");return;}
- let url;
- try{url=new URL(value);if(!["ws:","wss:"].includes(url.protocol))throw new Error("L'adresse doit commencer par ws:// ou wss://");}
- catch(error){connectorStatus("Adresse WebSocket invalide : "+error.message);return;}
- disconnectLiveConnector();
+ liveConnectorManuallyClosed=false;
+ if(liveConnectorSocket&&(liveConnectorSocket.readyState===WebSocket.OPEN||liveConnectorSocket.readyState===WebSocket.CONNECTING))return;
+ if(liveConnectorRetryTimer){clearTimeout(liveConnectorRetryTimer);liveConnectorRetryTimer=null;}
+ const url=new URL(LIVE_RELAY_URL);
  try{
+  connectorStatus("Connexion automatique à @quizzzz123_…");
   liveConnectorSocket=new WebSocket(url.href);
-  connectorStatus("Connexion en cours à "+url.href+"…");
-  liveConnectorSocket.onopen=()=>connectorStatus("Connecté au TikTok Live Connector.");
-  liveConnectorSocket.onerror=()=>connectorStatus("Erreur de connexion. Vérifie l'adresse et que le connecteur accepte les WebSocket.");
-  liveConnectorSocket.onclose=()=>connectorStatus("Connexion au connecteur fermée.");
+  liveConnectorSocket.onopen=()=>connectorStatus("Relais connecté. Vérification de la connexion TikTok de @quizzzz123_…");
+  liveConnectorSocket.onerror=()=>connectorStatus("Relais inaccessible. Nouvelle tentative automatique dans 15 secondes…");
+  liveConnectorSocket.onclose=()=>{
+   liveConnectorSocket=null;
+   if(!liveConnectorManuallyClosed){
+    connectorStatus("Connexion interrompue. Nouvelle tentative automatique dans 15 secondes…");
+    scheduleLiveConnectorRetry();
+   }
+  };
   liveConnectorSocket.onmessage=event=>{
    try{handleConnectorEvent(JSON.parse(event.data));}
    catch(error){connectorStatus("Événement reçu mais JSON non reconnu : "+error.message);}
   };
- }catch(error){connectorStatus("Impossible de démarrer la connexion : "+error.message);}
+ }catch(error){
+  connectorStatus("Impossible de démarrer la connexion. Nouvelle tentative dans 15 secondes…");
+  scheduleLiveConnectorRetry();
+ }
 }
 
 function handleConnectorEvent(data){
  if(!data || typeof data!=="object")return;
  const type=String(data.type||data.event||data.action||"").toLowerCase();
+ if(type==="relay_status"){
+  if(data.status==="connected")connectorStatus("TikTok LIVE connecté : @quizzzz123_");
+  else connectorStatus("Relais en ligne, attente de TikTok LIVE pour @quizzzz123_… Nouvelle vérification automatique côté serveur.");
+  return;
+ }
  const userData=(data.user&&typeof data.user==="object")?data.user:{};
  const username=String(data.username||userData.uniqueId||userData.displayId||userData.nickname||data.nickname||data.uniqueId||data.sender||(typeof data.user==="string"?data.user:"")).trim();
  const message=String(data.comment||data.message||data.text||"").trim();
@@ -3078,7 +3107,10 @@ renderQuestion();
 renderRanking();
 updatePart(1);
 startTicker();
-connectorStatus("Connecteur non configuré. Renseigne l'adresse fournie par ton logiciel TikTok Live Connector.");
+const socketField=$("connectorSocketUrl");
+if(socketField)socketField.value=LIVE_RELAY_URL;
+connectorStatus("Démarrage du connecteur TikTok pour @quizzzz123_…");
+connectLiveConnector();
 
 /* La voix démarre automatiquement à l'ouverture du quiz. */
 activateVoice();
