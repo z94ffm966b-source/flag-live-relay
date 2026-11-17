@@ -1250,6 +1250,13 @@ body.broadcast-mode .phone-preview .ranking-row{min-height:clamp(20px,2.6vh,27px
 body.broadcast-mode .phone-preview .rank-avatar{width:clamp(18px,2.2vh,23px)!important;height:clamp(18px,2.2vh,23px)!important}
 body.broadcast-mode .phone-preview .special-screen{max-height:100%;overflow:hidden!important}
 
+
+/* Petit témoin discret de l'état du relais, sans afficher les commandes techniques. */
+.connector-badge{display:inline-flex;align-items:center;gap:4px;margin-left:5px;padding:3px 6px;border:1px solid #ffbd3566;border-radius:20px;background:#ffbd3518;color:#ffd77a;font-size:8px;font-weight:900;letter-spacing:.25px;white-space:nowrap}
+.connector-badge::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;flex:0 0 auto}
+.connector-badge.connected{border-color:#22c87588;background:#22c87518;color:#72f0b0}
+.connector-badge.disconnected{border-color:#ff536888;background:#ff536818;color:#ff8b99}
+body.broadcast-mode .connector-badge{font-size:7px;padding:2px 5px;margin-left:3px}
 </style>
 </head>
 
@@ -1268,6 +1275,7 @@ body.broadcast-mode .phone-preview .special-screen{max-height:100%;overflow:hidd
   <span class="creator-name">Par Quizzzz123_</span>
   <span class="live-indicator">● LIVE</span>
   <span class="viewer-count" id="viewerCount">● 50 spectateurs</span>
+  <span class="connector-badge" id="liveConnectorBadge" aria-live="polite">CONNEXION…</span>
  </div>
 
  <section class="likes">
@@ -2031,7 +2039,15 @@ const LIVE_RECONNECT_DELAY=15000;
 let liveConnectorSocket=null;
 let liveConnectorRetryTimer=null;
 let liveConnectorManuallyClosed=false;
-function connectorStatus(message){const el=$("connectorStatus");if(el)el.textContent=message;}
+function connectorStatus(message){
+ const el=$("connectorStatus");if(el)el.textContent=message;
+ const badge=$("liveConnectorBadge");
+ if(!badge)return;
+ const text=String(message||"");
+ badge.textContent=/Relais connecté/i.test(text)?"RELAIS CONNECTÉ":/Démarrage|Connexion automatique/i.test(text)?"CONNEXION…":/déconnecté manuellement/i.test(text)?"DÉCONNECTÉ":/inaccessible|interrompue|erreur|échec/i.test(text)?"RECONNEXION…":"EN ATTENTE";
+ badge.classList.toggle("connected",/Relais connecté/i.test(text));
+ badge.classList.toggle("disconnected",/inaccessible|interrompue|erreur|échec|déconnecté manuellement/i.test(text));
+}
 function scheduleLiveConnectorRetry(){
  if(liveConnectorManuallyClosed||liveConnectorRetryTimer)return;
  liveConnectorRetryTimer=setTimeout(()=>{
