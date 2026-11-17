@@ -1107,6 +1107,29 @@ body.broadcast-mode .phone-preview #rankingList{
 .phone-speaker{display:none!important}
 
 
+
+/* REPARTITION VERTICALE : le contenu occupe toute la hauteur du live */
+body.broadcast-mode .phone-preview .live-screen{
+ display:flex!important;
+ flex-direction:column!important;
+ justify-content:space-between!important;
+}
+body.broadcast-mode .phone-preview .live-screen > .header,
+body.broadcast-mode .phone-preview .live-screen > .creator,
+body.broadcast-mode .phone-preview .live-screen > .likes,
+body.broadcast-mode .phone-preview .live-screen > .question-card,
+body.broadcast-mode .phone-preview .live-screen > .timer-area,
+body.broadcast-mode .phone-preview .live-screen > .answers,
+body.broadcast-mode .phone-preview .live-screen > .chat-instruction,
+body.broadcast-mode .phone-preview .live-screen > .vote-count,
+body.broadcast-mode .phone-preview .live-screen > .vote-ticker,
+body.broadcast-mode .phone-preview .live-screen > .message-bar,
+body.broadcast-mode .phone-preview .live-screen > .gifts,
+body.broadcast-mode .phone-preview .live-screen > .part,
+body.broadcast-mode .phone-preview .live-screen > .ranking{
+ flex-shrink:0;
+}
+
 /* Agrandissement léger des cartes pour remplir la hauteur ajoutée */
 body.broadcast-mode .phone-preview .question-card{
  padding-top:clamp(10px,1.15vh,13px)!important;
