@@ -1108,6 +1108,26 @@ body.broadcast-mode .phone-preview #rankingList{
 
 
 
+
+/* CORRECTION DIMENSIONS : le quiz remplit réellement son conteneur */
+body.broadcast-mode .phone-preview{
+ width:min(480px,calc((100svh - 20px)*9/16))!important;
+ height:min(1000px,calc(100svh - 20px))!important;
+ flex:0 0 auto!important;
+}
+body.broadcast-mode .phone-preview .live-screen{
+ zoom:1!important;
+ width:100%!important;
+ height:100%!important;
+ min-height:0!important;
+ max-height:none!important;
+ aspect-ratio:auto!important;
+ box-sizing:border-box!important;
+ flex:0 0 100%!important;
+ margin:0!important;
+ overflow:hidden!important;
+}
+
 /* REPARTITION VERTICALE : le contenu occupe toute la hauteur du live */
 body.broadcast-mode .phone-preview .live-screen{
  display:flex!important;
