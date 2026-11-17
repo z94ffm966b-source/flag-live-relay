@@ -1114,8 +1114,8 @@ body.broadcast-mode .live-screen{
    <button class="sim-button yellow" type="button" onclick="pauseFreeMusic()">⏸ PAUSE</button>
    <button class="sim-button red" type="button" onclick="stopFreeMusic()">⏹ ARRÊTER</button>
   </div>
-  <label for="freeMusicVolume" class="sim-note" style="display:block;margin-top:12px">Volume de fond : <span id="freeMusicVolumeValue">2 %</span></label>
-  <input id="freeMusicVolume" type="range" min="0" max="8" value="2" style="width:100%" oninput="setFreeMusicVolume(this.value);document.getElementById('freeMusicVolumeValue').textContent=this.value+' %'">
+  <label for="freeMusicVolume" class="sim-note" style="display:block;margin-top:12px">Volume de fond : <span id="freeMusicVolumeValue">0,6 %</span></label>
+  <input id="freeMusicVolume" type="range" min="0" max="2" step="0.1" value="0.6" style="width:100%" oninput="setFreeMusicVolume(this.value);document.getElementById('freeMusicVolumeValue').textContent=this.value+' %'">
   <div class="sim-status" id="freeMusicStatus">Ambiance prête. Clique sur « LANCER L’AMBIANCE » pour démarrer.</div>
   <div class="sim-note">Musique synthétisée directement par le site : aucun fichier à télécharger, aucun compte ni abonnement. Dans TikTok LIVE Studio, vérifie que le son de la source web est bien capturé.</div>
  </div>
@@ -3030,67 +3030,61 @@ function resetQuiz(){
 }
 
 /* =========================================================
-   AMBIANCE MUSICALE ORIGINALE — CHILL GAME SHOW
+   AMBIANCE MUSICALE ORIGINALE — QUIZ TV JOYEUX ET DISCRET
 ========================================================= */
 let appleMusicDuckActive=false;
-let freeMusicBaseVolume=0.02;
+let freeMusicBaseVolume=0.006;
 let freeMusicContext=null;
 let freeMusicMaster=null;
 let freeMusicTimer=null;
 let freeMusicStep=0;
 function freeMusicStatus(message){const el=$("freeMusicStatus");if(el)el.textContent=message;}
 function setFreeMusicVolume(value){
- freeMusicBaseVolume=Math.max(0,Math.min(.08,Number(value)/100));
+ freeMusicBaseVolume=Math.max(0,Math.min(.02,Number(value)/100));
  if(freeMusicMaster&&freeMusicContext){
-  freeMusicMaster.gain.setTargetAtTime(freeMusicBaseVolume*(appleMusicDuckActive ? .25 : 1),freeMusicContext.currentTime,.12);
+  freeMusicMaster.gain.setTargetAtTime(freeMusicBaseVolume*(appleMusicDuckActive ? .08 : 1),freeMusicContext.currentTime,.12);
  }
 }
 function setAppleMusicDucking(active){
  appleMusicDuckActive=!!active;
  if(freeMusicMaster&&freeMusicContext){
-  freeMusicMaster.gain.setTargetAtTime(freeMusicBaseVolume*(appleMusicDuckActive ? .22 : 1),freeMusicContext.currentTime,.18);
+  freeMusicMaster.gain.setTargetAtTime(freeMusicBaseVolume*(appleMusicDuckActive ? .08 : 1),freeMusicContext.currentTime,.18);
  }
 }
 function playMusicChord(){
  if(!freeMusicContext||!freeMusicMaster)return;
  const ctx=freeMusicContext;
+ // Accords majeurs simples et lumineux, ambiance plateau TV conviviale.
  const chords=[
-  [60,64,67,71],[57,60,64,67],[53,57,60,64],[55,59,62,67]
+  [60,64,67],[65,69,72],[67,71,74],[60,64,67]
  ];
  const notes=chords[freeMusicStep%chords.length];
  const now=ctx.currentTime;
+ // Petit tapis doux, sans nappes graves ni tension harmonique.
  notes.forEach((midi,index)=>{
   const osc=ctx.createOscillator();
   const gain=ctx.createGain();
   osc.type="sine";
   osc.frequency.value=440*Math.pow(2,(midi-69)/12);
-  gain.gain.setValueAtTime(0,now);
-  gain.gain.linearRampToValueAtTime(index===0 ? .13 : .085,now+1.1);
-  gain.gain.setTargetAtTime(.0001,now+3.1,.42);
+  gain.gain.setValueAtTime(.0001,now);
+  gain.gain.linearRampToValueAtTime(index===0 ? .045 : .032,now+.45);
+  gain.gain.setTargetAtTime(.0001,now+2.35,.38);
   osc.connect(gain);gain.connect(freeMusicMaster);
-  osc.start(now);osc.stop(now+4.8);
+  osc.start(now);osc.stop(now+3.7);
  });
- const bass=ctx.createOscillator();
- const bassGain=ctx.createGain();
- bass.type="sine";
- bass.frequency.value=440*Math.pow(2,(notes[0]-12-69)/12);
- bassGain.gain.setValueAtTime(.0001,now);
- bassGain.gain.linearRampToValueAtTime(.16,now+.8);
- bassGain.gain.setTargetAtTime(.0001,now+3.0,.38);
- bass.connect(bassGain);bassGain.connect(freeMusicMaster);
- bass.start(now);bass.stop(now+4.5);
- // Petite note cristalline espacée : présence de jeu télévisé, sans tic-tac agressif.
- if(freeMusicStep%2===0){
+ // Quelques notes aiguës rondes et espacées pour donner un côté jeu télévisé.
+ const melody=[notes[2]+12,notes[1]+12,notes[2]+12,notes[0]+12];
+ [0.25,1.05,1.85,2.65].forEach((offset,index)=>{
   const pluck=ctx.createOscillator();
   const pluckGain=ctx.createGain();
-  pluck.type="sine";
-  pluck.frequency.value=440*Math.pow(2,(notes[2]+12-69)/12);
-  pluckGain.gain.setValueAtTime(.0001,now+1.65);
-  pluckGain.gain.linearRampToValueAtTime(.12,now+1.72);
-  pluckGain.gain.exponentialRampToValueAtTime(.0001,now+2.65);
+  pluck.type="triangle";
+  pluck.frequency.value=440*Math.pow(2,(melody[index]-69)/12);
+  pluckGain.gain.setValueAtTime(.0001,now+offset);
+  pluckGain.gain.linearRampToValueAtTime(.035,now+offset+.06);
+  pluckGain.gain.exponentialRampToValueAtTime(.0001,now+offset+.48);
   pluck.connect(pluckGain);pluckGain.connect(freeMusicMaster);
-  pluck.start(now+1.65);pluck.stop(now+2.7);
- }
+  pluck.start(now+offset);pluck.stop(now+offset+.52);
+ });
  freeMusicStep++;
 }
 async function playFreeMusic(){
@@ -3100,7 +3094,7 @@ async function playFreeMusic(){
   if(!freeMusicContext){
    freeMusicContext=new AudioCtx();
    freeMusicMaster=freeMusicContext.createGain();
-   freeMusicMaster.gain.value=freeMusicBaseVolume*(appleMusicDuckActive ? .22 : 1);
+   freeMusicMaster.gain.value=freeMusicBaseVolume*(appleMusicDuckActive ? .08 : 1);
    freeMusicMaster.connect(freeMusicContext.destination);
    freeMusicStep=0;
   }
@@ -3109,7 +3103,7 @@ async function playFreeMusic(){
    playMusicChord();
    freeMusicTimer=setInterval(playMusicChord,4000);
   }
-  freeMusicStatus("Ambiance chill en lecture. Le volume baisse automatiquement pendant la voix du quiz.");
+  freeMusicStatus("Ambiance jeu télévisé douce en lecture. Volume très bas, encore réduit pendant la voix du quiz.");
  }catch(error){
   freeMusicStatus("Impossible de démarrer l’ambiance audio dans ce navigateur.");
  }
