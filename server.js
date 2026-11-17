@@ -3,9 +3,10 @@ import { WebSocketServer, WebSocket } from "ws";
 import { TikTokLiveConnection, WebcastEvent, ControlEvent } from "tiktok-live-connector";
 
 const PORT = Number(process.env.PORT || 10000);
-const username = String(process.env.TIKTOK_USERNAME || "").trim().replace(/^@/, "");
+const username = String(process.env.TIKTOK_USERNAME || "quizzzz123_").trim().replace(/^@/, "");
 const clients = new Set();
 let connection = null;
+let tiktokConnected = false;
 let reconnectTimer = null;
 let connecting = false;
 let shuttingDown = false;
@@ -17,7 +18,7 @@ const server = http.createServer((req, res) => {
       ok: true,
       service: "quiz-culture-tiktok-relay",
       tiktokUsernameConfigured: Boolean(username),
-      tiktokConnected: Boolean(connection)
+      tiktokConnected
     }));
     return;
   }
@@ -29,7 +30,7 @@ const wss = new WebSocketServer({ server, path: "/ws" });
 
 wss.on("connection", socket => {
   clients.add(socket);
-  socket.send(JSON.stringify({ type: "relay_status", status: connection ? "connected" : "waiting" }));
+  socket.send(JSON.stringify({ type: "relay_status", status: tiktokConnected ? "connected" : "waiting" }));
   socket.on("close", () => clients.delete(socket));
   socket.on("error", () => clients.delete(socket));
 });
@@ -50,7 +51,7 @@ function scheduleReconnect() {
   reconnectTimer = setTimeout(() => {
     reconnectTimer = null;
     connectTikTok();
-  }, 30000);
+  }, 15000);
 }
 
 async function connectTikTok() {
@@ -61,14 +62,16 @@ async function connectTikTok() {
     connection = live;
 
     live.on(ControlEvent.CONNECTED, state => {
-      console.log("[TikTok] Connecté, roomId:", state?.roomId || "inconnu");
+      tiktokConnected = true;
+      console.log("[TikTok] Connecté à @" + username + ", roomId:", state?.roomId || "inconnu");
       broadcast({ type: "relay_status", status: "connected" });
     });
 
     live.on(ControlEvent.DISCONNECTED, info => {
       console.log("[TikTok] Déconnecté:", info?.code || "", info?.reason || "");
       connection = null;
-      broadcast({ type: "relay_status", status: "disconnected" });
+      tiktokConnected = false;
+      broadcast({ type: "relay_status", status: "waiting" });
       scheduleReconnect();
     });
 
@@ -112,6 +115,8 @@ async function connectTikTok() {
   } catch (error) {
     console.error("[TikTok] Connexion impossible:", error?.message || error);
     connection = null;
+    tiktokConnected = false;
+    broadcast({ type: "relay_status", status: "waiting" });
     scheduleReconnect();
   } finally {
     connecting = false;
@@ -131,6 +136,7 @@ server.listen(PORT, "0.0.0.0", () => {
 async function shutdown() {
   shuttingDown = true;
   if (reconnectTimer) clearTimeout(reconnectTimer);
+  tiktokConnected = false;
   try { await connection?.disconnect(); } catch {}
   for (const client of clients) client.close();
   server.close(() => process.exit(0));
