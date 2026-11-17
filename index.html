@@ -912,10 +912,11 @@ body.broadcast-mode{
  overflow:hidden;
 }
 body.broadcast-mode .live-screen{
- zoom:1;
- width:min(320px,calc((100svh - 8px)*9/16));
- height:min(568px,calc(100svh - 8px));
- max-height:calc(100svh - 8px);
+ /* Base mobile layout 320x568, enlarged to fill a 720x1280 browser source. */
+ zoom:2.25;
+ width:320px;
+ height:568.8889px;
+ max-height:568.8889px;
  min-height:0;
  aspect-ratio:9/16;
  overflow-y:auto!important;
