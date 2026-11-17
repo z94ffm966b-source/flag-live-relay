@@ -11,8 +11,55 @@ let reconnectTimer = null;
 let connecting = false;
 let shuttingDown = false;
 
-const server = http.createServer((req, res) => {
-  const pathname = new URL(req.url, "http://localhost").pathname.replace(/\/+$/, "");
+const server = http.createServer(async (req, res) => {
+  const requestUrl = new URL(req.url, "http://localhost");
+  const pathname = requestUrl.pathname.replace(/\\/+$/, "");
+  if (pathname === "/test-event") {
+    if (process.env.ENABLE_TEST_EVENTS !== "true") {
+      res.writeHead(404, { "content-type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ ok: false, error: "Test events disabled" }));
+      return;
+    }
+    if (req.method !== "POST") {
+      res.writeHead(405, { allow: "POST", "content-type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ ok: false, error: "Use POST" }));
+      return;
+    }
+    if (process.env.TEST_EVENT_KEY && req.headers["x-test-key"] !== process.env.TEST_EVENT_KEY) {
+      res.writeHead(401, { "content-type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ ok: false, error: "Invalid test key" }));
+      return;
+    }
+    try {
+      let raw = "";
+      for await (const chunk of req) {
+        raw += chunk;
+        if (raw.length > 4096) throw new Error("Payload too large");
+      }
+      const event = JSON.parse(raw || "{}");
+      const type = String(event.type || "").toLowerCase();
+      const allowed = ["chat", "like", "subscribe", "gift"];
+      if (!allowed.includes(type)) throw new Error("Unsupported test event type");
+      const username = String(event.username || "JoueurTest").trim().slice(0, 30);
+      let payload;
+      if (type === "chat") {
+        payload = { type, username, comment: String(event.comment || "A").slice(0, 200) };
+      } else if (type === "like") {
+        payload = { type, username, count: Math.max(1, Math.min(10000, Number(event.count) || 1)) };
+      } else if (type === "subscribe") {
+        payload = { type, username };
+      } else {
+        payload = { type, username, giftName: String(event.giftName || "Rose").slice(0, 60), count: Math.max(1, Math.min(99, Number(event.count) || 1)) };
+      }
+      broadcast(payload);
+      res.writeHead(200, { "content-type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ ok: true, deliveredTo: clients.size, event: payload }));
+    } catch (error) {
+      res.writeHead(400, { "content-type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ ok: false, error: error.message || "Invalid request" }));
+    }
+    return;
+  }
   if (pathname === "/health") {
     res.writeHead(200, { "content-type": "application/json; charset=utf-8" });
     res.end(JSON.stringify({
