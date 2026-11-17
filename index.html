@@ -1046,22 +1046,33 @@ body:not(.broadcast-mode) .phone-preview .special-screen{max-height:100%;overflo
 /* FORMAT LIVE STUDIO : interface agrandie de 568px à 851px (+283px),
    avec les proportions et les éléments du quiz réadaptés ensemble. */
 body.broadcast-mode .phone-preview{
- width:min(479px,calc((100svh - 40px)*9/16));
- height:min(851px,calc(100svh - 40px));
- aspect-ratio:9/16;
+ /* On retire le cadre du téléphone : seul le live reste visible. */
+ width:min(480px,calc((100svh - 20px)*9/16));
+ height:min(900px,calc(100svh - 20px));
+ aspect-ratio:auto;
+ padding:0;
+ border:0;
+ border-radius:0;
+ background:transparent;
+ box-shadow:none;
+ overflow:visible;
 }
+body.broadcast-mode .phone-preview .phone-speaker{display:none}
 body.broadcast-mode .phone-preview .live-screen{
- /* Mise à l'échelle du contenu 320x568 vers environ 480x853 */
+ /* Live plus long, sans cadre de téléphone */
  zoom:1.5;
  width:66.6667%;
  height:66.6667%;
  min-height:0;
  max-height:none;
- aspect-ratio:9/16;
+ aspect-ratio:auto;
  overflow:hidden!important;
  padding:7px;
  flex:0 0 auto;
  margin:0;
+ border:0;
+ border-radius:0;
+ box-shadow:none;
 }
 body.broadcast-mode .phone-preview .question-card{
  min-height:0;
