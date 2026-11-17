@@ -971,6 +971,77 @@ body:not(.broadcast-mode) .phone-preview .live-screen{
  overflow-y:auto!important;overflow-x:hidden!important;
  border:0;border-radius:26px;box-shadow:none;padding:12px 8px 8px;margin:0;flex:1 1 auto;
 }
+
+/* ADAPTATION COMPACTE DU CONTENU DANS LE PETIT APERÇU */
+body:not(.broadcast-mode) .phone-preview .live-screen{
+ box-sizing:border-box;display:flex;flex-direction:column;gap:0;
+ height:100%;min-height:0;max-height:100%;padding:7px 7px 5px;
+ overflow:hidden!important;font-size:10px;
+}
+body:not(.broadcast-mode) .phone-preview .header{gap:3px;flex:0 0 auto}
+body:not(.broadcast-mode) .phone-preview .brand{font-size:12px;line-height:1.1}
+body:not(.broadcast-mode) .phone-preview .question-number{font-size:10px;padding:3px 5px}
+body:not(.broadcast-mode) .phone-preview .creator{margin-top:3px;font-size:8px;line-height:1.15;flex:0 0 auto}
+body:not(.broadcast-mode) .phone-preview .likes{margin-top:5px;flex:0 0 auto}
+body:not(.broadcast-mode) .phone-preview .likes-top{font-size:8px}
+body:not(.broadcast-mode) .phone-preview .likes-track{height:4px;margin-top:3px}
+body:not(.broadcast-mode) .phone-preview .likes-goal-note{font-size:6px;line-height:1.15;margin-top:2px}
+body:not(.broadcast-mode) .phone-preview .question-card{
+ box-sizing:border-box;flex:0 0 70px;min-height:70px;max-height:70px;
+ margin-top:5px;padding:5px 7px;overflow:hidden;
+ display:flex;flex-direction:column;justify-content:center;gap:2px;
+}
+body:not(.broadcast-mode) .phone-preview .double-badge{font-size:6px;line-height:1;padding:2px 4px;margin:0}
+body:not(.broadcast-mode) .phone-preview .theme{font-size:7px;line-height:1.1;margin:0}
+body:not(.broadcast-mode) .phone-preview .question-text{
+ display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;
+ overflow:hidden;text-overflow:ellipsis;font-size:clamp(8px,2.8vw,10px);
+ line-height:1.12;overflow-wrap:anywhere;margin:0;
+}
+body:not(.broadcast-mode) .phone-preview .timer-area{margin-top:4px;flex:0 0 auto}
+body:not(.broadcast-mode) .phone-preview .timer-label{font-size:7px;line-height:1.1}
+body:not(.broadcast-mode) .phone-preview .timer-number{font-size:8px}
+body:not(.broadcast-mode) .phone-preview .timer-track{height:4px;margin-top:2px}
+body:not(.broadcast-mode) .phone-preview .answers{
+ display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:5px;flex:0 0 auto;
+}
+body:not(.broadcast-mode) .phone-preview .answer{
+ box-sizing:border-box;min-height:31px;height:31px;padding:3px 4px;gap:4px;
+ font-size:8px;line-height:1.05;overflow:hidden;
+}
+body:not(.broadcast-mode) .phone-preview .answer-letter{
+ width:17px;height:17px;min-width:17px;font-size:8px;flex:0 0 17px;
+}
+body:not(.broadcast-mode) .phone-preview .answer-text{
+ display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+ overflow:hidden;text-overflow:ellipsis;overflow-wrap:anywhere;font-size:7px;line-height:1.05;
+}
+body:not(.broadcast-mode) .phone-preview .chat-instruction{margin-top:4px;font-size:7px;line-height:1.1;flex:0 0 auto}
+body:not(.broadcast-mode) .phone-preview .chat-key{padding:1px 3px;font-size:7px}
+body:not(.broadcast-mode) .phone-preview .vote-count{margin-top:2px;font-size:7px;line-height:1;flex:0 0 auto}
+body:not(.broadcast-mode) .phone-preview .vote-ticker{height:18px;min-height:18px;margin-top:3px;flex:0 0 18px}
+body:not(.broadcast-mode) .phone-preview .vote-pill{font-size:7px;padding:2px 4px}
+body:not(.broadcast-mode) .phone-preview .message-bar{min-height:23px;margin-top:4px;padding:3px 5px;flex:0 0 auto}
+body:not(.broadcast-mode) .phone-preview .message-text{font-size:7px;line-height:1.1}
+body:not(.broadcast-mode) .phone-preview .gifts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;margin-top:5px;flex:0 0 auto}
+body:not(.broadcast-mode) .phone-preview .gift{min-width:0;padding:3px 2px;overflow:hidden}
+body:not(.broadcast-mode) .phone-preview .gift-emoji{font-size:13px;line-height:1}
+body:not(.broadcast-mode) .phone-preview .gift-name{font-size:7px;line-height:1.1}
+body:not(.broadcast-mode) .phone-preview .gift-description{font-size:5px;line-height:1.05;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+body:not(.broadcast-mode) .phone-preview .part{margin-top:4px;flex:0 0 auto}
+body:not(.broadcast-mode) .phone-preview .part-label{font-size:6px;line-height:1.1}
+body:not(.broadcast-mode) .phone-preview .part-track{height:3px;margin-top:2px}
+body:not(.broadcast-mode) .phone-preview .ranking{margin-top:5px;padding:4px 5px;flex:0 0 auto;overflow:hidden}
+body:not(.broadcast-mode) .phone-preview .ranking-title{font-size:7px;line-height:1.1;margin-bottom:2px}
+body:not(.broadcast-mode) .phone-preview .ranking-row{padding:1px 0;min-height:13px;font-size:7px;line-height:1.05}
+body:not(.broadcast-mode) .phone-preview .rank-avatar{width:12px;height:12px;min-width:12px;font-size:7px}
+body:not(.broadcast-mode) .phone-preview .rank-name{font-size:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body:not(.broadcast-mode) .phone-preview .rank-score{font-size:7px}
+body:not(.broadcast-mode) .phone-preview .podium{margin-top:3px;padding:4px;flex:0 0 auto}
+body:not(.broadcast-mode) .phone-preview .voice-button{display:none}
+body:not(.broadcast-mode) .phone-preview .bottom-status{padding-top:3px;font-size:6px;line-height:1;flex:0 0 auto}
+body:not(.broadcast-mode) .phone-preview .special-screen{max-height:100%;overflow:hidden}
+
 </style>
 </head>
 
