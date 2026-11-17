@@ -2940,13 +2940,13 @@ function freeMusicStatus(message){const el=$("freeMusicStatus");if(el)el.textCon
 function setFreeMusicVolume(value){
  freeMusicBaseVolume=Math.max(0,Math.min(.20,Number(value)/100));
  if(freeMusicMaster&&freeMusicContext){
-  freeMusicMaster.gain.setTargetAtTime(freeMusicBaseVolume*(appleMusicDuckActive?.25:1),freeMusicContext.currentTime,.12);
+  freeMusicMaster.gain.setTargetAtTime(freeMusicBaseVolume*(appleMusicDuckActive ? .25 : 1),freeMusicContext.currentTime,.12);
  }
 }
 function setAppleMusicDucking(active){
  appleMusicDuckActive=!!active;
  if(freeMusicMaster&&freeMusicContext){
-  freeMusicMaster.gain.setTargetAtTime(freeMusicBaseVolume*(appleMusicDuckActive?.22:1),freeMusicContext.currentTime,.18);
+  freeMusicMaster.gain.setTargetAtTime(freeMusicBaseVolume*(appleMusicDuckActive ? .22 : 1),freeMusicContext.currentTime,.18);
  }
 }
 function playMusicChord(){
@@ -2963,7 +2963,7 @@ function playMusicChord(){
   osc.type="sine";
   osc.frequency.value=440*Math.pow(2,(midi-69)/12);
   gain.gain.setValueAtTime(0,now);
-  gain.gain.linearRampToValueAtTime(index===0?.035:.022,now+1.1);
+  gain.gain.linearRampToValueAtTime(index===0 ? .13 : .085,now+1.1);
   gain.gain.setTargetAtTime(.0001,now+3.1,.42);
   osc.connect(gain);gain.connect(freeMusicMaster);
   osc.start(now);osc.stop(now+4.8);
@@ -2973,7 +2973,7 @@ function playMusicChord(){
  bass.type="sine";
  bass.frequency.value=440*Math.pow(2,(notes[0]-12-69)/12);
  bassGain.gain.setValueAtTime(.0001,now);
- bassGain.gain.linearRampToValueAtTime(.045,now+.8);
+ bassGain.gain.linearRampToValueAtTime(.16,now+.8);
  bassGain.gain.setTargetAtTime(.0001,now+3.0,.38);
  bass.connect(bassGain);bassGain.connect(freeMusicMaster);
  bass.start(now);bass.stop(now+4.5);
@@ -2984,7 +2984,7 @@ function playMusicChord(){
   pluck.type="sine";
   pluck.frequency.value=440*Math.pow(2,(notes[2]+12-69)/12);
   pluckGain.gain.setValueAtTime(.0001,now+1.65);
-  pluckGain.gain.linearRampToValueAtTime(.035,now+1.72);
+  pluckGain.gain.linearRampToValueAtTime(.12,now+1.72);
   pluckGain.gain.exponentialRampToValueAtTime(.0001,now+2.65);
   pluck.connect(pluckGain);pluckGain.connect(freeMusicMaster);
   pluck.start(now+1.65);pluck.stop(now+2.7);
@@ -2998,7 +2998,7 @@ async function playFreeMusic(){
   if(!freeMusicContext){
    freeMusicContext=new AudioCtx();
    freeMusicMaster=freeMusicContext.createGain();
-   freeMusicMaster.gain.value=freeMusicBaseVolume*(appleMusicDuckActive?.22:1);
+   freeMusicMaster.gain.value=freeMusicBaseVolume*(appleMusicDuckActive ? .22 : 1);
    freeMusicMaster.connect(freeMusicContext.destination);
    freeMusicStep=0;
   }
