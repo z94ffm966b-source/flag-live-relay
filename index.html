@@ -1041,22 +1041,17 @@ body.broadcast-mode .voice-button{display:none!important}
  </div>
 
  <div class="sim-section">
-  <div class="sim-section-title">🎵 MUSIQUE DE FOND — VOLUME AUTOMATIQUE</div>
-  <div class="sim-note">Ajoute un fichier audio depuis ton ordinateur ou colle un lien direct vers un fichier/flux audio autorisé. La musique baisse automatiquement quand la voix du quiz parle, puis remonte à la fin.</div>
-  <label for="freeMusicFile" class="sim-note" style="display:block;margin-top:10px">Choisir un fichier audio (MP3, WAV, M4A…)</label>
-  <input class="sim-input" id="freeMusicFile" type="file" accept="audio/*">
-  <label for="freeMusicUrl" class="sim-note" style="display:block;margin-top:10px">Ou lien direct vers un flux/fichier audio</label>
-  <input class="sim-input" id="freeMusicUrl" type="url" placeholder="https://exemple.com/musique.mp3">
-  <div class="sim-grid" style="margin-top:8px">
-   <button class="sim-button green" type="button" onclick="playFreeMusic()">▶ LANCER LA MUSIQUE</button>
+  <div class="sim-section-title">🎵 AMBIANCE MUSICALE — QUIZ CHILL</div>
+  <div class="sim-note">Fond sonore original, doux et discret : ambiance de jeu télévisé moderne, avec accords calmes et petites notes légères. Il tourne en boucle et baisse automatiquement pendant les annonces vocales.</div>
+  <div class="sim-grid" style="margin-top:10px">
+   <button class="sim-button green" type="button" onclick="playFreeMusic()">▶ LANCER L’AMBIANCE</button>
    <button class="sim-button yellow" type="button" onclick="pauseFreeMusic()">⏸ PAUSE</button>
    <button class="sim-button red" type="button" onclick="stopFreeMusic()">⏹ ARRÊTER</button>
   </div>
-  <label for="freeMusicVolume" class="sim-note" style="display:block;margin-top:12px">Volume de base : <span id="freeMusicVolumeValue">15 %</span></label>
-  <input id="freeMusicVolume" type="range" min="0" max="40" value="15" style="width:100%" oninput="setFreeMusicVolume(this.value);document.getElementById('freeMusicVolumeValue').textContent=this.value+' %'">
-  <audio id="freeMusicAudio" preload="none"></audio>
-  <div class="sim-status" id="freeMusicStatus">Aucune musique chargée. Choisis un fichier audio ou colle un lien direct.</div>
-  <div class="sim-note">Important : un lien de playlist Apple Music ne fonctionne pas ici. Il faut un fichier audio que tu peux utiliser ou un flux direct autorisé. Dans TikTok LIVE Studio, vérifie que le son de la source web est bien capturé. Le fichier choisi devra être rechargé si tu actualises la page.</div>
+  <label for="freeMusicVolume" class="sim-note" style="display:block;margin-top:12px">Volume de fond : <span id="freeMusicVolumeValue">8 %</span></label>
+  <input id="freeMusicVolume" type="range" min="0" max="20" value="8" style="width:100%" oninput="setFreeMusicVolume(this.value);document.getElementById('freeMusicVolumeValue').textContent=this.value+' %'">
+  <div class="sim-status" id="freeMusicStatus">Ambiance prête. Clique sur « LANCER L’AMBIANCE » pour démarrer.</div>
+  <div class="sim-note">Musique synthétisée directement par le site : aucun fichier à télécharger, aucun compte ni abonnement. Dans TikTok LIVE Studio, vérifie que le son de la source web est bien capturé.</div>
  </div>
 
  <div class="sim-section">
@@ -2933,59 +2928,106 @@ function resetQuiz(){
 }
 
 /* =========================================================
-   MUSIQUE DE FOND GRATUITE — FICHIER LOCAL OU FLUX DIRECT
+   AMBIANCE MUSICALE ORIGINALE — CHILL GAME SHOW
 ========================================================= */
 let appleMusicDuckActive=false;
-let freeMusicBaseVolume=0.15;
-let freeMusicObjectUrl=null;
+let freeMusicBaseVolume=0.08;
+let freeMusicContext=null;
+let freeMusicMaster=null;
+let freeMusicTimer=null;
+let freeMusicStep=0;
 function freeMusicStatus(message){const el=$("freeMusicStatus");if(el)el.textContent=message;}
 function setFreeMusicVolume(value){
- freeMusicBaseVolume=Math.max(0,Math.min(.4,Number(value)/100));
- const audio=$("freeMusicAudio");
- if(audio)audio.volume=appleMusicDuckActive?Math.min(.06,freeMusicBaseVolume*.35):freeMusicBaseVolume;
+ freeMusicBaseVolume=Math.max(0,Math.min(.20,Number(value)/100));
+ if(freeMusicMaster&&freeMusicContext){
+  freeMusicMaster.gain.setTargetAtTime(freeMusicBaseVolume*(appleMusicDuckActive?.25:1),freeMusicContext.currentTime,.12);
+ }
 }
 function setAppleMusicDucking(active){
  appleMusicDuckActive=!!active;
- const audio=$("freeMusicAudio");
- if(audio)audio.volume=appleMusicDuckActive?Math.min(.06,freeMusicBaseVolume*.35):freeMusicBaseVolume;
+ if(freeMusicMaster&&freeMusicContext){
+  freeMusicMaster.gain.setTargetAtTime(freeMusicBaseVolume*(appleMusicDuckActive?.22:1),freeMusicContext.currentTime,.18);
+ }
+}
+function playMusicChord(){
+ if(!freeMusicContext||!freeMusicMaster)return;
+ const ctx=freeMusicContext;
+ const chords=[
+  [60,64,67,71],[57,60,64,67],[53,57,60,64],[55,59,62,67]
+ ];
+ const notes=chords[freeMusicStep%chords.length];
+ const now=ctx.currentTime;
+ notes.forEach((midi,index)=>{
+  const osc=ctx.createOscillator();
+  const gain=ctx.createGain();
+  osc.type="sine";
+  osc.frequency.value=440*Math.pow(2,(midi-69)/12);
+  gain.gain.setValueAtTime(0,now);
+  gain.gain.linearRampToValueAtTime(index===0?.035:.022,now+1.1);
+  gain.gain.setTargetAtTime(.0001,now+3.1,.42);
+  osc.connect(gain);gain.connect(freeMusicMaster);
+  osc.start(now);osc.stop(now+4.8);
+ });
+ const bass=ctx.createOscillator();
+ const bassGain=ctx.createGain();
+ bass.type="sine";
+ bass.frequency.value=440*Math.pow(2,(notes[0]-12-69)/12);
+ bassGain.gain.setValueAtTime(.0001,now);
+ bassGain.gain.linearRampToValueAtTime(.045,now+.8);
+ bassGain.gain.setTargetAtTime(.0001,now+3.0,.38);
+ bass.connect(bassGain);bassGain.connect(freeMusicMaster);
+ bass.start(now);bass.stop(now+4.5);
+ // Petite note cristalline espacée : présence de jeu télévisé, sans tic-tac agressif.
+ if(freeMusicStep%2===0){
+  const pluck=ctx.createOscillator();
+  const pluckGain=ctx.createGain();
+  pluck.type="sine";
+  pluck.frequency.value=440*Math.pow(2,(notes[2]+12-69)/12);
+  pluckGain.gain.setValueAtTime(.0001,now+1.65);
+  pluckGain.gain.linearRampToValueAtTime(.035,now+1.72);
+  pluckGain.gain.exponentialRampToValueAtTime(.0001,now+2.65);
+  pluck.connect(pluckGain);pluckGain.connect(freeMusicMaster);
+  pluck.start(now+1.65);pluck.stop(now+2.7);
+ }
+ freeMusicStep++;
 }
 async function playFreeMusic(){
- const audio=$("freeMusicAudio");
- const file=$("freeMusicFile").files&&$("freeMusicFile").files[0];
- const url=$("freeMusicUrl").value.trim();
- if(file){
-  if(freeMusicObjectUrl)URL.revokeObjectURL(freeMusicObjectUrl);
-  freeMusicObjectUrl=URL.createObjectURL(file);
-  audio.src=freeMusicObjectUrl;
- }else if(url){
-  audio.src=url;
- }else{
-  freeMusicStatus("Choisis un fichier audio ou colle un lien direct vers un flux MP3.");
-  return;
- }
- audio.volume=appleMusicDuckActive?Math.min(.06,freeMusicBaseVolume*.35):freeMusicBaseVolume;
  try{
-  await audio.play();
-  freeMusicStatus("Musique en lecture. Vérifie que LIVE Studio reçoit l'audio de cette source web.");
+  const AudioCtx=window.AudioContext||window.webkitAudioContext;
+  if(!AudioCtx){freeMusicStatus("Ce navigateur ne prend pas en charge l’ambiance audio.");return;}
+  if(!freeMusicContext){
+   freeMusicContext=new AudioCtx();
+   freeMusicMaster=freeMusicContext.createGain();
+   freeMusicMaster.gain.value=freeMusicBaseVolume*(appleMusicDuckActive?.22:1);
+   freeMusicMaster.connect(freeMusicContext.destination);
+   freeMusicStep=0;
+  }
+  await freeMusicContext.resume();
+  if(freeMusicTimer===null){
+   playMusicChord();
+   freeMusicTimer=setInterval(playMusicChord,4000);
+  }
+  freeMusicStatus("Ambiance chill en lecture. Le volume baisse automatiquement pendant la voix du quiz.");
  }catch(error){
-  freeMusicStatus("Lecture bloquée ou lien incompatible : "+(error&&error.message?error.message:"vérifie le fichier ou le flux."));
+  freeMusicStatus("Impossible de démarrer l’ambiance audio dans ce navigateur.");
  }
 }
-function pauseFreeMusic(){
- const audio=$("freeMusicAudio");
- if(!audio||!audio.src){freeMusicStatus("Aucune musique chargée.");return;}
- audio.pause();freeMusicStatus("Musique en pause.");
+async function pauseFreeMusic(){
+ if(freeMusicContext&&freeMusicContext.state==="running"){
+  if(freeMusicTimer!==null){clearInterval(freeMusicTimer);freeMusicTimer=null;}
+  await freeMusicContext.suspend();
+  freeMusicStatus("Ambiance en pause.");
+ }else freeMusicStatus("L’ambiance n’est pas en lecture.");
 }
-function stopFreeMusic(){
- const audio=$("freeMusicAudio");
- if(audio){audio.pause();audio.currentTime=0;}
- freeMusicStatus("Musique arrêtée.");
+async function stopFreeMusic(){
+ if(freeMusicTimer!==null){clearInterval(freeMusicTimer);freeMusicTimer=null;}
+ if(freeMusicContext){
+  const oldContext=freeMusicContext;
+  freeMusicContext=null;freeMusicMaster=null;freeMusicStep=0;
+  try{await oldContext.close();}catch(e){}
+ }
+ freeMusicStatus("Ambiance arrêtée.");
 }
-const freeMusicFileInput=$("freeMusicFile");
-if(freeMusicFileInput)freeMusicFileInput.addEventListener("change",()=>{
- const file=freeMusicFileInput.files&&freeMusicFileInput.files[0];
- if(file)freeMusicStatus("Fichier sélectionné : "+file.name+". Clique sur LANCER LA MUSIQUE.");
-});
 /* =========================================================
    RACCORD TIKTOK LIVE CONNECTOR
 =========================================================
