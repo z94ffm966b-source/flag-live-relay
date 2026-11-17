@@ -911,24 +911,770 @@ body.broadcast-mode{
  gap:0;
  overflow:hidden;
 }
+body.broadcast-mode .live-screen{
+ /* Base mobile layout 320x568, enlarged to fill a 720x1280 browser source. */
+ zoom:2.25;
+ width:320px;
+ height:568.8889px;
+ max-height:568.8889px;
+ min-height:0;
+ aspect-ratio:9/16;
+ overflow-y:auto!important;
+ overflow-x:hidden!important;
+ padding:7px;
+ flex:0 0 auto;
+ margin-left:auto;
+ margin-right:auto;
+}
+
+
+/* Aperçu téléphone pour le mode diffusion */
 body.broadcast-mode{
- min-height:100svh;height:100svh;padding:18px;display:flex;align-items:center;justify-content:center;overflow:hidden;
- background:radial-gradient(ellipse at 50% 45%,#1c2948 0%,#080b18 65%);
+ min-height:100svh;height:100svh;padding:16px;display:flex;align-items:center;justify-content:center;
+ overflow:hidden;background:radial-gradient(ellipse at 50% 45%,#1c2948 0%,#080b18 65%);
 }
 body.broadcast-mode .phone-preview{
- position:relative;width:min(370px,calc((100svh - 48px)*9/16));aspect-ratio:9/16;padding:9px;
- border:5px solid #242a38;border-radius:38px;background:#05070d;box-shadow:0 22px 70px #000b,inset 0 0 0 1px #ffffff25;
- flex:0 0 auto;overflow:hidden;
+ position:relative;width:min(370px,calc((100svh - 40px)*9/16));aspect-ratio:9/16;padding:9px;
+ border:5px solid #242a38;border-radius:38px;background:#05070d;
+ box-shadow:0 22px 70px #000b,inset 0 0 0 1px #ffffff25;flex:0 0 auto;overflow:hidden;
 }
 body.broadcast-mode .phone-speaker{
  position:absolute;z-index:5;top:8px;left:50%;transform:translateX(-50%);width:74px;height:13px;
  border-radius:0 0 10px 10px;background:#05070d;pointer-events:none;
 }
-body.broadcast-mode .live-screen{
- zoom:1;width:100%;height:100%;max-height:none;min-height:0;aspect-ratio:9/16;
+body.broadcast-mode .phone-preview .live-screen{
+ zoom:1;width:100%;height:100%;max-height:none;min-height:0;aspect-ratio:auto;
  overflow-y:auto!important;overflow-x:hidden!important;border-radius:27px;border:0;box-shadow:none;
  padding:12px 8px 8px;flex:1 1 auto;margin:0;
-} candidate.forEach((q,index)=>{
+}
+</style>
+</head>
+
+<body>
+
+<div class="phone-preview">
+ <div class="phone-speaker"></div>
+<main class="live-screen" id="liveScreen">
+
+ <div class="header">
+  <div class="brand">QUIZ CULTURE G</div>
+  <div class="question-number" id="questionNumber">1 / 20</div>
+ </div>
+
+ <div class="creator">
+  <span class="creator-name">Par Quizzzz123_</span>
+  <span class="live-indicator">● LIVE</span>
+  <span class="viewer-count" id="viewerCount">● 50 spectateurs</span>
+ </div>
+
+ <section class="likes">
+  <div class="likes-top">
+   <span>❤️ OBJECTIF DE LIKES</span>
+   <span class="likes-number" id="likesNumber">0 / 500</span>
+  </div>
+  <div class="likes-track">
+   <div class="likes-fill" id="likesFill"></div>
+  </div>
+  <div class="likes-goal-note">À 500 LIKES : BOOST x2 POUR TOUS À LA PROCHAINE MANCHE</div>
+ </section>
+
+ <section class="question-card">
+  <div class="double-badge" id="doubleBadge">⚡ QUESTION DOUBLÉE</div>
+  <div class="theme" id="theme">CULTURE GÉNÉRALE</div>
+  <div class="question-text" id="questionText">
+   La première question va bientôt commencer.
+  </div>
+ </section>
+
+ <section class="timer-area">
+  <div class="timer-label">
+   <span>TEMPS POUR RÉPONDRE</span>
+   <span class="timer-number" id="timerNumber">10 SECONDES</span>
+  </div>
+  <div class="timer-track">
+   <div class="timer-fill" id="timerFill"></div>
+  </div>
+ </section>
+
+ <section class="answers" id="answers">
+  <div class="answer answer-a"><span class="answer-letter">A</span><span class="answer-text">Réponse A</span></div>
+  <div class="answer answer-b"><span class="answer-letter">B</span><span class="answer-text">Réponse B</span></div>
+  <div class="answer answer-c"><span class="answer-letter">C</span><span class="answer-text">Réponse C</span></div>
+  <div class="answer answer-d"><span class="answer-letter">D</span><span class="answer-text">Réponse D</span></div>
+ </section>
+
+ <div class="chat-instruction">TAPE
+  <span class="chat-key key-a">A</span>
+  <span class="chat-key key-b">B</span>
+  <span class="chat-key key-c">C</span>
+  <span class="chat-key key-d">D</span>
+  DANS LE CHAT
+ </div>
+ <div class="vote-count" id="voteCount">0 RÉPONSE</div>
+ <div class="vote-ticker" id="voteTicker" aria-label="Pseudos des joueurs ayant voté"><span class="vote-pill">En attente des réponses…</span></div>
+
+ <section class="message-bar">
+  <div class="message-text" id="messageText">
+   ⭐ Abonne-toi pour profiter du bonus x2 permanent !
+  </div>
+ </section>
+
+ <section class="gifts">
+  <div class="gift rose">
+   <div class="gift-emoji">🌹</div>
+   <div class="gift-name">ROSE</div>
+   <div class="gift-description">POINTS DOUBLÉS À LA PROCHAINE MANCHE</div>
+  </div>
+
+  <div class="gift ice">
+   <div class="gift-emoji">🧊</div>
+   <div class="gift-name">20 PIÈCES</div>
+   <div class="gift-description">GÈLE LE PREMIER POUR LA PROCHAINE MANCHE</div>
+  </div>
+
+  <div class="gift bomb">
+   <div class="gift-emoji">💣</div>
+   <div class="gift-name">99+ PIÈCES</div>
+   <div class="gift-description">VOLE LA MOITIÉ DES POINTS DU PREMIER</div>
+  </div>
+ </section>
+
+ <section class="part">
+  <div class="part-label">
+   <span>PROGRESSION DE LA PARTIE</span>
+   <span id="partNumber">PARTIE 1/16</span>
+  </div>
+  <div class="part-track">
+   <div class="part-fill" id="partFill"></div>
+  </div>
+ </section>
+
+ <section class="ranking">
+  <div class="ranking-title">
+   <span>🏆 CLASSEMENT DU LIVE</span>
+   <span id="rankingLabel">TOP 5</span>
+  </div>
+  <div id="rankingList">
+   <div class="ranking-row ranking-waiting"><span class="rank-number">1.</span><span class="rank-avatar">?</span><span class="rank-name">En attente d'un joueur...</span><span class="rank-score">—</span></div>
+   <div class="ranking-row ranking-waiting"><span class="rank-number">2.</span><span class="rank-avatar">?</span><span class="rank-name">En attente d'un joueur...</span><span class="rank-score">—</span></div>
+   <div class="ranking-row ranking-waiting"><span class="rank-number">3.</span><span class="rank-avatar">?</span><span class="rank-name">En attente d'un joueur...</span><span class="rank-score">—</span></div>
+   <div class="ranking-row ranking-waiting"><span class="rank-number">4.</span><span class="rank-avatar">?</span><span class="rank-name">En attente d'un joueur...</span><span class="rank-score">—</span></div>
+   <div class="ranking-row ranking-waiting"><span class="rank-number">5.</span><span class="rank-avatar">?</span><span class="rank-name">En attente d'un joueur...</span><span class="rank-score">—</span></div>
+  </div>
+ </section>
+
+ <section class="podium" id="podium">
+  <div class="podium-title" id="podiumTitle">🏆 PODIUM FINAL</div>
+  <div id="podiumList"></div>
+ </section>
+
+ <button class="voice-button" id="voiceButton" onclick="activateVoice()">
+  🔊 VOIX AUTOMATIQUE — RECLIQUER POUR RELANCER
+ </button>
+
+ <div class="bottom-status" id="bottomStatus">
+  JOUE • RÉPONDS • GAGNE
+ </div>
+
+ <section class="special-screen" id="specialScreen"></section>
+
+</main></div>
+
+<section class="simulator">
+
+ <div class="simulator-header">
+  <div class="simulator-title">🧪 SIMULATEUR DU LIVE</div>
+  <div class="simulator-tag">MODE TEST</div>
+ </div>
+
+ <div class="simulator-description">
+  Teste les fonctionnalités du quiz sans être connecté à TikTok.
+  Les actions effectuées ici modifient uniquement cet aperçu.
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">📚 BANQUE DE 320 QUESTIONS</div>
+  <div class="sim-grid">
+   <button class="sim-button green" type="button" onclick="exportQuestionBank()">⬇️ Exporter la banque JSON</button>
+   <button class="sim-button blue" type="button" onclick="document.getElementById('questionBankFile').click()">⬆️ Importer une banque JSON</button>
+  </div>
+  <input id="questionBankFile" type="file" accept=".json,application/json" style="display:none" onchange="importQuestionBank(event)">
+  <div class="sim-note">Le fichier exporté contient les 320 questions, leurs quatre propositions et l'index de la bonne réponse. L'import remplace la banque actuelle après vérification.</div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">🖥️ AFFICHAGE POUR LE LIVE</div>
+  <button class="sim-button blue" type="button" style="width:100%" onclick="toggleBroadcastMode()">⛶ ACTIVER LE MODE DIFFUSION</button>
+  <div class="sim-note">Resserre le quiz au format vertical 9:16. Le classement, le bouton de voix, le simulateur et toutes les commandes restent présents. Appuie sur Échap pour quitter ce mode.</div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">🎬 SIMULATION AUTOMATIQUE — 50 SPECTATEURS</div>
+  <div class="sim-note">Lance un faux live : 50 pseudos arrivent, discutent, répondent aux questions, s'abonnent et envoient des likes et des cadeaux. La simulation utilise le vrai classement et le vrai déroulement du quiz, sans connexion TikTok.</div>
+  <div class="sim-grid" style="margin-top:9px">
+   <button class="sim-button green" id="autoSimStart" type="button" onclick="startAutoLiveSimulation()">▶ LANCER LA SIMULATION LIVE</button>
+   <button class="sim-button red" id="autoSimStop" type="button" onclick="stopAutoLiveSimulation()" disabled>■ ARRÊTER</button>
+  </div>
+  <div class="sim-status" id="autoSimStatus">Simulation arrêtée. Appuie sur « Lancer » pour voir un live avec 50 spectateurs.</div>
+  <div class="auto-sim-feed">
+   <div class="auto-sim-feed-title">💬 COMMENTAIRES DU LIVE EN DIRECT</div>
+   <div id="autoSimFeed"><div class="auto-sim-comment">Les commentaires simulés apparaîtront ici.</div></div>
+  </div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">🔌 TIKTOK LIVE CONNECTOR</div>
+  <label for="connectorSocketUrl" class="sim-note">Adresse WebSocket du connecteur</label>
+  <input class="sim-input" id="connectorSocketUrl" type="url" placeholder="ws://adresse-du-connecteur:port">
+  <div class="sim-grid" style="margin-top:8px">
+   <button class="sim-button green" type="button" onclick="connectLiveConnector()">🔌 Connecter le live</button>
+   <button class="sim-button red" type="button" onclick="disconnectLiveConnector()">Déconnecter</button>
+  </div>
+  <label for="connectorInterfaceUrl" class="sim-note" style="display:block;margin-top:10px">URL de l'interface web du connecteur</label>
+  <input class="sim-input" id="connectorInterfaceUrl" type="url" placeholder="https://...">
+  <button class="sim-button blue" type="button" style="width:100%;margin-top:8px" onclick="openLiveConnectorInterface()">🌐 Ouvrir l'interface du connecteur</button>
+  <div class="sim-status" id="connectorStatus">Connecteur non configuré. Renseigne l'adresse fournie par ton logiciel TikTok Live Connector.</div>
+  <div class="sim-note">Ce champ reçoit le serveur TikTok LIVE Relay hébergé séparément sur Render. Adresse attendue : wss://TON-SERVEUR.onrender.com/ws. Le serveur relaie les commentaires, likes, abonnements et cadeaux pris en charge.</div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">🎵 AMBIANCE MUSICALE — QUIZ CHILL</div>
+  <div class="sim-note">Fond sonore original, doux et discret : ambiance de jeu télévisé moderne, avec accords calmes et petites notes légères. Il tourne en boucle et baisse automatiquement pendant les annonces vocales.</div>
+  <div class="sim-grid" style="margin-top:10px">
+   <button class="sim-button green" type="button" onclick="playFreeMusic()">▶ LANCER L’AMBIANCE</button>
+   <button class="sim-button yellow" type="button" onclick="pauseFreeMusic()">⏸ PAUSE</button>
+   <button class="sim-button red" type="button" onclick="stopFreeMusic()">⏹ ARRÊTER</button>
+  </div>
+  <label for="freeMusicVolume" class="sim-note" style="display:block;margin-top:12px">Volume de fond : <span id="freeMusicVolumeValue">0,6 %</span></label>
+  <input id="freeMusicVolume" type="range" min="0" max="2" step="0.1" value="0.6" style="width:100%" oninput="setFreeMusicVolume(this.value);document.getElementById('freeMusicVolumeValue').textContent=this.value+' %'">
+  <div class="sim-status" id="freeMusicStatus">Ambiance prête. Clique sur « LANCER L’AMBIANCE » pour démarrer.</div>
+  <div class="sim-note">Musique synthétisée directement par le site : aucun fichier à télécharger, aucun compte ni abonnement. Dans TikTok LIVE Studio, vérifie que le son de la source web est bien capturé.</div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">👤 JOUEUR À SIMULER</div>
+  <input class="sim-input" id="testUsername" value="JoueurTest" maxlength="30" placeholder="Pseudo du joueur">
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">💬 TESTER LES RÉPONSES DU CHAT</div>
+  <div class="sim-grid">
+   <button class="sim-button blue" onclick="testAnswer('A')">Répondre A</button>
+   <button class="sim-button green" onclick="testAnswer('B')">Répondre B</button>
+   <button class="sim-button yellow" onclick="testAnswer('C')">Répondre C</button>
+   <button class="sim-button purple" onclick="testAnswer('D')">Répondre D</button>
+   <button class="sim-button green" onclick="testCorrectAnswer()">✅ Bonne réponse automatique</button>
+   <button class="sim-button red" onclick="testWrongAnswer()">❌ Mauvaise réponse automatique</button>
+  </div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">🎁 TESTER LES CADEAUX ET ABONNEMENTS</div>
+  <div class="sim-grid">
+   <button class="sim-button pink" onclick="testRose()">🌹 Envoyer une rose</button>
+   <button class="sim-button purple" onclick="testSubscribe()">⭐ Simuler un abonnement</button>
+   <button class="sim-button blue" onclick="testIce()">🧊 Envoyer un glaçon</button>
+   <button class="sim-button red" onclick="testBomb()">💣 Envoyer une bombe</button>
+  </div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">❤️ TESTER LES LIKES</div>
+  <div class="sim-grid">
+   <button class="sim-button pink" onclick="testLikes(1)">+1 like</button>
+   <button class="sim-button pink" onclick="testLikes(10)">+10 likes</button>
+   <button class="sim-button pink" onclick="testLikes(100)">+100 likes</button>
+   <button class="sim-button pink" onclick="testLikes(500)">+500 likes</button>
+  </div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">🔊 TESTER LA VOIX</div>
+  <div class="sim-grid">
+   <button class="sim-button blue" onclick="testVoice()">🎙️ Tester la voix française</button>
+   <button class="sim-button blue" onclick="testQuestionVoice()">📢 Lire la question actuelle</button>
+   <button class="sim-button yellow" onclick="stopVoice()">🔇 Arrêter la voix</button>
+  </div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">⏱️ TESTER LE DÉROULEMENT DU QUIZ</div>
+  <div class="sim-grid">
+   <button class="sim-button green" onclick="startTimer()">▶️ Démarrer le chrono</button>
+   <button class="sim-button yellow" onclick="pauseTimer()">⏸️ Mettre en pause</button>
+   <button class="sim-button blue" onclick="revealAnswer()">👁️ Révéler la réponse</button>
+   <button class="sim-button purple" onclick="nextQuestion()">➡️ Question suivante</button>
+  </div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">🏆 TESTER LE CLASSEMENT ET LE PODIUM</div>
+  <div class="sim-grid">
+   <button class="sim-button yellow" onclick="addTestPlayers()">👥 Ajouter 5 joueurs de test</button>
+   <button class="sim-button yellow" onclick="testTop7()">🏆 Tester le Top 7</button>
+   <button class="sim-button purple" onclick="showFinalPodium(true)">🥇 Tester le podium final</button>
+  </div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">📢 TESTER LA BARRE DE MESSAGES</div>
+  <div class="sim-grid">
+   <button class="sim-button blue" onclick="testTicker()">🔄 Message automatique</button>
+   <button class="sim-button green" onclick="testThanks()">⭐ Message de remerciement</button>
+   <button class="sim-button yellow" onclick="testPartMessage()">🎯 Message de progression</button>
+  </div>
+ </div>
+
+ <div class="sim-section">
+  <div class="sim-section-title">🔄 RÉINITIALISER LES TESTS</div>
+  <button class="sim-button red" style="width:100%" onclick="resetQuiz()">
+   🗑️ TOUT REMETTRE À ZÉRO
+  </button>
+ </div>
+
+ <div class="sim-status" id="simStatus">
+  En attente d'une action de test...
+ </div>
+
+ <div class="sim-note">
+  Attention : les joueurs, cadeaux et likes simulés ne proviennent pas de TikTok.
+  Le raccordement réel nécessite que TikTok Live Connector transmette ses événements au quiz.
+ </div>
+
+</section>
+
+<!-- LA PARTIE 2 COMMENCE ICI : COLLE LE SCRIPT JAVASCRIPT À LA SUITE -->
+<script>
+/* =========================================================
+   BANQUE DE QUESTIONS — 16 PARTIES DE 20 QUESTIONS
+   Chaque partie mélange plusieurs thèmes.
+========================================================= */
+
+let rawQuestions = [
+/* PARTIE 1 */
+["HISTOIRE","Quel traité met officiellement fin à la Première Guerre mondiale entre l'Allemagne et les Alliés ?","Traité de Versailles","Traité de Trianon","Traité de Brest-Litovsk","Traité de Saint-Germain",0],
+["SCIENCES","Quel mécanisme permet aux plantes de transformer l'énergie lumineuse en énergie chimique ?","La fermentation","La photosynthèse","La respiration cellulaire","La transpiration",1],
+["GÉOGRAPHIE","Quel détroit sépare l'Espagne du Maroc ?","Le détroit de Messine","Le détroit de Gibraltar","Le Bosphore","Le détroit d'Ormuz",1],
+["LITTÉRATURE","Qui a écrit le roman Les Misérables ?","Émile Zola","Victor Hugo","Honoré de Balzac","Gustave Flaubert",1],
+["ASTRONOMIE","Quelle planète possède la période de révolution autour du Soleil la plus courte ?","Vénus","Mercure","Mars","Jupiter",1],
+["HISTOIRE","En quelle année Constantinople tombe-t-elle aux mains des Ottomans ?","1204","1453","1492","1517",1],
+["ÉCONOMIE","Que désigne une situation de monopole sur un marché ?","Un seul offreur face à de nombreux acheteurs","Un seul acheteur face à plusieurs vendeurs","Un marché sans prix","Une concurrence entre deux entreprises",0],
+["BIOLOGIE","Quel organite est principalement responsable de la production d'énergie utilisable par la cellule ?","Le ribosome","Le noyau","La mitochondrie","L'appareil de Golgi",2],
+["GÉOGRAPHIE","Quel pays possède la région autonome du Groenland ?","La Norvège","Le Danemark","Le Canada","L'Islande",1],
+["ART","Quel peintre est associé au tableau Guernica ?","Salvador Dalí","Pablo Picasso","Joan Miró","Francisco de Goya",1],
+["SPORT","Quelle nation a remporté la première Coupe du monde masculine de football en 1930 ?","L'Italie","Le Brésil","L'Uruguay","L'Argentine",2],
+["PHYSIQUE","Quelle unité mesure la résistance électrique ?","Le volt","L'ampère","L'ohm","Le watt",2],
+["HISTOIRE","Quel empereur romain est associé à l'édit de Milan de 313 ?","Néron","Constantin","Auguste","Trajan",1],
+["CINÉMA","Quel réalisateur a signé le film 2001 : L'Odyssée de l'espace ?","Steven Spielberg","Stanley Kubrick","Ridley Scott","George Lucas",1],
+["GÉOGRAPHIE","Quel est le plus long fleuve entièrement situé en Europe ?","Le Danube","Le Rhin","La Volga","Le Tage",2],
+["CHIMIE","Quel élément chimique possède le symbole Fe ?","Le fluor","Le fer","Le francium","Le fermium",1],
+["MUSIQUE","Quel compositeur a écrit Les Quatre Saisons ?","Jean-Sébastien Bach","Antonio Vivaldi","Wolfgang Amadeus Mozart","Frédéric Chopin",1],
+["INSTITUTIONS","Combien d'États membres compte l'Union européenne depuis le retrait du Royaume-Uni ?","25","26","27","28",2],
+["TECHNOLOGIE","Que signifie l'acronyme HTML ?","HyperText Markup Language","High Transfer Machine Link","HyperTool Modern Language","Home Text Management Logic",0],
+["HISTOIRE","Quel événement déclenche directement la Première Guerre mondiale en 1914 ?","L'invasion de la Pologne","L'assassinat de l'archiduc François-Ferdinand","La révolution russe","La crise de Cuba",1],
+
+/* PARTIE 2 */
+["GÉOGRAPHIE","Quel pays est traversé par l'équateur et possède Quito pour capitale ?","La Colombie","L'Équateur","Le Pérou","La Bolivie",1],
+["HISTOIRE","Quel souverain français est surnommé le Roi-Soleil ?","Louis XIII","Louis XIV","Louis XV","François Ier",1],
+["SCIENCES","Quelle particule porte une charge électrique négative ?","Le proton","Le neutron","L'électron","Le positron",2],
+["LITTÉRATURE","Dans quelle œuvre trouve-t-on le personnage de Meursault ?","La Peste","L'Étranger","La Nausée","Germinal",1],
+["SPORT","Au tennis, comment appelle-t-on un score de zéro dans un jeu ?","Love","Égalité","Avantage","Break",0],
+["GÉOGRAPHIE","Quelle chaîne montagneuse forme une frontière naturelle entre la France et l'Espagne ?","Les Alpes","Les Pyrénées","Le Jura","Les Carpates",1],
+["BIOLOGIE","Quelle molécule porte l'essentiel de l'information génétique des êtres vivants ?","L'ARN messager","L'ADN","Le glucose","L'hémoglobine",1],
+["HISTOIRE","Quel pays a lancé le premier satellite artificiel, Spoutnik 1, en 1957 ?","Les États-Unis","L'Union soviétique","La Chine","La France",1],
+["ÉCONOMIE","Que mesure principalement le produit intérieur brut ?","Le patrimoine total des ménages","La valeur des richesses produites sur un territoire pendant une période","Le montant des exportations uniquement","Les recettes fiscales de l'État",1],
+["CINÉMA","Quel film de Francis Ford Coppola met en scène la famille Corleone ?","Scarface","Le Parrain","Les Affranchis","Casino",1],
+["ASTRONOMIE","Quelle étoile est la plus proche de la Terre après le Soleil ?","Sirius","Proxima du Centaure","Véga","Bételgeuse",1],
+["ART","Quel mouvement artistique est particulièrement associé à Claude Monet ?","Le cubisme","L'impressionnisme","Le surréalisme","Le futurisme",1],
+["INSTITUTIONS","Quel organe de l'ONU peut adopter des résolutions contraignantes en matière de sécurité internationale ?","L'Assemblée générale","Le Conseil de sécurité","La Cour internationale de Justice","Le Conseil économique et social",1],
+["CHIMIE","Quel est le pH approximatif d'une solution neutre à 25 °C ?","0","5","7","14",2],
+["GÉOGRAPHIE","Quelle mer borde à la fois la Jordanie, Israël et la Cisjordanie ?","La mer Rouge","La mer Morte","La mer Noire","La mer Caspienne",1],
+["MUSIQUE","Quel instrument appartient à la famille des bois malgré sa fabrication fréquente en métal ?","La trompette","La flûte traversière","Le violon","Le trombone",1],
+["HISTOIRE","Quel texte anglais de 1215 limite certains pouvoirs du roi Jean sans Terre ?","L'Habeas Corpus","La Magna Carta","Le Bill of Rights","L'Acte de suprématie",1],
+["TECHNOLOGIE","Quel protocole est principalement utilisé pour sécuriser les échanges sur le Web ?","FTP","HTTPS","SMTP","Telnet",1],
+["SPORT","Combien de joueurs d'une équipe de basket-ball sont présents simultanément sur le terrain ?","4","5","6","7",1],
+["LITTÉRATURE","Quel écrivain est l'auteur de Candide ?","Denis Diderot","Voltaire","Jean-Jacques Rousseau","Montesquieu",1],
+
+/* PARTIE 3 */
+["HISTOIRE","Quel général romain franchit le Rubicon en 49 av. J.-C. ?","Pompée","Jules César","Cicéron","Marc Antoine",1],
+["GÉOGRAPHIE","Quelle est la capitale constitutionnelle de la Bolivie ?","La Paz","Sucre","Santa Cruz","Cochabamba",1],
+["PHYSIQUE","Quelle loi relie la tension, l'intensité et la résistance dans un circuit électrique ?","Loi de Boyle","Loi d'Ohm","Loi de Newton","Loi de Snell-Descartes",1],
+["CINÉMA","Quel réalisateur est à l'origine de la trilogie Le Seigneur des anneaux au cinéma ?","James Cameron","Peter Jackson","Christopher Nolan","Guillermo del Toro",1],
+["BIOLOGIE","Quel type de cellule ne possède pas de noyau délimité par une membrane ?","Cellule eucaryote","Cellule procaryote","Cellule végétale","Cellule animale",1],
+["HISTOIRE","Quelle révolution commence en France en juillet 1789 ?","La révolution de 1830","La Révolution française","La révolution de 1848","La Commune de Paris",1],
+["GÉOGRAPHIE","Quel pays enclavé est entièrement entouré par l'Afrique du Sud ?","L'Eswatini","Le Lesotho","Le Botswana","La Namibie",1],
+["ÉCONOMIE","Quand le prix d'un bien augmente, que prévoit généralement la loi de la demande, toutes choses égales par ailleurs ?","La demande augmente","La demande diminue","L'offre disparaît","La demande reste toujours identique",1],
+["ART","Quel architecte est associé à la Sagrada Família de Barcelone ?","Le Corbusier","Antoni Gaudí","Frank Lloyd Wright","Oscar Niemeyer",1],
+["ASTRONOMIE","Quelle planète du système solaire possède le plus grand nombre d'anneaux spectaculaires ?","Mars","Saturne","Mercure","Vénus",1],
+["SPORT","Dans quelle discipline sportive utilise-t-on un fleuret, une épée ou un sabre ?","Le pentathlon","L'escrime","Le tir à l'arc","L'aviron",1],
+["LITTÉRATURE","Qui est l'auteur de Madame Bovary ?","Stendhal","Gustave Flaubert","Guy de Maupassant","Émile Zola",1],
+["CHIMIE","Quel gaz représente la plus grande proportion de l'atmosphère terrestre ?","L'oxygène","Le dioxyde de carbone","L'azote","L'argon",2],
+["HISTOIRE","Quel traité de 1957 fonde la Communauté économique européenne ?","Traité de Maastricht","Traité de Rome","Traité de Lisbonne","Traité de Nice",1],
+["TECHNOLOGIE","Dans un ordinateur, quelle mémoire perd normalement son contenu lorsque l'alimentation est coupée ?","SSD","ROM","RAM","Disque dur",2],
+["GÉOGRAPHIE","Quel est le plus grand lac d'Afrique en superficie ?","Le lac Tanganyika","Le lac Victoria","Le lac Malawi","Le lac Tchad",1],
+["MUSIQUE","Quel compositeur devient progressivement sourd tout en poursuivant son activité musicale ?","Haydn","Beethoven","Schubert","Liszt",1],
+["INSTITUTIONS","Quelle institution de l'Union européenne est directement élue par les citoyens ?","La Commission européenne","Le Parlement européen","La Cour des comptes","La Banque centrale européenne",1],
+["BIOLOGIE","Quel pigment donne principalement leur couleur verte aux feuilles ?","La mélanine","La chlorophylle","L'hémoglobine","La kératine",1],
+["CULTURE","Quel pays a pour devise nationale « Liberté, égalité, fraternité » ?","La Belgique","La France","La Suisse","Le Luxembourg",1],
+
+/* PARTIE 4 */
+["GÉOGRAPHIE","Quel pays possède la plus grande superficie au monde ?","Le Canada","La Chine","La Russie","Les États-Unis",2],
+["HISTOIRE","Quel événement marque symboliquement la fin de la guerre froide en Europe en 1989 ?","La crise de Suez","La chute du mur de Berlin","La création de l'OTAN","La réunification de l'Allemagne en 1990",1],
+["SCIENCES","Quelle force maintient les planètes en orbite autour du Soleil ?","La force magnétique","La gravitation","La force nucléaire forte","La poussée d'Archimède",1],
+["LITTÉRATURE","Quel auteur a écrit Le Rouge et le Noir ?","Stendhal","Balzac","Flaubert","Zola",0],
+["SPORT","Dans quelle épreuve d'athlétisme combine-t-on course, sauts et lancers sur deux jours ?","Le décathlon","Le marathon","Le steeple","Le relais",0],
+["GÉOGRAPHIE","Quel fleuve traverse Budapest ?","Le Rhin","Le Danube","La Vistule","La Seine",1],
+["BIOLOGIE","Quel organe produit l'insuline ?","Le foie","Le pancréas","La rate","Les reins",1],
+["HISTOIRE","Quelle dynastie règne en France au moment de la Révolution de 1789 ?","Les Capétiens directs","Les Bourbons","Les Valois","Les Bonaparte",1],
+["ÉCONOMIE","Que signifie une inflation durable ?","Une baisse générale des prix","Une hausse générale et persistante des prix","Une hausse du chômage uniquement","Une augmentation automatique des salaires",1],
+["CINÉMA","Quel acteur incarne le personnage de Jack dans Titanic, réalisé par James Cameron ?","Brad Pitt","Leonardo DiCaprio","Matt Damon","Johnny Depp",1],
+["ASTRONOMIE","Comment appelle-t-on une étoile qui explose en fin d'évolution ?","Une nébuleuse","Une supernova","Une comète","Une exoplanète",1],
+["ART","Quel peintre néerlandais a réalisé La Nuit étoilée ?","Rembrandt","Vincent van Gogh","Vermeer","Piet Mondrian",1],
+["INSTITUTIONS","Quel est le rôle principal de la Cour de cassation en France ?","Voter les lois","Contrôler la bonne application du droit par les juridictions","Diriger le gouvernement","Organiser les élections",1],
+["CHIMIE","Quel est le symbole chimique du potassium ?","P","Po","K","Pt",2],
+["GÉOGRAPHIE","Quel pays possède la ville de Marrakech ?","Tunisie","Maroc","Algérie","Mauritanie",1],
+["MUSIQUE","Quel genre musical est historiquement associé à La Nouvelle-Orléans ?","Le flamenco","Le jazz","Le reggae","Le fado",1],
+["HISTOIRE","Quel empire avait pour capitale Tenochtitlan avant la conquête espagnole ?","L'empire inca","L'empire aztèque","L'empire maya","L'empire olmèque",1],
+["TECHNOLOGIE","Quel composant exécute principalement les instructions d'un programme informatique ?","La carte son","Le processeur","Le ventilateur","L'écran",1],
+["SPORT","Quelle est la distance officielle d'un marathon ?","40 km","41,195 km","42,195 km","43 km",2],
+["LITTÉRATURE","Dans quelle pièce de Molière apparaît le personnage d'Harpagon ?","Tartuffe","L'Avare","Le Misanthrope","Les Fourberies de Scapin",1],
+
+/* PARTIE 5 */
+["HISTOIRE","Quel accord de 1648 met fin à la guerre de Trente Ans ?","La paix d'Augsbourg","Les traités de Westphalie","Le traité des Pyrénées","Le traité d'Utrecht",1],
+["GÉOGRAPHIE","Quelle capitale se trouve sur les rives du fleuve Tage ?","Madrid","Lisbonne","Porto","Séville",1],
+["PHYSIQUE","Quelle grandeur s'exprime en joules dans le système international ?","La puissance","L'énergie","La pression","La fréquence",1],
+["BIOLOGIE","Quel phénomène permet le passage de l'eau à travers une membrane semi-perméable ?","La diffusion simple","L'osmose","La mitose","La transcription",1],
+["CINÉMA","Quel film de science-fiction met en scène le personnage de Neo ?","Blade Runner","Matrix","Total Recall","Minority Report",1],
+["SPORT","Quel pays a remporté la Coupe du monde de rugby à XV en 2023 ?","La France","La Nouvelle-Zélande","L'Afrique du Sud","L'Angleterre",2],
+["GÉOGRAPHIE","Quel est le nom du point le plus profond connu des océans ?","La fosse des Tonga","La fosse des Mariannes","La fosse de Java","La fosse de Porto Rico",1],
+["HISTOIRE","Quel roi d'Angleterre rompt avec Rome au XVIe siècle et instaure l'Église d'Angleterre ?","Richard III","Henri VIII","Édouard VI","Jacques Ier",1],
+["ÉCONOMIE","Que désigne le chômage conjoncturel ?","Un chômage lié aux fluctuations de l'activité économique","Un chômage uniquement lié à l'âge","Un chômage provoqué par les saisons agricoles","Un chômage sans rapport avec la croissance",0],
+["LITTÉRATURE","Quel écrivain a créé le personnage de Sherlock Holmes ?","Agatha Christie","Arthur Conan Doyle","Edgar Allan Poe","Jules Verne",1],
+["CHIMIE","Quelle formule correspond à l'eau ?","CO₂","H₂O","O₂","NaCl",1],
+["ART","Quel courant artistique Salvador Dalí représente-t-il particulièrement ?","Le réalisme","Le surréalisme","Le romantisme","Le pointillisme",1],
+["ASTRONOMIE","Comment nomme-t-on une planète située en dehors du système solaire ?","Une planète naine","Une exoplanète","Une comète","Un astéroïde",1],
+["INSTITUTIONS","Quel pays est à l'origine de la déclaration d'indépendance du 4 juillet 1776 ?","Le Canada","Les États-Unis","Le Mexique","L'Irlande",1],
+["TECHNOLOGIE","Quel langage est principalement utilisé pour structurer le contenu d'une page Web ?","CSS","HTML","Python","SQL",1],
+["GÉOGRAPHIE","Quel pays possède les villes de Karachi et Lahore ?","L'Inde","Le Pakistan","Le Bangladesh","L'Afghanistan",1],
+["MUSIQUE","Quel compositeur est l'auteur de la Neuvième Symphonie et de son célèbre final choral ?","Mozart","Beethoven","Brahms","Mahler",1],
+["HISTOIRE","Quel régime politique succède à la monarchie de Juillet en France en 1848 ?","Le Second Empire","La Deuxième République","La Troisième République","La Restauration",1],
+["SCIENCES","Quelle unité mesure la fréquence d'un phénomène périodique ?","Le newton","Le hertz","Le pascal","Le tesla",1],
+["SPORT","Au football, combien de joueurs une équipe aligne-t-elle au début d'un match, gardien compris ?","10","11","12","9",1],
+
+/* PARTIE 6 */
+["GÉOGRAPHIE","Quel pays possède la région de Transylvanie ?","La Hongrie","La Roumanie","La Bulgarie","La Serbie",1],
+["HISTOIRE","Quel événement de 1492 est traditionnellement associé à Christophe Colomb ?","La découverte européenne des Amériques","La chute de Constantinople","La première circumnavigation","La conquête du Mexique",0],
+["BIOLOGIE","Quelle division cellulaire produit normalement deux cellules filles génétiquement identiques ?","La méiose","La mitose","La fécondation","La mutation",1],
+["PHYSIQUE","Quelle loi décrit la relation entre la pression et le volume d'un gaz à température constante ?","Loi de Boyle-Mariotte","Loi de Hooke","Loi de Coulomb","Loi de Faraday",0],
+["LITTÉRATURE","Quel auteur français a écrit Germinal ?","Victor Hugo","Émile Zola","Guy de Maupassant","Alphonse Daudet",1],
+["SPORT","Dans quelle discipline utilise-t-on les termes « ippon » et « waza-ari » ?","Karaté","Judo","Taekwondo","Aïkido",1],
+["GÉOGRAPHIE","Quelle est la capitale du Kazakhstan depuis le changement de nom de 2019 ?","Almaty","Astana","Chimkent","Karaganda",1],
+["HISTOIRE","Quel mouvement politique est dirigé par Lénine lors de la révolution russe d'Octobre 1917 ?","Les mencheviks","Les bolcheviks","Les socialistes-révolutionnaires","Les cadets",1],
+["ÉCONOMIE","Quel indicateur permet de comparer le niveau moyen des prix entre différentes périodes ?","Le taux de natalité","L'indice des prix à la consommation","Le taux d'emploi","La balance commerciale",1],
+["CINÉMA","Quel réalisateur a réalisé Inception et Interstellar ?","Denis Villeneuve","Christopher Nolan","David Fincher","Alfonso Cuarón",1],
+["CHIMIE","Quel gaz est principalement responsable de l'effet de serre d'origine humaine avec le méthane et d'autres gaz ?","L'hélium","Le dioxyde de carbone","Le néon","L'hydrogène",1],
+["ART","Quel artiste a peint La Persistance de la mémoire, célèbre pour ses montres molles ?","René Magritte","Salvador Dalí","Max Ernst","Joan Miró",1],
+["ASTRONOMIE","Quelle planète tourne sur elle-même avec une inclinaison extrême, presque couchée sur son orbite ?","Neptune","Uranus","Saturne","Mercure",1],
+["INSTITUTIONS","Quel principe garantit que les pouvoirs exécutif, législatif et judiciaire ne sont pas concentrés dans les mêmes mains ?","La souveraineté nationale","La séparation des pouvoirs","Le fédéralisme","La décentralisation",1],
+["TECHNOLOGIE","Quel système permet d'associer un nom de domaine à une adresse IP ?","DHCP","DNS","HTTP","SSH",1],
+["GÉOGRAPHIE","Quel pays possède la péninsule du Yucatán avec le Belize et le Guatemala à proximité ?","Le Mexique","Le Venezuela","Le Honduras","Le Costa Rica",0],
+["MUSIQUE","Quel instrument est associé à Niccolò Paganini ?","Le violoncelle","Le violon","La clarinette","Le piano",1],
+["HISTOIRE","Quel pays est envahi par l'Allemagne nazie le 1er septembre 1939 ?","La Belgique","La Pologne","La Norvège","La Tchécoslovaquie",1],
+["SCIENCES","Quelle est la principale fonction des globules rouges ?","Produire des anticorps","Transporter l'oxygène","Déclencher la coagulation","Détruire les hormones",1],
+["SPORT","Combien de points vaut un essai au rugby à XV depuis la modification du barème en 1992 ?","3","4","5","6",2],
+
+/* PARTIE 7 */
+["GÉOGRAPHIE","Quel pays est traversé par le fleuve Mékong et possède Hanoï pour capitale ?","La Thaïlande","Le Vietnam","Le Cambodge","Le Laos",1],
+["HISTOIRE","Quelle conférence de 1884-1885 organise les règles du partage colonial de l'Afrique entre puissances européennes ?","Conférence de Yalta","Conférence de Berlin","Conférence de Bandung","Conférence de Potsdam",1],
+["SCIENCES","Quel scientifique formule les trois lois du mouvement et la loi de la gravitation universelle ?","Galilée","Isaac Newton","Albert Einstein","Niels Bohr",1],
+["LITTÉRATURE","Quel roman de George Orwell décrit une société sous surveillance permanente dirigée par Big Brother ?","La Ferme des animaux","1984","Le Meilleur des mondes","Fahrenheit 451",1],
+["SPORT","Quelle compétition cycliste comprend notamment le classement général symbolisé par le maillot jaune ?","Le Giro","Le Tour de France","La Vuelta","Paris-Roubaix",1],
+["GÉOGRAPHIE","Quel est le plus grand pays d'Amérique du Sud par superficie ?","L'Argentine","Le Brésil","Le Pérou","La Colombie",1],
+["BIOLOGIE","Quel système du corps humain coordonne notamment les réponses hormonales ?","Le système lymphatique","Le système endocrinien","Le système digestif","Le système respiratoire",1],
+["HISTOIRE","Quel président américain annonce la politique de containment face à l'expansion soviétique en 1947 ?","Franklin D. Roosevelt","Harry Truman","Dwight Eisenhower","John F. Kennedy",1],
+["ÉCONOMIE","Que signifie une balance commerciale excédentaire ?","Les importations dépassent les exportations","Les exportations dépassent les importations","Les dépenses publiques dépassent les recettes","Les prix diminuent",1],
+["CINÉMA","Quel film de Steven Spielberg raconte le débarquement en Normandie à travers une mission de sauvetage ?","La Liste de Schindler","Il faut sauver le soldat Ryan","Munich","Lincoln",1],
+["CHIMIE","Quel type de liaison chimique implique un partage de paires d'électrons ?","Liaison ionique","Liaison covalente","Liaison métallique uniquement","Liaison hydrogène uniquement",1],
+["ART","Quel peintre est associé au tableau La Liberté guidant le peuple ?","Jacques-Louis David","Eugène Delacroix","Théodore Géricault","Gustave Courbet",1],
+["ASTRONOMIE","Quel phénomène explique l'alternance des saisons sur Terre ?","La variation quotidienne de la distance au Soleil","L'inclinaison de l'axe terrestre au cours de sa révolution","La rotation de la Lune","Les éruptions solaires",1],
+["INSTITUTIONS","Quel traité signé en 1992 crée officiellement l'Union européenne ?","Traité de Rome","Traité de Maastricht","Traité de Lisbonne","Traité de Paris",1],
+["TECHNOLOGIE","Quel langage est particulièrement utilisé pour interroger et manipuler des bases de données relationnelles ?","SQL","HTML","CSS","XML",0],
+["GÉOGRAPHIE","Quel pays possède la région du Cachemire, disputée avec plusieurs États voisins ?","L'Inde","Le Portugal","Le Japon","L'Égypte",0],
+["MUSIQUE","Quel compositeur est associé au ballet Le Sacre du printemps ?","Igor Stravinsky","Claude Debussy","Maurice Ravel","Serge Prokofiev",0],
+["HISTOIRE","Quel événement de 1962 constitue un moment majeur de tension entre les États-Unis et l'URSS ?","Le blocus de Berlin","La crise des missiles de Cuba","La guerre du Vietnam","Le printemps de Prague",1],
+["SCIENCES","Quel phénomène correspond au changement d'état d'un corps de l'état gazeux à l'état liquide ?","La sublimation","La condensation","La fusion","La solidification",1],
+["SPORT","Dans quelle discipline sportive le Tournoi des Six Nations est-il organisé ?","Le rugby à XV","Le cricket","Le hockey sur gazon","Le handball",0],
+
+/* PARTIE 8 */
+["GÉOGRAPHIE","Quel pays possède la ville de Dubrovnik, sur la côte adriatique ?","La Croatie","La Slovénie","Le Monténégro","L'Albanie",0],
+["HISTOIRE","Quel roi de France est exécuté en janvier 1793 ?","Louis XIV","Louis XVI","Louis XVIII","Charles X",1],
+["BIOLOGIE","Quel type de globule blanc produit les anticorps ?","Les lymphocytes B","Les plaquettes","Les globules rouges","Les monocytes uniquement",0],
+["PHYSIQUE","Quelle grandeur se mesure en pascals ?","La puissance","La pression","La charge électrique","La température",1],
+["LITTÉRATURE","Qui a écrit le roman Le Nom de la rose ?","Umberto Eco","Italo Calvino","Primo Levi","Alessandro Baricco",0],
+["SPORT","Quelle nage est généralement la plus rapide en compétition ?","La brasse","Le papillon","Le crawl","Le dos",2],
+["GÉOGRAPHIE","Quel est le nom du canal reliant la mer Méditerranée à la mer Rouge ?","Canal de Panama","Canal de Suez","Canal de Corinthe","Canal de Kiel",1],
+["HISTOIRE","Quel chef militaire carthaginois traverse les Alpes avec des éléphants pendant la deuxième guerre punique ?","Scipion l'Africain","Hannibal","Hasdrubal","Vercingétorix",1],
+["ÉCONOMIE","Quel terme désigne une situation où plusieurs entreprises s'entendent pour limiter la concurrence ?","Une externalité","Un cartel","Une subvention","Une déflation",1],
+["CINÉMA","Quel film d'animation japonais met en scène Chihiro dans un monde peuplé d'esprits ?","Princesse Mononoké","Le Voyage de Chihiro","Le Château ambulant","Mon voisin Totoro",1],
+["CHIMIE","Quel élément chimique est indispensable à la formation des os et des dents ?","Le calcium","Le chlore","Le sodium","Le cuivre",0],
+["ART","Quel peintre espagnol a réalisé Les Ménines ?","El Greco","Diego Velázquez","Francisco de Zurbarán","Murillo",1],
+["ASTRONOMIE","Quel objet céleste est constitué de glace, de poussières et développe souvent une queue près du Soleil ?","Un astéroïde","Une comète","Une naine blanche","Un pulsar",1],
+["INSTITUTIONS","Quel organe français peut censurer le gouvernement sous la Ve République ?","Le Sénat seul","L'Assemblée nationale","Le Conseil constitutionnel","Le Conseil d'État",1],
+["TECHNOLOGIE","Quel est le rôle principal d'un système d'exploitation ?","Créer automatiquement des sites Web","Gérer les ressources matérielles et logicielles de l'ordinateur","Remplacer le processeur","Convertir uniquement les images",1],
+["GÉOGRAPHIE","Quelle capitale se trouve au confluent du Tigre et de l'Euphrate, dans une région proche ?","Damas","Bagdad","Téhéran","Amman",1],
+["MUSIQUE","Quel groupe britannique a sorti l'album The Dark Side of the Moon ?","The Beatles","Pink Floyd","The Rolling Stones","Queen",1],
+["HISTOIRE","Quel traité de 1919 impose de lourdes conditions à l'Allemagne après la Première Guerre mondiale ?","Traité de Versailles","Traité de Lausanne","Traité de Sèvres","Traité de Locarno",0],
+["SCIENCES","Quelle partie de l'œil règle la quantité de lumière qui entre ?","La rétine","L'iris","Le cristallin","Le nerf optique",1],
+["SPORT","Dans quel sport utilise-t-on un « scrum » ou une mêlée ?","Le rugby","Le volley-ball","Le water-polo","Le baseball",0],
+
+/* PARTIE 9 */
+["GÉOGRAPHIE","Quel pays est traversé par le fleuve Orange et possède Pretoria comme capitale administrative ?","Le Botswana","L'Afrique du Sud","Le Zimbabwe","La Zambie",1],
+["HISTOIRE","Quel mouvement intellectuel du XVIIIe siècle valorise la raison et la diffusion des connaissances ?","Le romantisme","Les Lumières","Le symbolisme","Le réalisme",1],
+["SCIENCES","Quelle structure cellulaire contient les chromosomes chez les cellules eucaryotes ?","La membrane","Le noyau","Le cytoplasme uniquement","Le ribosome",1],
+["LITTÉRATURE","Quel auteur est à l'origine du roman Frankenstein ?","Mary Shelley","Jane Austen","Emily Brontë","Virginia Woolf",0],
+["SPORT","Quelle est la longueur d'une piscine olympique ?","25 mètres","33 mètres","50 mètres","100 mètres",2],
+["GÉOGRAPHIE","Quel pays possède les îles de Java, Sumatra et Bornéo en partie ?","Les Philippines","L'Indonésie","Le Japon","La Papouasie-Nouvelle-Guinée",1],
+["BIOLOGIE","Quel phénomène permet à une espèce de voir sa fréquence de certains caractères héréditaires évoluer au fil des générations ?","La sélection naturelle","La digestion","La photosynthèse","La respiration",0],
+["HISTOIRE","Quel dirigeant soviétique lance la perestroïka dans les années 1980 ?","Léonid Brejnev","Mikhaïl Gorbatchev","Nikita Khrouchtchev","Joseph Staline",1],
+["ÉCONOMIE","Quel mécanisme consiste à vendre un produit à un prix inférieur à son coût pour éliminer des concurrents ?","La différenciation","La pratique prédatrice","La diversification","La titrisation",1],
+["CINÉMA","Quel réalisateur a signé Pulp Fiction et Kill Bill ?","Martin Scorsese","Quentin Tarantino","David Lynch","Tim Burton",1],
+["CHIMIE","Quel est le symbole chimique du sodium ?","S","So","Na","N",2],
+["ART","Quel mouvement artistique est caractérisé par des formes géométriques fragmentées et plusieurs points de vue ?","Le cubisme","L'impressionnisme","Le baroque","Le rococo",0],
+["ASTRONOMIE","Quelle planète possède la Grande Tache rouge, une gigantesque tempête atmosphérique ?","Saturne","Jupiter","Neptune","Mars",1],
+["INSTITUTIONS","Quel texte constitue la norme suprême de l'ordre juridique français sous la Ve République ?","Le Code civil","La Constitution","Le Code pénal","Le règlement intérieur de l'Assemblée",1],
+["TECHNOLOGIE","Quelle technologie permet à deux appareils proches d'échanger des données sans contact, sur quelques centimètres ?","NFC","GPS","Ethernet","HDMI",0],
+["GÉOGRAPHIE","Quel pays possède la ville de Samarcande, étape historique de la route de la soie ?","L'Ouzbékistan","Le Kirghizistan","Le Tadjikistan","Le Turkménistan",0],
+["MUSIQUE","Quel compositeur français a écrit le Boléro ?","Camille Saint-Saëns","Maurice Ravel","Gabriel Fauré","Hector Berlioz",1],
+["HISTOIRE","Quelle bataille de 1815 met définitivement fin au pouvoir de Napoléon Ier ?","Austerlitz","Waterloo","Iéna","Marengo",1],
+["SCIENCES","Quel est le rôle principal des enzymes dans l'organisme ?","Stocker l'information génétique","Accélérer les réactions chimiques","Transporter l'oxygène","Former les membranes",1],
+["SPORT","Combien de sets faut-il généralement gagner pour remporter un match masculin en Grand Chelem au tennis ?","2","3","4","5",1],
+
+/* PARTIE 10 */
+["GÉOGRAPHIE","Quel pays possède la région du Transvaal historique ?","L'Afrique du Sud","Le Kenya","L'Angola","Le Mozambique",0],
+["HISTOIRE","Quel événement marque le début de la guerre d'indépendance américaine en 1775 ?","La prise de la Bastille","Les combats de Lexington et Concord","La bataille de Yorktown","La déclaration de 1776",1],
+["BIOLOGIE","Quel organe assure principalement les échanges gazeux entre l'air et le sang ?","Le foie","Les alvéoles pulmonaires","L'estomac","Le pancréas",1],
+["PHYSIQUE","Quelle loi exprime que l'énergie totale d'un système isolé se conserve ?","La loi de conservation de l'énergie","La loi de Coulomb","La loi de gravitation","La loi de Snell",0],
+["LITTÉRATURE","Quel écrivain est l'auteur de La Métamorphose ?","Franz Kafka","Thomas Mann","Hermann Hesse","Stefan Zweig",0],
+["SPORT","Dans quel sport le terme « birdie » désigne-t-il un score inférieur d'un coup au par ?","Le golf","Le tennis","Le badminton","Le cricket",0],
+["GÉOGRAPHIE","Quel est le nom du bras de mer séparant la Grande-Bretagne de la France ?","Le golfe de Gascogne","La Manche","La mer du Nord","La mer Celtique",1],
+["HISTOIRE","Quel peuple antique est à l'origine de la cité de Carthage ?","Les Grecs","Les Phéniciens","Les Romains","Les Étrusques",1],
+["ÉCONOMIE","Quelle politique monétaire consiste notamment à augmenter les taux directeurs pour freiner l'inflation ?","Une politique expansionniste","Une politique restrictive","Une politique de relance budgétaire","Une politique de dévaluation automatique",1],
+["CINÉMA","Quel acteur interprète le personnage principal du film Le Pianiste de Roman Polanski ?","Adrien Brody","Ralph Fiennes","Daniel Day-Lewis","Christoph Waltz",0],
+["CHIMIE","Quel est le nom du processus par lequel un solide passe directement à l'état gazeux ?","La condensation","La sublimation","La fusion","La vaporisation",1],
+["ART","Quel peintre est associé à l'œuvre Le Cri ?","Edvard Munch","Gustav Klimt","Egon Schiele","Paul Klee",0],
+["ASTRONOMIE","Quelle galaxie abrite le système solaire ?","Andromède","La Voie lactée","Le Grand Nuage de Magellan","La galaxie du Sombrero",1],
+["INSTITUTIONS","Quel pouvoir appartient principalement au Parlement français ?","Le pouvoir judiciaire","Le pouvoir législatif","Le pouvoir exécutif","Le pouvoir militaire",1],
+["TECHNOLOGIE","Quel composant graphique réalise les calculs nécessaires à l'affichage des images 3D ?","Le processeur graphique","Le disque dur","La mémoire ROM","La carte réseau",0],
+["GÉOGRAPHIE","Quelle capitale européenne est traversée par le fleuve Vltava ?","Prague","Varsovie","Budapest","Bratislava",0],
+["MUSIQUE","Quel chanteur est surnommé le « King of Pop » ?","Elvis Presley","Michael Jackson","Prince","Stevie Wonder",1],
+["HISTOIRE","Quel accord de 1998 contribue au processus de paix en Irlande du Nord ?","Accords de Dayton","Accord du Vendredi saint","Traité de Maastricht","Accords d'Évian",1],
+["SCIENCES","Quelle unité mesure la quantité de matière dans le système international ?","Le gramme","La mole","Le litre","Le kelvin",1],
+["SPORT","Quelle nation a remporté la Coupe du monde masculine de football en 2010 ?","L'Allemagne","L'Espagne","Les Pays-Bas","L'Italie",1],
+
+/* PARTIE 11 */
+["GÉOGRAPHIE","Quel pays possède la ville de Valparaíso et une longue façade pacifique ?","Le Chili","L'Argentine","L'Équateur","La Bolivie",0],
+["HISTOIRE","Quel souverain est couronné empereur des Français en 1804 ?","Louis XVIII","Napoléon Bonaparte","Charles X","Louis-Philippe",1],
+["SCIENCES","Quelle molécule fournit l'énergie directement utilisable par de nombreuses réactions cellulaires ?","L'ADN","L'ATP","Le collagène","La cellulose",1],
+["LITTÉRATURE","Quel auteur a écrit Le Comte de Monte-Cristo ?","Victor Hugo","Alexandre Dumas","Jules Verne","Théophile Gautier",1],
+["SPORT","Combien de joueurs composent une équipe de handball sur le terrain, gardien compris ?","5","6","7","8",2],
+["GÉOGRAPHIE","Quelle chaîne montagneuse sépare en partie l'Europe de l'Asie ?","Les Alpes","L'Oural","Les Apennins","Les Pyrénées",1],
+["BIOLOGIE","Quel est le nom du processus de production de gamètes avec réduction du nombre de chromosomes ?","La mitose","La méiose","La réplication","La traduction",1],
+["HISTOIRE","Quel empire disparaît officiellement en 1918 à la fin de la Première Guerre mondiale ?","L'Empire byzantin","L'Empire austro-hongrois","L'Empire carolingien","L'Empire mongol",1],
+["ÉCONOMIE","Que désigne une externalité négative ?","Un bénéfice reçu par un tiers","Un coût imposé à des tiers sans compensation directe","Une taxe sur les importations","Une hausse de la productivité",1],
+["CINÉMA","Quel film de Christopher Nolan traite notamment de rêves imbriqués ?","Memento","Inception","Dunkerque","Tenet",1],
+["CHIMIE","Quel élément a pour numéro atomique 6 ?","L'oxygène","Le carbone","L'azote","Le bore",1],
+["ART","Quel architecte a conçu la pyramide du Louvre ?","Renzo Piano","Ieoh Ming Pei","Jean Nouvel","Norman Foster",1],
+["ASTRONOMIE","Comment appelle-t-on la limite au-delà de laquelle rien ne peut s'échapper d'un trou noir ?","L'héliopause","L'horizon des événements","La photosphère","La magnétosphère",1],
+["INSTITUTIONS","Quel traité fonde l'Organisation du traité de l'Atlantique nord en 1949 ?","Traité de Bruxelles","Traité de Washington","Traité de Rome","Traité de Paris",1],
+["TECHNOLOGIE","Quel type de réseau relie des appareils sur une zone géographique limitée, comme un bâtiment ?","WAN","LAN","MAN","GAN",1],
+["GÉOGRAPHIE","Quel pays possède la ville de Québec et la ville de Montréal ?","Les États-Unis","Le Canada","La France","La Belgique",1],
+["MUSIQUE","Quel compositeur a écrit l'opéra La Flûte enchantée ?","Beethoven","Mozart","Verdi","Wagner",1],
+["HISTOIRE","Quel événement de 1955 marque une conférence majeure de pays d'Asie et d'Afrique non alignés ?","Conférence de Bandung","Conférence de Munich","Conférence de Genève de 1919","Conférence de San Remo",0],
+["SCIENCES","Quel type de rayonnement est utilisé en radiographie médicale classique ?","Les infrarouges","Les rayons X","Les ondes radio","Les ultrasons",1],
+["SPORT","Dans quelle discipline peut-on réaliser un « alley-oop » ?","Le basket-ball","Le football","Le rugby","Le volley-ball",0],
+
+/* PARTIE 12 */
+["GÉOGRAPHIE","Quel pays possède la ville de Tbilissi, dans le Caucase ?","L'Arménie","La Géorgie","L'Azerbaïdjan","La Turquie",1],
+["HISTOIRE","Quel événement de 1929 est associé au début de la Grande Dépression ?","La crise de Suez","Le krach de Wall Street","La révolution chinoise","La crise pétrolière",1],
+["BIOLOGIE","Quel système transporte le sang dans l'ensemble du corps humain ?","Le système nerveux","Le système cardiovasculaire","Le système digestif","Le système lymphatique uniquement",1],
+["PHYSIQUE","Quelle particule du noyau atomique ne porte pas de charge électrique ?","Le proton","Le neutron","L'électron","Le positron",1],
+["LITTÉRATURE","Quel dramaturge a écrit En attendant Godot ?","Eugène Ionesco","Samuel Beckett","Jean Anouilh","Albert Camus",1],
+["SPORT","Quelle est la hauteur réglementaire d'un panier de basket-ball ?","2,75 m","3,05 m","3,25 m","3,50 m",1],
+["GÉOGRAPHIE","Quel pays possède le désert du Namib ?","La Namibie","Le Niger","Le Soudan","Le Tchad",0],
+["HISTOIRE","Quel pharaon est associé à la découverte de sa tombe presque intacte en 1922 ?","Ramsès II","Toutânkhamon","Akhenaton","Khéops",1],
+["ÉCONOMIE","Quel terme désigne une hausse de la production par heure travaillée ?","La productivité du travail","La déflation","Le déficit public","La consommation intermédiaire",0],
+["CINÉMA","Quel réalisateur a créé la saga cinématographique Star Wars ?","George Lucas","James Cameron","Ridley Scott","George Miller",0],
+["CHIMIE","Quel est le principal constituant du gaz naturel ?","Le méthane","Le propane","Le butane","Le dioxyde de carbone",0],
+["ART","Quel mouvement architectural est caractérisé par des formes simples, fonctionnelles et peu décorées au XXe siècle ?","Le baroque","Le modernisme","Le rococo","Le gothique flamboyant",1],
+["ASTRONOMIE","Quelle planète est la plus massive du système solaire ?","Saturne","Jupiter","Neptune","Uranus",1],
+["INSTITUTIONS","Quelle juridiction internationale règle des différends entre États lorsqu'ils acceptent sa compétence ?","Cour pénale internationale","Cour internationale de Justice","Cour européenne des droits de l'homme","Tribunal de l'Union européenne",1],
+["TECHNOLOGIE","Quel principe de cybersécurité consiste à demander uniquement les autorisations nécessaires à un utilisateur ?","Le privilège maximal","Le moindre privilège","La redondance","Le chiffrement symétrique",1],
+["GÉOGRAPHIE","Quel pays possède la ville de Marrakech et borde l'océan Atlantique ainsi que la Méditerranée ?","Le Maroc","La Libye","L'Égypte","La Mauritanie",0],
+["MUSIQUE","Quel groupe a publié l'album Nevermind en 1991 ?","Pearl Jam","Nirvana","Radiohead","Soundgarden",1],
+["HISTOIRE","Quel traité met fin à la guerre d'indépendance américaine en 1783 ?","Traité de Paris","Traité de Versailles de 1919","Traité de Gand","Traité de Jay",0],
+["SCIENCES","Quel phénomène permet à la lumière de changer de direction en passant d'un milieu à un autre ?","La diffraction","La réfraction","La réflexion totale uniquement","L'interférence",1],
+["SPORT","Quel pays a remporté la Coupe du monde féminine de football en 2023 ?","Les États-Unis","L'Espagne","L'Angleterre","L'Allemagne",1],
+
+/* PARTIE 13 */
+["GÉOGRAPHIE","Quel pays possède la ville de Bergen et une façade sur la mer de Norvège ?","La Suède","La Norvège","La Finlande","Le Danemark",1],
+["HISTOIRE","Quel dirigeant sud-africain devient président en 1994 après la fin de l'apartheid ?","Desmond Tutu","Nelson Mandela","F. W. de Klerk","Thabo Mbeki",1],
+["SCIENCES","Quelle loi génétique est associée à la séparation des allèles lors de la formation des gamètes ?","La loi de Mendel sur la ségrégation","La loi de Newton","La loi de Hardy uniquement","La loi de Boyle",0],
+["LITTÉRATURE","Quel écrivain est l'auteur de Voyage au centre de la Terre ?","H. G. Wells","Jules Verne","Arthur Conan Doyle","Robert Louis Stevenson",1],
+["SPORT","Dans quelle discipline sportive utilise-t-on les agrès appelés cheval d'arçons et anneaux ?","La gymnastique artistique","L'athlétisme","L'haltérophilie","Le trampoline uniquement",0],
+["GÉOGRAPHIE","Quel pays possède la ville de Cusco, ancienne capitale de l'empire inca ?","Le Pérou","Le Chili","L'Équateur","La Bolivie",0],
+["BIOLOGIE","Quel mécanisme permet à l'organisme de maintenir relativement stable sa température interne ?","L'homéostasie","La mutation","La méiose","La fécondation",0],
+["HISTOIRE","Quelle bataille navale de 1571 oppose une coalition chrétienne à l'Empire ottoman ?","Actium","Lépante","Trafalgar","Salamine",1],
+["ÉCONOMIE","Quel mécanisme économique peut conduire à une baisse de la demande lorsque les ménages anticipent une hausse future du chômage ?","Une hausse de la consommation","Une épargne de précaution","Une hausse automatique des exportations","Une baisse de l'offre de travail uniquement",1],
+["CINÉMA","Quel film de Ridley Scott met en scène un androïde nommé Roy Batty ?","Alien","Blade Runner","Gladiator","Seul sur Mars",1],
+["CHIMIE","Quel type de réaction libère généralement de l'énergie sous forme de chaleur ?","Une réaction endothermique","Une réaction exothermique","Une dissolution toujours froide","Une réaction de fusion nucléaire uniquement",1],
+["ART","Quel peintre est associé à la fresque du plafond de la chapelle Sixtine ?","Raphaël","Michel-Ange","Botticelli","Le Caravage",1],
+["ASTRONOMIE","Quelle planète est connue pour ses vents extrêmement rapides et sa couleur bleue liée au méthane ?","Uranus","Neptune","Mars","Vénus",1],
+["INSTITUTIONS","Quel principe permet aux collectivités territoriales françaises d'exercer des compétences propres ?","La centralisation","La décentralisation","La monarchie constitutionnelle","La séparation des Églises",1],
+["TECHNOLOGIE","Quel algorithme de chiffrement utilise une même clé pour chiffrer et déchiffrer ?","Le chiffrement symétrique","Le chiffrement asymétrique","Le hachage seul","La signature électronique seule",0],
+["GÉOGRAPHIE","Quel pays est traversé par le fleuve Zambèze et abrite une partie des chutes Victoria ?","La Zambie","Le Maroc","Le Sénégal","La Tunisie",0],
+["MUSIQUE","Quel compositeur russe a écrit Le Lac des cygnes ?","Tchaïkovski","Rachmaninov","Chostakovitch","Moussorgski",0],
+["HISTOIRE","Quel événement de 1917 entraîne l'abdication du tsar Nicolas II ?","La révolution de Février","La révolution hongroise","La Commune de Paris","La révolution des Œillets",0],
+["SCIENCES","Quel phénomène physique explique qu'un objet immergé subisse une poussée verticale vers le haut ?","L'effet Doppler","La poussée d'Archimède","La force de Coriolis","La loi de Joule",1],
+["SPORT","Quel pays est associé à la naissance du taekwondo ?","Le Japon","La Corée","La Chine","La Thaïlande",1],
+
+/* PARTIE 14 */
+["GÉOGRAPHIE","Quel pays possède la ville de Lviv et borde la Pologne à l'ouest ?","La Biélorussie","L'Ukraine","La Moldavie","La Slovaquie",1],
+["HISTOIRE","Quel événement marque le début de la guerre de Sécession américaine en 1861 ?","La bataille de Gettysburg","L'attaque de Fort Sumter","L'abolition de l'esclavage","L'élection de Theodore Roosevelt",1],
+["BIOLOGIE","Quel organe filtre le sang et participe à la production de l'urine ?","Le foie","Le rein","Le pancréas","La vésicule biliaire",1],
+["PHYSIQUE","Quelle relation décrit la puissance électrique en courant continu ?","P = U × I","P = U / I","P = R × I","P = U + I",0],
+["LITTÉRATURE","Quel auteur a écrit Le Procès ?","Franz Kafka","Albert Camus","Milan Kundera","Marcel Proust",0],
+["SPORT","Dans quel sport le terme « strike » désigne-t-il notamment trois essais réussis pour éliminer un batteur ?","Le baseball","Le tennis","Le rugby","Le cricket uniquement",0],
+["GÉOGRAPHIE","Quelle mer intérieure est bordée notamment par la Russie, le Kazakhstan et l'Iran ?","La mer Noire","La mer Caspienne","La mer Baltique","La mer d'Aral",1],
+["HISTOIRE","Quel empereur français perd le pouvoir après la défaite de Sedan en 1870 ?","Napoléon Ier","Napoléon III","Louis-Napoléon avant 1852","Charles X",1],
+["ÉCONOMIE","Que désigne le coût d'opportunité d'une décision ?","Le prix affiché d'un produit","La valeur de la meilleure option à laquelle on renonce","Le coût total des impôts","Le coût de production uniquement",1],
+["CINÉMA","Quel film de Bong Joon-ho remporte l'Oscar du meilleur film en 2020 ?","Oldboy","Parasite","Memories of Murder","Snowpiercer",1],
+["CHIMIE","Quel élément chimique est nécessaire à la formation de l'hémoglobine ?","Le fer","Le calcium","Le lithium","Le silicium",0],
+["ART","Quel courant littéraire et artistique du XIXe siècle cherche à représenter la réalité sociale sans idéalisation ?","Le réalisme","Le symbolisme","Le romantisme","Le classicisme",0],
+["ASTRONOMIE","Quelle planète possède une atmosphère très dense composée principalement de dioxyde de carbone et une température de surface extrême ?","Mars","Vénus","Mercure","Jupiter",1],
+["INSTITUTIONS","Quel article de la Constitution française permet au président de la République de dissoudre l'Assemblée nationale ?","Article 16","Article 12","Article 49","Article 89",1],
+["TECHNOLOGIE","Quel protocole attribue automatiquement des adresses IP aux appareils d'un réseau local ?","DNS","DHCP","HTTPS","IMAP",1],
+["GÉOGRAPHIE","Quel pays possède la ville de Cebu et l'archipel de Palawan ?","L'Indonésie","Les Philippines","La Malaisie","Le Vietnam",1],
+["MUSIQUE","Quel compositeur a écrit le Requiem inachevé souvent appelé Requiem de Mozart ?","Wolfgang Amadeus Mozart","Joseph Haydn","Antonio Vivaldi","Franz Liszt",0],
+["HISTOIRE","Quel traité de 1951 crée la Communauté européenne du charbon et de l'acier ?","Traité de Paris","Traité de Rome","Traité de Maastricht","Traité de Lisbonne",0],
+["SCIENCES","Quel type de rayonnement électromagnétique possède une longueur d'onde plus courte que la lumière visible ?","Les ondes radio","Les ultraviolets","Les micro-ondes","Les infrarouges",1],
+["SPORT","Quel pays a remporté la Coupe du monde de football en 2006 ?","La France","L'Italie","L'Allemagne","Le Brésil",1],
+
+/* PARTIE 15 */
+["GÉOGRAPHIE","Quel pays possède la ville de Lahore et partage une frontière avec l'Afghanistan ?","Le Pakistan","Le Népal","Le Bangladesh","Le Sri Lanka",0],
+["HISTOIRE","Quel traité de 1871 met fin à la guerre franco-prussienne ?","Traité de Francfort","Traité de Versailles","Traité de Vienne","Traité de Paris",0],
+["SCIENCES","Quelle théorie explique l'évolution de l'Univers à partir d'un état initial extrêmement chaud et dense ?","La théorie des cordes uniquement","Le modèle du Big Bang","La théorie géocentrique","La théorie de l'état stationnaire uniquement",1],
+["LITTÉRATURE","Quel auteur a écrit À la recherche du temps perdu ?","André Gide","Marcel Proust","Paul Valéry","Louis-Ferdinand Céline",1],
+["SPORT","Quel pays a remporté le plus de titres en Coupe du monde masculine de football jusqu'en 2022 ?","L'Allemagne","L'Italie","Le Brésil","L'Argentine",2],
+["GÉOGRAPHIE","Quel pays possède le lac Baïkal, considéré comme le lac le plus profond du monde ?","La Mongolie","La Russie","Le Kazakhstan","La Chine",1],
+["BIOLOGIE","Quel est le rôle principal des ribosomes dans une cellule ?","La synthèse des protéines","La production d'ATP","Le stockage des lipides","La réplication des chromosomes",0],
+["HISTOIRE","Quel dirigeant est à la tête de l'Allemagne nazie pendant la Seconde Guerre mondiale ?","Hermann Göring","Adolf Hitler","Heinrich Himmler","Joseph Goebbels",1],
+["ÉCONOMIE","Quel indicateur mesure la part des personnes en emploi dans une population donnée en âge de travailler ?","Le taux d'emploi","Le taux d'inflation","Le taux de marge","Le taux de change",0],
+["CINÉMA","Quel film de Stanley Kubrick se déroule en partie dans un hôtel isolé appelé l'Overlook ?","Orange mécanique","Shining","Full Metal Jacket","Eyes Wide Shut",1],
+["CHIMIE","Quel est le nom de la transformation d'un liquide en gaz à sa surface, à toute température ?","La fusion","L'évaporation","La condensation","La solidification",1],
+["ART","Quel artiste est associé au mouvement du pop art et aux sérigraphies de Marilyn Monroe ?","Andy Warhol","Jackson Pollock","Mark Rothko","Edward Hopper",0],
+["ASTRONOMIE","Quel phénomène explique les marées terrestres principalement ?","L'attraction gravitationnelle de la Lune et du Soleil","Le vent solaire","La rotation de Mars","Les variations du champ magnétique terrestre",0],
+["INSTITUTIONS","Quel organe de l'Union européenne propose généralement les textes législatifs ?","Le Conseil européen","La Commission européenne","La Cour de justice","La Banque centrale",1],
+["TECHNOLOGIE","Quel format de fichier est principalement associé aux images vectorielles sur le Web ?","SVG","JPEG","MP3","WAV",0],
+["GÉOGRAPHIE","Quel pays possède la ville de Fez et le massif de l'Atlas ?","L'Algérie","Le Maroc","La Libye","L'Égypte",1],
+["MUSIQUE","Quel groupe britannique est à l'origine de l'album Abbey Road ?","The Who","The Beatles","Queen","The Kinks",1],
+["HISTOIRE","Quel événement de 1989 symbolise l'ouverture de la frontière entre l'Est et l'Ouest de Berlin ?","La chute du mur de Berlin","La crise de Cuba","La signature du traité de Rome","La dissolution de l'URSS",0],
+["SCIENCES","Quel phénomène correspond à la transmission d'un caractère génétique d'une génération à l'autre ?","L'hérédité","La digestion","La respiration","La photosynthèse",0],
+["SPORT","Quel pays a remporté la Coupe du monde de rugby à XV en 2019 ?","L'Angleterre","L'Afrique du Sud","La Nouvelle-Zélande","L'Australie",1],
+
+/* PARTIE 16 — DERNIÈRE PARTIE */
+["HISTOIRE","Quel traité signé en 1919 établit la Société des Nations dans le cadre du règlement de la Première Guerre mondiale ?","Traité de Versailles","Traité de Rome","Traité de Tordesillas","Traité de Vienne",0],
+["GÉOGRAPHIE","Quel pays possède la ville de Samarcande et une partie importante de l'ancienne route de la soie ?","L'Ouzbékistan","L'Arménie","Le Népal","Le Pakistan",0],
+["SCIENCES","Quel phénomène permet aux organismes de transmettre une copie de leur ADN avant une division cellulaire ?","La réplication","La traduction","La fermentation","La photosynthèse",0],
+["LITTÉRATURE","Quel écrivain français est l'auteur de La Condition humaine ?","André Malraux","Albert Camus","Jean-Paul Sartre","Romain Gary",0],
+["SPORT","Quel pays remporte la première Coupe du monde féminine de football en 1991 ?","La Norvège","Les États-Unis","L'Allemagne","La Chine",1],
+["ASTRONOMIE","Quel phénomène se produit lorsqu'un astre passe dans l'ombre d'un autre ?","Une éclipse","Une occultation atmosphérique","Une supernova","Une aurore polaire",0],
+["ÉCONOMIE","Quel mécanisme peut réduire les inégalités de revenus après redistribution ?","Les prélèvements obligatoires et les prestations sociales","La suppression de tous les impôts","La baisse automatique des salaires","La disparition des services publics",0],
+["HISTOIRE","Quel événement de 1945 entraîne la capitulation du Japon et la fin de la Seconde Guerre mondiale ?","La bataille de Stalingrad","Les bombardements atomiques et l'entrée en guerre de l'URSS contre le Japon","Le débarquement de Normandie","La bataille d'El-Alamein",1],
+["BIOLOGIE","Quel système assure la défense de l'organisme contre les agents pathogènes ?","Le système immunitaire","Le système digestif","Le système locomoteur","Le système endocrinien uniquement",0],
+["CINÉMA","Quel réalisateur est à l'origine du film Le Voyage dans la Lune, réalisé en 1902 ?","Georges Méliès","Auguste Lumière","Louis Feuillade","Charlie Chaplin",0],
+["CHIMIE","Quel type de particule est échangé lors d'une oxydoréduction ?","Un proton uniquement","Un électron","Un neutron","Un photon",1],
+["ART","Quel peintre a réalisé La Naissance de Vénus, conservée aux Offices de Florence ?","Sandro Botticelli","Raphaël","Titien","Le Tintoret",0],
+["INSTITUTIONS","Quel principe signifie que les citoyens sont soumis aux mêmes règles juridiques, sans privilège devant la loi ?","La séparation des pouvoirs","L'égalité devant la loi","Le suffrage censitaire","La souveraineté extérieure",1],
+["TECHNOLOGIE","Quel mécanisme transforme un nom de domaine en adresse IP utilisable par les machines ?","Le DNS","Le chiffrement AES","Le protocole FTP","Le format JSON",0],
+["GÉOGRAPHIE","Quel pays possède la ville de Reykjavik et se situe sur la dorsale médio-atlantique ?","La Norvège","L'Islande","Le Groenland","Les îles Féroé",1],
+["MUSIQUE","Quel compositeur a écrit la Symphonie fantastique en 1830 ?","Hector Berlioz","Claude Debussy","Maurice Ravel","Erik Satie",0],
+["HISTOIRE","Quel événement de 1961 est associé à la construction du mur de Berlin ?","La fermeture de la frontière entre Berlin-Est et Berlin-Ouest","La réunification allemande","La création de la RDA","La crise des missiles de Cuba",0],
+["PHYSIQUE","Quelle loi relie la force, la masse et l'accélération ?","La deuxième loi de Newton","La loi de Boyle","La loi de Faraday","La loi de Coulomb",0],
+["SPORT","Quel athlète détient le record du monde masculin du 100 mètres établi à Berlin en 2009 ?","Carl Lewis","Usain Bolt","Tyson Gay","Justin Gatlin",1],
+["CULTURE GÉNÉRALE","Quel philosophe grec est le maître d'Alexandre le Grand ?","Socrate","Platon","Aristote","Épicure",2]
+];
+
+let questions = rawQuestions.map(q=>[
+ q[0],q[1],[q[2],q[3],q[4],q[5]],q[6]
+]);
+
+if(questions.length!==320){
+ console.error("Attention : le quiz doit contenir 320 questions, actuellement :",questions.length);
+}
+
+/* =========================================================
+   ÉTAT DU QUIZ
+========================================================= */
+
+const QUESTIONS_PER_PART=20;
+const TOTAL_PARTS=16;
+const TOTAL_QUESTIONS=QUESTIONS_PER_PART*TOTAL_PARTS;
+const ROUND_SECONDS=10;
+
+let questionIndex=0;
+let seconds=ROUND_SECONDS;
+let likes=0;
+let timer=null;
+let revealed=false;
+let gameFinished=false;
+let voiceEnabled=false;
+let voiceQueue=[];
+let speaking=false;
+let players=[];
+let roundAnswers=[];
+let roundValidated=false;
+
+let globalDoublePending=false;
+let globalDoubleActive=false;
+
+let recapTimeout=null;
+let recapTestMode=false;
+let voiceRunId=0;
+let voiceSequenceCallback=null;
+
+let frozenNextRound=[];
+let frozenThisRound=[];
+let tickerIndex=0;
+let tickerInterval=null;
+let tickerMessageTimeout=null;
+let tickerPriority=false;
+let autoSimInterval=null;
+let autoSimActive=false;
+let autoSimNames=[];
+let autoSimCommentCount=0;
+
+const $=id=>document.getElementById(id);
+
+function toggleBroadcastMode(force){
+ const enabled=typeof force==="boolean"?force:!document.body.classList.contains("broadcast-mode");
+ document.body.classList.toggle("broadcast-mode",enabled);
+ const button=document.querySelector('[onclick="toggleBroadcastMode()"]');
+ if(button)button.textContent=enabled?"⛶ QUITTER LE MODE DIFFUSION":"⛶ ACTIVER LE MODE DIFFUSION";
+}
+
+document.addEventListener("keydown",event=>{
+ if(event.key==="Escape"&&document.body.classList.contains("broadcast-mode"))toggleBroadcastMode(false);
+});
+
+/* =========================================================
+   IMPORT / EXPORT DE LA BANQUE DE QUESTIONS
+========================================================= */
+
+function validateQuestionBank(candidate){
+ if(!Array.isArray(candidate) || candidate.length!==TOTAL_QUESTIONS){
+  throw new Error("La banque doit contenir exactement "+TOTAL_QUESTIONS+" questions.");
+ }
+ candidate.forEach((q,index)=>{
   if(!Array.isArray(q) || q.length!==7 ||
      typeof q[0]!=="string" || !q[0].trim() ||
      typeof q[1]!=="string" || !q[1].trim() ||
