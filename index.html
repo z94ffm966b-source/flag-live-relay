@@ -901,22 +901,23 @@ body.broadcast-mode .ranking-row{display:flex!important;flex:0 0 auto;min-height
 .live-screen #rankingList{max-height:none;overflow:visible}
 .live-screen .bottom-status{padding-top:3px}
 .live-screen .voice-button{margin-top:3px;padding:5px}
+body.broadcast-mode{
+ height:100svh;
+ min-height:100svh;
+ padding:0;
+ gap:0;
+ overflow:hidden;
+}
 body.broadcast-mode .live-screen{
- zoom:.84;
- width:min(119%,480px);
- height:calc((100svh - 12px)/.84);
- max-height:calc((100svh - 12px)/.84);
- overflow-y:auto!important;
- padding:6px;
+ zoom:.72;
+ width:min(139%,560px);
+ height:calc((100svh - 8px)/.72);
+ max-height:calc((100svh - 8px)/.72);
+ min-height:0;
+ overflow:hidden!important;
+ padding:5px;
+ flex-shrink:0;
 }
-#liveMusicToggle{
- position:fixed;z-index:9999;right:12px;top:12px;
- border:1px solid #7de7c5aa;border-radius:999px;
- padding:9px 13px;background:#102b35;color:#eafff8;
- font:800 11px Inter,Arial,sans-serif;letter-spacing:.2px;
- box-shadow:0 5px 20px #0008;cursor:pointer;
-}
-#liveMusicToggle:active{transform:scale(.97)}
 
 </style>
 </head>
@@ -3186,7 +3187,7 @@ connectLiveConnector();
 activateVoice();
 /* Le premier clic/tap débloque la synthèse vocale si le navigateur bloque l'audio automatique. */
 document.addEventListener("pointerdown",event=>{
- if(!event.target.closest("#liveMusicToggle")&&freeMusicTimer===null)playFreeMusic();
+ if(freeMusicTimer===null)playFreeMusic();
  if(voiceEnabled&&"speechSynthesis" in window){speechSynthesis.resume();if(!speaking&&voiceQueue.length)processVoiceQueue(voiceRunId);}
 },{once:true});
 
@@ -3219,6 +3220,6 @@ document.addEventListener("keydown",event=>{
 });
 </script>
 
-<button id="liveMusicToggle" type="button" onclick="toggleLiveMusic()">♫ ACTIVER LA MUSIQUE</button>
+
 </body>
 </html> 
