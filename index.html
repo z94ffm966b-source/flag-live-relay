@@ -3116,6 +3116,7 @@ connectLiveConnector();
 activateVoice();
 /* Le premier clic/tap débloque la synthèse vocale si le navigateur bloque l'audio automatique. */
 document.addEventListener("pointerdown",()=>{
+ if(freeMusicTimer===null)playFreeMusic();
  if(voiceEnabled&&"speechSynthesis" in window){speechSynthesis.resume();if(!speaking&&voiceQueue.length)processVoiceQueue(voiceRunId);}
 },{once:true});
 
